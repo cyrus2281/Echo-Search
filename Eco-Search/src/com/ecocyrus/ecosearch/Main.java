@@ -12,6 +12,7 @@ import javafx.scene.image.Image;
  * This application is a GUI replacement for the class FindAndReplace
  *
  * @author Milad Mobini
+ * https://github.com/milad2281
  */
 public class Main extends Application {
     /**
@@ -24,7 +25,7 @@ public class Main extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("application.fxml"));
         primaryStage.setTitle("Eco-Search");
         primaryStage.getIcons().add(new Image("/com/ecocyrus/ecosearch/EcoCyrusLogo.png"));
-        primaryStage.setScene(new Scene(root, 700, 700));
+        primaryStage.setScene(new Scene(root, 700, 800));
         primaryStage.show();
     }
 

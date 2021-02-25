@@ -22,6 +22,7 @@ import java.nio.file.SimpleFileVisitor;
  * @author Milad Mobini
  * @version 1.1 February 25, 2021
  * @see PrintFileNames
+ * https://github.com/milad2281
  */
 public class FindAndReplace {
     /**
@@ -44,6 +45,14 @@ public class FindAndReplace {
      * The variable that holds all the file types to be searched
      */
     private ArrayList<String> filters;
+    /**
+     * if true, the report result will also contain the old and new contents
+     */
+    private boolean moreDetails;
+    /**
+     * This variable will hold a report of the run result
+     */
+    private String result = "";
 
     /**
      * Creats an object will all requirements for the run method
@@ -51,38 +60,39 @@ public class FindAndReplace {
      * @param replacment    the replacement for the found string
      * @param folderPath    the parent folder path where the crawl starts
      * @param filters      the file type to look for
+     * @param moreDetails   if true, returns content of the files in result too
      */
-    public FindAndReplace(String delimiter, String replacment, String folderPath, ArrayList<String> filters) {
+    public FindAndReplace(String delimiter, String replacment, String folderPath, ArrayList<String> filters, boolean moreDetails) {
         this.delimiter = delimiter;
         this.replacment = replacment;
         this.folderPath = folderPath;
         this.filters = filters;
+        this.moreDetails = moreDetails;
     }
-    /*
-        this.delimiter = readFile("D:\\Leon\\Programing\\Projects\\Eco-Search\\Eco-Search\\src\\com\\ecocyrus\\ecosearch\\del.txt");
-        this.replacment = readFile("D:\\Leon\\Programing\\Projects\\Eco-Search\\Eco-Search\\src\\com\\ecocyrus\\ecosearch\\rep.txt");
-        this.folderPath = "D:\\Leon\\Programing\\Projects\\Eco-Search";
-    */
 
     /**
-     * This method will run the program and read, find, replace, write to the all files
-     *
+     * This method will run the program and read, find, replace, write to the all files<br>
+     *and return a report of the program
      * @return a report of all finds and changes
      */
     public String run() {
 
         ArrayList<String> allPaths = filteredTree(getTree(folderPath), filters);
+        result += "total matched files: "+allPaths.size()+"\n\n";
         for (int index = 0; index < allPaths.size(); index++) {
-            System.out.println("\n\n\n\npaths:\n" + allPaths.get(index));
-
+            result += "Path:"+ allPaths.get(index)+"\n";
             String fileContent = readFile(allPaths.get(index));
-            System.out.println("\nold content:\n" + fileContent + "\n\n\n\nnew content:\n");
+            if(moreDetails){
+                result += "##########old content:\n" + fileContent+"\n\n\n##########new content:\n";
+            }
             fileContent = replaceFile(fileContent, Pattern.quote(delimiter), replacment);
-            System.out.println(fileContent);
-
+            if(moreDetails){
+                result+=fileContent;
+            }
             writeFile(allPaths.get(index), fileContent);
+            result += "\n*************************\n";
         }
-        return null;
+        return result;
     }
 
     /**
@@ -98,7 +108,7 @@ public class FindAndReplace {
                 content += scanner.nextLine() + "\n";
             }
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            e.getStackTrace();
         } finally {
             return content;
         }
@@ -125,7 +135,7 @@ public class FindAndReplace {
         try (FileWriter file = new FileWriter(path)) {
             file.write(content);
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            e.getStackTrace();
         }
     }
 
@@ -141,10 +151,7 @@ public class FindAndReplace {
             Files.walkFileTree(directory, crawler);
         } catch (IOException e) {
         }
-        System.out.println("\n\n\n\n\n");
-
         String[] paths = allPaths.split("\n");
-        System.out.println("Total Number of Paths Found: " + paths.length);
         return paths;
     }
 
@@ -158,7 +165,6 @@ public class FindAndReplace {
         ArrayList<String> allfiles = new ArrayList<String>();
         for (int count = 0; count < paths.length; count++) {
             if (paths[count].matches(makeFilter(filters))) {
-                System.out.println(paths[count]);
                 allfiles.add(paths[count]);
             }
         }
