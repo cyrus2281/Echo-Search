@@ -26,25 +26,47 @@ https://github.com/milad2281
         </image>
     </ImageView>
 
-    <Label  text="Eco Search" GridPane.columnIndex="1" GridPane.rowIndex="0">
+    <Label text="Eco Search" GridPane.columnIndex="1" GridPane.rowIndex="0">
         <font>
-            <Font name="System Bold" size="24.0" />
+            <Font name="System Bold" size="24.0"/>
         </font>
     </Label>
 
-    <Label text="Select the path" GridPane.columnIndex="0"  GridPane.rowIndex="2" />
+    <Label text="Select the path" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
     <Button fx:id="pathInput" text="select" GridPane.columnIndex="2" GridPane.rowIndex="2" onAction="#getPath"/>
-    <Label text="" fx:id="pathLoc" GridPane.columnIndex="0" GridPane.rowIndex="3" GridPane.columnSpan="4" />
+    <Label text="" fx:id="pathLoc" GridPane.columnIndex="0" GridPane.rowIndex="3" GridPane.columnSpan="4"/>
 
-    <Label text="Enter the search string" GridPane.columnIndex="0"  GridPane.rowIndex="4" />
-    <TextArea fx:id="findInput" GridPane.rowIndex="4" GridPane.columnIndex="2" GridPane.columnSpan="2" maxWidth="400" maxHeight="150"/>
+    <Label text="Enter the search string" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+    <TextArea fx:id="findInput" GridPane.rowIndex="4" GridPane.columnIndex="2" GridPane.columnSpan="2" maxWidth="400"
+              maxHeight="100"/>
 
-    <Label text="Enter the replace string" GridPane.columnIndex="0"  GridPane.rowIndex="5" />
-    <TextArea fx:id="replaceInput" GridPane.rowIndex="5" GridPane.columnIndex="2" GridPane.columnSpan="2" maxWidth="400" maxHeight="150"/>
-    <CheckBox fx:id="moreDetails" text="Long Details" GridPane.columnIndex="2" GridPane.rowIndex="7" selected="true"/>
-    <Button fx:id="runAppBtn" text="Find and Replace All" GridPane.columnIndex="0" GridPane.rowIndex="7" onAction="#runFindReplace"/>
-    <ProgressBar fx:id="progressBar" GridPane.rowIndex="7" GridPane.columnIndex="1" />
-    <Label text="Result:" fx:id="resultOutput" GridPane.columnIndex="0" GridPane.rowIndex="9" />
-    <TextArea fx:id="detailsResult" GridPane.rowIndex="10" GridPane.columnIndex="0" GridPane.columnSpan="3" editable="false" maxWidth="600" minHeight="200"/>
-    <Label text="Copyright(c) ecocyrus.com @ Milad Mobini 2021" GridPane.columnIndex="0" GridPane.rowIndex="11" GridPane.columnSpan="4" />
+    <Label text="Enter the replace string" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+    <TextArea fx:id="replaceInput" GridPane.rowIndex="5" GridPane.columnIndex="2" GridPane.columnSpan="2" maxWidth="400"
+              maxHeight="100"/>
+    <FlowPane hgap="10" vgap="10" GridPane.columnIndex="0" GridPane.rowIndex="7" GridPane.columnSpan="4" minHeight="60">
+        <Label text="File types:" />
+        <CheckBox fx:id="txt" text="text" selected="true"/>
+        <CheckBox fx:id="python" text="python" GridPane.columnIndex="2" GridPane.rowIndex="6" selected="true"/>
+        <CheckBox fx:id="java" text="java" GridPane.columnIndex="3" GridPane.rowIndex="6" selected="true"/>
+        <CheckBox fx:id="js" text="JavaScript" GridPane.columnIndex="4" GridPane.rowIndex="6" selected="true"/>
+        <CheckBox fx:id="css" text="css" GridPane.columnIndex="0" GridPane.rowIndex="7" selected="true"/>
+        <CheckBox fx:id="html" text="html" selected="true"/>
+        <CheckBox fx:id="php" text="php" selected="true"/>
+        <CheckBox fx:id="fxml" text="fxml" selected="true"/>
+        <CheckBox fx:id="sql" text="sql" selected="true"/>
+        <CheckBox fx:id="bash" text="bash" selected="true"/>
+        <CheckBox fx:id="ino" text="arduino" selected="true"/>
+        <CheckBox fx:id="cs" text="C#" selected="true"/>
+        <TextField fx:id="others" promptText="Others (comma separated)" minWidth="210"/>
+    </FlowPane>
+
+    <Button fx:id="runAppBtn" text="Find and Replace All" GridPane.columnIndex="0" GridPane.rowIndex="10"
+            onAction="#runFindReplace"/>
+    <ProgressBar fx:id="progressBar" GridPane.rowIndex="10" GridPane.columnIndex="1" />
+    <CheckBox fx:id="moreDetails" text="Long Details" GridPane.columnIndex="2" GridPane.rowIndex="10" selected="true"/>
+    <Label text="Result:" fx:id="resultOutput" GridPane.columnIndex="0" GridPane.rowIndex="11"/>
+    <TextArea fx:id="detailsResult" GridPane.rowIndex="12" GridPane.columnIndex="0" GridPane.columnSpan="3"
+              editable="false" maxWidth="600" minHeight="200" />
+    <Label text="Copyright(c) ecocyrus.com @ Milad Mobini 2021" GridPane.columnIndex="0" GridPane.rowIndex="13"
+           GridPane.columnSpan="4"/>
 </GridPane>

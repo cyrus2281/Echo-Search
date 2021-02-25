@@ -80,7 +80,7 @@ public class FindAndReplace {
         ArrayList<String> allPaths = filteredTree(getTree(folderPath), filters);
         result += "total matched files: "+allPaths.size()+"\n\n";
         for (int index = 0; index < allPaths.size(); index++) {
-            result += "Path:"+ allPaths.get(index)+"\n";
+            result += "Path "+(index+1)+":  "+ allPaths.get(index)+"\n";
             String fileContent = readFile(allPaths.get(index));
             if(moreDetails){
                 result += "##########old content:\n" + fileContent+"\n\n\n##########new content:\n";
