@@ -18,9 +18,8 @@ import java.nio.file.SimpleFileVisitor;
  *<br>
  * method <i>run()</i> will run the whole program<br>
  * other method of the program can be used alone statically<br>
- * The class can hold value to only one parent at a time
  * @author Milad Mobini
- * @version 1.4 February 25, 2021
+ * @version 1.5 February 25, 2021
  * @see PrintFileNames
  * https://github.com/milad2281
  */
@@ -147,11 +146,13 @@ public class FindAndReplace {
     public static String[] getTree(String pathFolder) {
         Path directory = Paths.get(pathFolder);
         try {
+            allPaths = "";
             PrintFileNames crawler = new PrintFileNames();
             Files.walkFileTree(directory, crawler);
         } catch (IOException e) {
         }
         String[] paths = allPaths.split("\n");
+        allPaths = "";
         return paths;
     }
 

@@ -14,7 +14,7 @@ import java.util.ArrayList;
  * Controller class for the fxml file
  *
  * @author Milad Mobini
- * @version 1.4 February 25, 2021
+ * @version 1.5 February 25, 2021
  * https://github.com/milad2281
  */
 public class Controller {

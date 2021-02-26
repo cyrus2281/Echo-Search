@@ -5,6 +5,7 @@
 <?import javafx.scene.image.Image?>
 <!--
 @author: Milad Mobini
+@version 1.5 February 25, 2021
 https://github.com/milad2281
 
 -->
@@ -12,8 +13,8 @@ https://github.com/milad2281
           xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
     <ImageView
             fx:id="imageView"
-            fitHeight="150.0"
-            fitWidth="200.0"
+            fitHeight="200.0"
+            fitWidth="250.0"
             pickOnBounds="true"
             preserveRatio="true"
             GridPane.columnIndex="0" GridPane.rowIndex="0"
