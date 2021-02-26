@@ -20,7 +20,7 @@ import java.nio.file.SimpleFileVisitor;
  * other method of the program can be used alone statically<br>
  * The class can hold value to only one parent at a time
  * @author Milad Mobini
- * @version 1.1 February 25, 2021
+ * @version 1.4 February 25, 2021
  * @see PrintFileNames
  * https://github.com/milad2281
  */
