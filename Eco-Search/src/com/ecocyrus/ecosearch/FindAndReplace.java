@@ -19,7 +19,7 @@ import java.nio.file.SimpleFileVisitor;
  * method <i>run()</i> will run the whole program<br>
  * other method of the program can be used alone statically<br>
  * @author Milad Mobini
- * @version 1.5 February 25, 2021
+ * @version 2.2.1.1 February 2021
  * @see PrintFileNames
  * https://github.com/milad2281
  */

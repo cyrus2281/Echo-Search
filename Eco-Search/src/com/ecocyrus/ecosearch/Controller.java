@@ -2,11 +2,18 @@ package com.ecocyrus.ecosearch;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.DirectoryChooser;
 import javafx.scene.control.Button;
 
+import java.awt.*;
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
@@ -14,7 +21,7 @@ import java.util.ArrayList;
  * Controller class for the fxml file
  *
  * @author Milad Mobini
- * @version 1.5 February 25, 2021
+ * @version 2.2.1.1 February 2021
  * https://github.com/milad2281
  */
 public class Controller {
@@ -170,5 +177,27 @@ public class Controller {
         }
         pathLoc.setText(path);
         runAppBtn.setDisable(false);
+    }
+    /**
+     * Open the Milad Mobini's GitHub page in the default browser
+     */
+    @FXML
+    public void handleLinkGithub() {
+        try {
+            Desktop.getDesktop().browse(new URI("https://github.com/milad2281/Eco-Search"));
+        } catch (IOException | URISyntaxException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+    /**
+     * Open the ecocyrus.com in the default browser
+     */
+    @FXML
+    public void handleLinkCyrus() {
+        try {
+            Desktop.getDesktop().browse(new URI("https://www.ecocyrus.com/"));
+        } catch (IOException | URISyntaxException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }
