@@ -12,7 +12,7 @@ import javafx.scene.image.Image;
  * This application is a GUI replacement for the class FindAndReplace
  *
  * @author Milad Mobini
- * @version 2.2.1.1 February 2021
+ * @version 2.3.0.1 March 2021
  * https://github.com/milad2281
  */
 public class Main extends Application {

@@ -5,7 +5,7 @@
 <?import javafx.scene.image.Image?>
 <!--
 @author: Milad Mobini
-@version 2.2.1.1 February 2021
+@version 2.3.0.1 March 2021
 https://github.com/milad2281
 
 -->
@@ -73,6 +73,6 @@ https://github.com/milad2281
     <Hyperlink text="ecocyrus.com" onAction="#handleLinkCyrus"/>
         <Label text="\@"/>
         <Hyperlink text="Milad Mobini" onAction="#handleLinkGithub"/>
-    <Label text="- version 2.2.1.1 February 2021"/>
+    <Label text="- version 2.3.0.1 March 2021"/>
     </HBox>
 </GridPane>

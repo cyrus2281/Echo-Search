@@ -1,5 +1,6 @@
 package com.ecocyrus.ecosearch;
 
+import com.ecocyrus.ecosearch.FindAndReplace.FindAndReplace;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
@@ -21,7 +22,7 @@ import java.util.ArrayList;
  * Controller class for the fxml file
  *
  * @author Milad Mobini
- * @version 2.2.1.1 February 2021
+ * @version 2.3.0.1 March 2021
  * https://github.com/milad2281
  */
 public class Controller {
@@ -155,7 +156,7 @@ public class Controller {
         if (otherTypes.trim() != "" && otherTypes!= null){
             String[] allTypes = otherTypes.split(",");
             for (int index = 0; index < allTypes.length; index++) {
-                types.add(allTypes[index]);
+                types.add(allTypes[index].trim());
             }
         }
         return types;
