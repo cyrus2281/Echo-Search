@@ -22,7 +22,7 @@ import java.util.ArrayList;
  * Controller class for the fxml file
  *
  * @author Milad Mobini
- * @version 2.3.0.1 March 2021
+ * @version 2.4.0.3 May 2021
  * https://github.com/milad2281
  */
 public class Controller {
@@ -100,11 +100,18 @@ public class Controller {
         new Thread(() -> {
             ArrayList<String> filters = new ArrayList<>();
             filters = getTypes(filters);
-            FindAndReplace findReplace = new FindAndReplace(delimiter, replacement, path, filters, details);
-            String report = findReplace.run();
-            detailsResult.setText(report);
-            setAllDisable(false);
-            progressBar.setVisible(false);
+            String report = "";
+            try{
+                FindAndReplace findReplace = new FindAndReplace(delimiter, replacement, path, filters, details);
+                report = findReplace.run();
+            } catch (IOException e){
+                System.out.println("eooooor");
+                report = "Process was not completed, an error occured\n" + e.getMessage();
+            }finally {
+                detailsResult.setText(report);
+                setAllDisable(false);
+                progressBar.setVisible(false);
+            }
         }).start();
     }
 

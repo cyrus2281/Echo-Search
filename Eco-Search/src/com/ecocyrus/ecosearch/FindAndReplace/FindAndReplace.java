@@ -20,8 +20,9 @@ import java.nio.file.SimpleFileVisitor;
  * other method of the program can be used alone statically<br>
  *
  * @author Milad Mobini
- * @version 2.3.0.1 March 2021
+ * @version 2.4.0.3 May 2021
  * @see PrintFileNames
+ * @see SimpleFileVisitor
  * https://github.com/milad2281
  */
 public class FindAndReplace {
@@ -49,10 +50,6 @@ public class FindAndReplace {
      * if true, the report result will also contain the old and new contents
      */
     private boolean moreDetails;
-    /**
-     * This variable will hold a report of the run result
-     */
-    private String result = "";
 
     /**
      * Creates an object will all requirements for the run method
@@ -166,25 +163,27 @@ public class FindAndReplace {
      * and return a report of the program
      *
      * @return a report of all finds and changes
+     * @throws IOException if an I/O error occurs
      */
-    public String run() {
-        result = "";
+    public String run() throws IOException {
+        //This string will hold a report of the run result
+        StringBuilder result = new StringBuilder();
         ArrayList<String> allPaths = filteredTree(getTree(folderPath), filters);
-        result += "total matched files: " + allPaths.size() + "\n\n";
+        result.append("total matched files: ").append(allPaths.size()).append("\n\n");
         for (int index = 0; index < allPaths.size(); index++) {
-            result += "Path " + (index + 1) + ":  " + allPaths.get(index) + "\n";
+            result.append("Path ").append(index + 1).append(":  ").append(allPaths.get(index)).append("\n");
             String fileContent = readFile(allPaths.get(index));
             if (moreDetails) {
-                result += "########## old content: ##########\n\n" + fileContent + "\n\n########## new content: ##########\n\n";
+                result.append("########## old content: ##########\n\n").append(fileContent).append("\n\n########## new content: ##########\n\n");
             }
             fileContent = replaceFile(fileContent, Pattern.quote(delimiter), replacment);
             if (moreDetails) {
-                result += fileContent;
+                result.append(fileContent);
             }
             writeFile(allPaths.get(index), fileContent);
-            result += "\n*************************\n";
+            result.append("\n*************************\n");
         }
-        return result;
+        return result.toString();
     }
 
     /**
@@ -199,22 +198,20 @@ public class FindAndReplace {
 
     /**
      * /**
-     * Reads any text file from the given path and return the output deviding each lien by '\n'
+     * Reads any text file from the given path and return the output dividing each lien by '\n'
      *
      * @param path          path to the file
      * @param lineDelimiter seperate each line of input file with this delimiter (Default: '\n')
      * @return contents of the file in a string output
      */
     public static String readFile(String path, String lineDelimiter) {
-        String content = "";
-        try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(path)));) {
+        StringBuilder content = new StringBuilder();
+        try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(path)))) {
             while (scanner.hasNextLine()) {
-                content += scanner.nextLine() + lineDelimiter;
+                content.append(scanner.nextLine()).append(lineDelimiter);
             }
-        } catch (IOException e) {
-            e.getStackTrace();
         } finally {
-            return content;
+            return content.toString();
         }
     }
 
@@ -236,12 +233,11 @@ public class FindAndReplace {
      *
      * @param path    path to the file
      * @param content content to be written in the file
+     * @throws IOException if an I/O error occurs
      */
-    public static void writeFile(String path, String content) {
+    public static void writeFile(String path, String content) throws IOException {
         try (FileWriter file = new FileWriter(path)) {
             file.write(content);
-        } catch (IOException e) {
-            e.getStackTrace();
         }
     }
 
@@ -250,15 +246,13 @@ public class FindAndReplace {
      *
      * @param pathFolder parent folder
      * @return an string array holding all the sub-directories and -file
+     * @throws IOException if an I/O error is thrown by a visitor method
      */
-    public static String[] getTree(String pathFolder) {
+    public static String[] getTree(String pathFolder) throws IOException {
         Path directory = Paths.get(pathFolder);
-        try {
-            allPaths = "";
-            PrintFileNames crawler = new PrintFileNames();
-            Files.walkFileTree(directory, crawler);
-        } catch (IOException e) {
-        }
+        allPaths = "";
+        PrintFileNames crawler = new PrintFileNames();
+        Files.walkFileTree(directory, crawler);
         String[] paths = allPaths.split("\n");
         allPaths = "";
         return paths;
@@ -272,10 +266,10 @@ public class FindAndReplace {
      * @return an ArrayList of the filtered paths
      */
     public static ArrayList<String> filteredTree(String[] paths, ArrayList<String> filters) {
-        ArrayList<String> allfiles = new ArrayList<String>();
-        for (int count = 0; count < paths.length; count++) {
-            if (paths[count].matches(makeFilter(filters))) {
-                allfiles.add(paths[count]);
+        ArrayList<String> allfiles = new ArrayList<>();
+        for (String path : paths) {
+            if (path.matches(makeFilter(filters))) {
+                allfiles.add(path);
             }
         }
         return allfiles;
@@ -288,11 +282,11 @@ public class FindAndReplace {
      * @return the regex for the types
      */
     private static String makeFilter(ArrayList<String> filters) {
-        String allFilters = ".*\\.";
-        for (int index = 0; index < filters.size(); index++) {
-            allFilters += "(" + filters.get(index) + ")*";
+        StringBuilder allFilters = new StringBuilder(".*\\.");
+        for (String filter : filters) {
+            allFilters.append("(").append(filter).append(")*");
         }
-        return allFilters;
+        return allFilters.toString();
     }
 
 
@@ -303,6 +297,7 @@ public class FindAndReplace {
      * @author Milad Mobini
      * @author Tim Buchalka
      * @see FindAndReplace
+     * @see SimpleFileVisitor
      */
     public static class PrintFileNames extends SimpleFileVisitor<Path> {
 
