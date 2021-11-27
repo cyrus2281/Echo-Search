@@ -180,11 +180,11 @@ public class Controller {
         File file = chooser.showDialog(gridPane.getScene().getWindow());
         if (file != null) {
             path = file.getAbsolutePath();
+            pathLoc.setText(path);
+            runAppBtn.setDisable(false);
         } else {
             System.out.println("Chooser was cancelled");
         }
-        pathLoc.setText(path);
-        runAppBtn.setDisable(false);
     }
     /**
      * Open the Milad Mobini's GitHub page in the default browser
