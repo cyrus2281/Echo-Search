@@ -1,0 +1,57 @@
+{
+  "name": "echo-search",
+  "version": "0.1.0",
+  "private": false,
+  "main": "src/Electron/electron.js",
+  "dependencies": {
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@mui/icons-material": "^5.11.0",
+    "@mui/material": "^5.11.0",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "notistack": "^2.0.8",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "dev": "concurrently -k \"cross-env BROWSER=none npm start\" \"cross-env NODE_ENV=development npm run electron\"",
+    "electron": "electron .",
+    "package:linux": "electron-packager ./ --out=../releases/linux --overwrite --platform=linux --arch=x64 --icon=assets/icon.png",
+    "package:win": "electron-packager ./ --out=../releases/windows --overwrite --platform=win32 --arch=x64 --icon=assets/icon.ico",
+    "package:mac": "electron-packager ./ --out=../releases/mac --overwrite --platform=darwin --arch=x64 --icon=assets/icon.icns",
+    "package": "npm run package:linux && npm run package:win && npm run package:mac"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^6.0.4",
+    "concurrently": "^7.6.0",
+    "cross-env": "^7.0.3",
+    "electron": "^22.0.0",
+    "electron-packager": "^17.1.1"
+  }
+}
