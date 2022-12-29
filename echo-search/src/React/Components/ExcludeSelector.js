@@ -41,7 +41,7 @@ function ExcludeSelector({ form }) {
       sx={{
         display: "flex",
         flexDirection: "column",
-        ml: 6,
+        ml: 3,
       }}
     >
       <Box
@@ -77,7 +77,7 @@ function ExcludeSelector({ form }) {
         </Box>
         <IconButton
           disabled={!exclude}
-          sx={{ mr: 3, ml: 1 }}
+          sx={{ ml: 1 }}
           onClick={() => addToExcludes(exclude)}
         >
           <AddCircleOutlineIcon />

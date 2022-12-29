@@ -64,7 +64,7 @@ ipcMain.on("directory:select", async () => {
 
 ipcMain.on("search:start", async (e, query) => {
   if (query) {
-    const onError = (error) => mainWindow.webContents.send('search:error', error);
+    const onError = (error) => mainWindow.webContents.send('search:fail', error);
     const onProgress = (progress) => mainWindow.webContents.send('search:progress', progress);
     const onComplete = (message) => mainWindow.webContents.send('search:complete', message);
     echoSearch(query, onComplete, onError, onProgress);

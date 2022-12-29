@@ -9,9 +9,21 @@ import Divider from "@mui/material/Divider";
 
 const { ipcSend, ipcListen } = window.api;
 
+const getMode = (mode) => {
+  switch (mode) {
+    case "success":
+      return "success.main";
+    case "error":
+      return "error.main";
+    default:
+      return "text.primary";
+  }
+};
+
 function Output({ isRunning }) {
   // due to async nature of useState, we might miss some messages
   const allMessages = useRef([]);
+  const [hasError, setHasError] = useState(false);
   const [progress, setProgress] = useState(0);
   const [heading, setHeading] = useState("Searching for files...");
   const [messages, setMessages] = React.useState([]);
@@ -19,34 +31,21 @@ function Output({ isRunning }) {
   useEffect(() => {
     const showProgress = (update) => {
       const progress = update.progress;
-      const heading = `Updating files. ${progress}% completed.`;
-      const newMessages = [{ message: update.message, isError: false }];
-      if (messages.length === 0) {
-        newMessages.unshift({
-          message: `Found ${update.totalFiles} files.`,
-          isError: false,
-        });
+      const message = { message: update.message, mode: getMode(update.mode) };
+      allMessages.current.push(message);
+      if (progress) {
+        const heading = `Updating files. ${progress}% completed.`;
+        setHeading(heading);
+        setProgress(progress);
       }
-      allMessages.current.push(...newMessages);
-      setHeading(heading);
-      setProgress(progress);
       setMessages([...allMessages.current]);
     };
     return ipcListen("search:progress", showProgress);
   }, [messages]);
 
   useEffect(() => {
-    const showError = (error) => {
-      const message = { message: error.message, isError: true };
-      allMessages.current.push(message);
-      setMessages([...allMessages.current]);
-    };
-    return ipcListen("search:error", showError);
-  }, [messages]);
-
-  useEffect(() => {
     const onComplete = (event) => {
-      const message = { message: event.message, isError: false };
+      const message = { message: event.message, mode: getMode("success") };
       allMessages.current.push(message);
       setHeading("All Done!");
       setProgress(100);
@@ -55,10 +54,22 @@ function Output({ isRunning }) {
     return ipcListen("search:complete", onComplete);
   }, [messages]);
 
-  console.log(progress, isRunning);
+  useEffect(() => {
+    const showError = (error) => {
+      const message = { message: error.message, mode: getMode("error") };
+      allMessages.current.push(message);
+      setHeading("Operation was not completely successful.");
+      setProgress(100);
+      setHasError(true);
+      setMessages([...allMessages.current]);
+    };
+    return ipcListen("search:fail", showError);
+  }, [messages]);
+
   return (
     <Box sx={{ width: "100%" }}>
       <LinearProgress
+        color={hasError ? "error" : "primary"}
         variant={
           isRunning
             ? progress
@@ -84,10 +95,7 @@ function Output({ isRunning }) {
         >
           {messages.map((msg, i) => (
             <ListItem key={i}>
-              <ListItemText
-                sx={{ color: msg.isError ? "error.main" : "text.primary" }}
-                primary={msg.message}
-              />
+              <ListItemText sx={{ color: msg.mode }} primary={msg.message} />
             </ListItem>
           ))}
         </List>

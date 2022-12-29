@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef } from "react";
 
-import { SnackbarProvider, useSnackbar } from "notistack";
+import { useSnackbar } from "notistack";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import { styled } from "@mui/material/styles";
@@ -64,20 +64,21 @@ function Form() {
 
   useEffect(() => {
     const showError = (error) => {
-      if (error.isFatal) {
-        enqueueSnackbar(error.message, {
-          variant: "error",
-          autoHideDuration: 3000,
-        });
-        setIsRunning(false);
-      }
+      enqueueSnackbar(error.message, {
+        variant: "error",
+        autoHideDuration: 3000,
+      });
+      setIsRunning(false);
     };
-    return ipcListen("search:error", showError);
+    return ipcListen("search:fail", showError);
   }, [enqueueSnackbar]);
 
   useEffect(() => {
     const onComplete = (event) => {
-      enqueueSnackbar(event.message, { variant: "success", autoHideDuration: 3000 });
+      enqueueSnackbar(event.message, {
+        variant: "success",
+        autoHideDuration: 3000,
+      });
       setIsRunning(false);
     };
     return ipcListen("search:complete", onComplete);

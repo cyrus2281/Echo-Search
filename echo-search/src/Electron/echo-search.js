@@ -1,3 +1,9 @@
+// get all files
+// read/write a file
+// replace a string
+
+// call all the functions
+
 const echoSearch = async (query, onComplete, onError, onUpdate) => {
   const reg = RegExp(query, "gi");
   const replacement = "🤯";
@@ -31,28 +37,37 @@ const echoSearch = async (query, onComplete, onError, onUpdate) => {
   console.log(newText);
 
   // fake progress
+
   let progress = 0;
   await new Promise((resolve) => setTimeout(resolve, 1000));
+  onUpdate &&
+    onUpdate({
+      progress,
+      message: "Found 22 files.",
+      mode: "success",
+    });
   for (let index = 0; index < 10; index++) {
     // sleep 1 second
     await new Promise((resolve) => setTimeout(resolve, 500));
     onUpdate &&
-      (await onUpdate({
-        totalFiles: 22,
+      onUpdate({
         progress,
         message: index + " Updating file of 22",
-      }));
+        mode: "info",
+      });
     progress += 10;
     await new Promise((resolve) => setTimeout(resolve, 500));
-    onError &&
-      (await onError({
-        message: index + "Error updating file of 22",
-        isFatal: false,
-      }));
+    onUpdate &&
+      onUpdate({
+        progress,
+        message: "Couldn't read file",
+        mode: "error",
+      });
   }
 
   await new Promise((resolve) => setTimeout(resolve, 2500));
-  onComplete && onComplete({ message: "Search Completed: 22 files updated" });
+  onError &&onError({message: "Search Failed", });
+//   onComplete && onComplete({ message: "Search Completed: 22 files updated" });
 };
 
 module.exports = echoSearch;

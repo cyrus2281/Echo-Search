@@ -39,7 +39,7 @@ function FileTypeSelector({ form }) {
       sx={{
         display: "flex",
         flexDirection: "column",
-        ml: 6,
+        ml: 3,
       }}
     >
       <Box sx={{ width: "100%", display: "flex", alignItems: "center" }}>
@@ -104,7 +104,11 @@ function FileTypeSelector({ form }) {
             />
           )}
         />
-        <IconButton disabled={allTypes || !fileType} sx={{ mr: 3, ml: 1 }} onClick={() => addFileType(fileType)}>
+        <IconButton
+          disabled={allTypes || !fileType}
+          sx={{ ml: 1 }}
+          onClick={() => addFileType(fileType)}
+        >
           <AddCircleOutlineIcon />
         </IconButton>
       </Box>
