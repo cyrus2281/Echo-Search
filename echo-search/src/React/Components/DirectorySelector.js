@@ -12,14 +12,18 @@ import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import FolderIcon from "@mui/icons-material/Folder";
 import DeleteIcon from "@mui/icons-material/Delete";
-import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
+import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import { useSnackbar } from "notistack";
+
+const { ipcSend, ipcListen } = window.api;
 
 function DirectorySelector({ form }) {
+  const { enqueueSnackbar } = useSnackbar();
   const [directories, setDirectories] = useState([]);
 
   const onSelectDirectory = () => {
-    setDirectories([...directories, "test" + Math.random()]);
+    ipcSend("directory:select");
   };
 
   const onRemoveDirectory = (index) => {
@@ -28,25 +32,65 @@ function DirectorySelector({ form }) {
   };
 
   useEffect(() => {
+    return ipcListen("directory:selected", (directory) => {
+      if (directories.includes(directory)) {
+        enqueueSnackbar("Directory already selected.", {
+          variant: "error",
+          autoHideDuration: 3000,
+        });
+        return;
+      }
+      const a = [];
+      if (directories.some((dir) => directory.includes(dir))) {
+        enqueueSnackbar(
+          "Can not select a child of an already selected directory. Please remove the parent first.",
+          {
+            variant: "error",
+            autoHideDuration: 5000,
+          }
+        );
+        return;
+      }
+      if (directories.some((dir) => dir.includes(directory))) {
+        enqueueSnackbar(
+          "Can not select the parent of an already selected directory. Please remove the child first.",
+          {
+            variant: "error",
+            autoHideDuration: 5000,
+          }
+        );
+        return;
+      }
+      setDirectories([...directories, directory]);
+    });
+  }, [directories, enqueueSnackbar]);
+
+  useEffect(() => {
     form.current.directories = directories;
   }, [directories]);
 
   return (
     <Grid container spacing={2} display="flex" alignItems={"center"}>
-      <Grid item xs={7} display="flex" alignItems={"center"} justifyContent="center">
+      <Grid
+        item
+        xs={7}
+        display="flex"
+        alignItems={"center"}
+        justifyContent="center"
+      >
         <Typography variant="body1">Parent Directories</Typography>
         <Tooltip
-            title="The root directories that the recursive search will start from."
-            sx={{ pr: 1 }}
-          >
-            <IconButton>
-              <InfoOutlinedIcon />
-            </IconButton>
-          </Tooltip>
+          title="The root directories that the recursive search will start from."
+          sx={{ pr: 1 }}
+        >
+          <IconButton>
+            <InfoOutlinedIcon />
+          </IconButton>
+        </Tooltip>
       </Grid>
       <Grid item xs={4}>
         <Button variant="contained" fullWidth onClick={onSelectDirectory}>
-          <CreateNewFolderIcon sx={{mr:2}}/> SELECT
+          <CreateNewFolderIcon sx={{ mr: 2 }} /> SELECT
         </Button>
       </Grid>
       <Grid item xs={12}>
@@ -54,7 +98,7 @@ function DirectorySelector({ form }) {
           dense={false}
           sx={{
             overflow: "auto",
-            mr:2,
+            mr: 2,
             maxHeight: 150,
             "&::-webkit-scrollbar": {
               width: "0.3em",

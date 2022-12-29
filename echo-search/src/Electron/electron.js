@@ -1,36 +1,39 @@
 const path = require('path');
+const { app, BrowserWindow, ipcMain, dialog, Menu} = require('electron');
+const echoSearch = require('./echo-search');
 
-const { app, BrowserWindow } = require('electron');
 const isDev = process.env.NODE_ENV === 'development';
 
+let mainWindow
 function createWindow() {
   // Create the browser window.
-  const win = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 800,
-    height: 600,
+    height: 1000,
     minWidth:600,
-    minHeight: 400,
+    minHeight: 500,
     webPreferences: {
-      nodeIntegration: true,
+      nodeIntegration: false,
+      contextIsolation: true, // protect against prototype pollution
+      enableRemoteModule: false, // turn off remote
+      preload: path.join(__dirname, "preload.js") // use a preload script
     },
   });
 
   // and load the index.html of the app.
-  // win.loadFile("index.html");
-  win.loadURL(
+  mainWindow.loadURL(
     isDev
       ? 'http://localhost:3000'
       : `file://${path.join(__dirname, '../../build/index.html')}`
   );
   // Open the DevTools.
   if (isDev) {
-    win.webContents.openDevTools({ mode: 'detach' });
+    mainWindow.webContents.openDevTools({ mode: 'detach' });
   }
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
+Menu.setApplicationMenu(null);
+
 app.whenReady().then(createWindow);
 
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -45,5 +48,25 @@ app.on('window-all-closed', () => {
 app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
     createWindow();
+  }
+});
+
+ipcMain.on("directory:select", async () => {
+  const result = await dialog.showOpenDialog(mainWindow, {
+    properties: ['openDirectory'],
+    buttonLabel: "Select directory",
+    title: "Parent directory for recursive search"
+  })
+  if (result.filePaths && result.filePaths.length) {
+    mainWindow.webContents.send('directory:selected', result.filePaths[0])
+  }
+});
+
+ipcMain.on("search:start", async (e, query) => {
+  if (query) {
+    const onError = (error) => mainWindow.webContents.send('search:error', error);
+    const onProgress = (progress) => mainWindow.webContents.send('search:progress', progress);
+    const onComplete = (message) => mainWindow.webContents.send('search:complete', message);
+    echoSearch(query, onComplete, onError, onProgress);
   }
 });

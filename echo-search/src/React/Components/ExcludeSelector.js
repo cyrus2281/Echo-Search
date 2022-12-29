@@ -54,7 +54,7 @@ function ExcludeSelector({ form }) {
         <Box sx={{ width: "100%", display: "flex", alignItems: "center" }}>
           <Typography variant="body1">Sub-Directories To Exclude:</Typography>
           <Tooltip
-            title="Path can either be a text or a regular expression."
+            title="Path can complete or partial, a text or a regular expression."
             sx={{ ml: 1 }}
           >
             <IconButton>

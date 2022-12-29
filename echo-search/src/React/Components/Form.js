@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 
 import { SnackbarProvider, useSnackbar } from "notistack";
 import Paper from "@mui/material/Paper";
@@ -11,6 +11,8 @@ import DirectorySelector from "./DirectorySelector";
 import InclusionSelector from "./InclusionSelector";
 import Output from "./Output";
 import QuerySelector from "./QuerySelector";
+
+const { ipcSend, ipcListen } = window.api;
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -38,6 +40,7 @@ function Form() {
   const formData = useRef({});
   const { enqueueSnackbar } = useSnackbar();
   const [isRunning, setIsRunning] = React.useState(false);
+  const [showOutput, setShowOutput] = React.useState(false);
 
   const onSubmit = (e) => {
     const hasError = validateForm(formData);
@@ -48,8 +51,37 @@ function Form() {
       );
       return;
     }
+    showOutput && setShowOutput(false);
     setIsRunning(true);
+    ipcSend("search:start", formData.current);
   };
+
+  useEffect(() => {
+    if (isRunning) {
+      setShowOutput(true);
+    }
+  }, [isRunning]);
+
+  useEffect(() => {
+    const showError = (error) => {
+      if (error.isFatal) {
+        enqueueSnackbar(error.message, {
+          variant: "error",
+          autoHideDuration: 3000,
+        });
+        setIsRunning(false);
+      }
+    };
+    return ipcListen("search:error", showError);
+  }, [enqueueSnackbar]);
+
+  useEffect(() => {
+    const onComplete = (event) => {
+      enqueueSnackbar(event.message, { variant: "success", autoHideDuration: 3000 });
+      setIsRunning(false);
+    };
+    return ipcListen("search:complete", onComplete);
+  }, [enqueueSnackbar]);
 
   return (
     <Paper
@@ -92,7 +124,7 @@ function Form() {
           </Button>
         </Grid>
         <Grid item xs={12}>
-          {isRunning && (
+          {showOutput && (
             <Item>
               <Output isRunning={isRunning} />
             </Item>
