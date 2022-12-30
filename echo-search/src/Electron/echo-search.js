@@ -1,3 +1,17 @@
+/**
+ *   Echo Search
+ *
+ *   An algorithm to search and replace strings in files recursively
+ *
+ *   author: Cyrus Mobini
+ *
+ *   Licensed under the MIT license.
+ *   http://www.opensource.org/licenses/mit-license.php
+ *
+ *   Copyright 2023 Cyrus Mobini (https://github.com/cyrus2281)
+ *
+ *
+ */
 const fs = require("fs");
 const path = require("path");
 
@@ -62,8 +76,7 @@ const crawlDirectory = async (directory, fileTypes = [], excludes = []) => {
  * @returns {false|string} false if the text doesn't have the search query or is empty, otherwise returns the new text
  */
 const replaceString = (text, query) => {
-  const { searchQuery, replaceQuery, regexFlags, isRegex, matchWhole } =
-    query;
+  const { searchQuery, replaceQuery, regexFlags, isRegex, matchWhole } = query;
 
   const flags = regexFlags.join("");
 
@@ -88,6 +101,9 @@ const replaceString = (text, query) => {
  */
 const replaceStringInFile = async (filePath, query) => {
   const text = await fs.promises.readFile(filePath, { encoding: "utf-8" });
+  if (/\ufffd/.test(text)) {
+    return false;
+  }
   const newText = replaceString(text, query);
   if (newText === false) {
     return false;

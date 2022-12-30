@@ -3,6 +3,7 @@
   "version": "2.0.0",
   "private": false,
   "main": "src/Electron/electron.js",
+  "homepage": "./",
   "dependencies": {
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
@@ -28,7 +29,7 @@
     "package:linux": "electron-packager ./ --out=../releases/linux --overwrite --platform=linux --arch=x64 --icon=assets/icon.png",
     "package:win": "electron-packager ./ --out=../releases/windows --overwrite --platform=win32 --arch=x64 --icon=assets/icon.ico",
     "package:mac": "electron-packager ./ --out=../releases/mac --overwrite --platform=darwin --arch=x64 --icon=assets/icon.icns",
-    "package": "npm run package:linux && npm run package:win && npm run package:mac"
+    "package": "npm run build && npm run package:linux && npm run package:win && npm run package:mac"
   },
   "eslintConfig": {
     "extends": [
