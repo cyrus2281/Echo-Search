@@ -21,9 +21,9 @@ import java.util.ArrayList;
 /**
  * Controller class for the fxml file
  *
- * @author Milad Mobini
+ * @author Cyrus Mobini
  * @version 2.4.0.3 May 2021
- * https://github.com/milad2281
+ * https://github.com/cyrus2281
  */
 public class Controller {
     /**
@@ -187,12 +187,12 @@ public class Controller {
         }
     }
     /**
-     * Open the Milad Mobini's GitHub page in the default browser
+     * Open the Cyrus Mobini's GitHub page in the default browser
      */
     @FXML
     public void handleLinkGithub() {
         try {
-            Desktop.getDesktop().browse(new URI("https://github.com/milad2281/Eco-Search"));
+            Desktop.getDesktop().browse(new URI("https://github.com/cyrus2281/Eco-Search"));
         } catch (IOException | URISyntaxException e) {
             System.out.println(e.getMessage());
         }

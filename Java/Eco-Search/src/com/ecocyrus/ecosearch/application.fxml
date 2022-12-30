@@ -4,9 +4,9 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
 <!--
-@author: Milad Mobini
+@author: Cyrus Mobini
 @version 2.4.0.3 May 2021
-https://github.com/milad2281
+https://github.com/cyrus2281
 
 -->
 <GridPane fx:controller="com.ecocyrus.ecosearch.Controller" fx:id="gridPane"
@@ -72,7 +72,7 @@ https://github.com/milad2281
     <Label text="Copyright&#169;"/>
     <Hyperlink text="ecocyrus.com" onAction="#handleLinkCyrus"/>
         <Label text="\@"/>
-        <Hyperlink text="Milad Mobini" onAction="#handleLinkGithub"/>
+        <Hyperlink text="Cyrus Mobini" onAction="#handleLinkGithub"/>
     <Label text="- version 2.4.0.3 May 2021"/>
     </HBox>
 </GridPane>

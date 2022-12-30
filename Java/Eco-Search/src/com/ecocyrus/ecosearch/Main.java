@@ -11,9 +11,9 @@ import javafx.scene.image.Image;
  * Class Main that holds the method main which run the application
  * This application is a GUI replacement for the class FindAndReplace
  *
- * @author Milad Mobini
+ * @author Cyrus Mobini
  * @version 2.4.0.3 May 2021
- * https://github.com/milad2281
+ * https://github.com/cyrus2281
  */
 public class Main extends Application {
     /**

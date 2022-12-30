@@ -19,11 +19,11 @@ import java.nio.file.SimpleFileVisitor;
  * method <i>run()</i> will run the whole program<br>
  * other method of the program can be used alone statically<br>
  *
- * @author Milad Mobini
+ * @author Cyrus Mobini
  * @version 2.4.0.3 May 2021
  * @see PrintFileNames
  * @see SimpleFileVisitor
- * https://github.com/milad2281
+ * https://github.com/cyrus2281
  */
 public class FindAndReplace {
     /**
@@ -294,7 +294,7 @@ public class FindAndReplace {
      * This class inner extends <i>SimpleFileVisitor</i> which provides objects for <i>walkFileTree</i>.<br>
      * The class marks the visit files, and directories and add all paths to the outer class variable <i>allPaths</i>
      *
-     * @author Milad Mobini
+     * @author Cyrus Mobini
      * @author Tim Buchalka
      * @see FindAndReplace
      * @see SimpleFileVisitor

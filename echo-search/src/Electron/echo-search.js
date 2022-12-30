@@ -73,7 +73,6 @@ const replaceString = (text, query) => {
     ? RegExp(`\\b${searchQuery}\\b`, flags)
     : RegExp(searchQuery, flags);
 
-  console.log(reg);
   // if the text doesn't have the search query or is empty
   if (!text.match(reg) || text.length === 0) {
     return false;
