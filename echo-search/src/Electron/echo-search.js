@@ -157,7 +157,13 @@ const echoSearch = async (echoSearchQuery, onComplete, onError, onUpdate) => {
           });
       }
     } catch (error) {
-      onError && onError({ message: `Couldn't read file ${file}`, error });
+      onUpdate &&
+        onUpdate({
+          progress,
+          message: `Couldn't read file ${file}`,
+          mode: "error",
+          error,
+        });
     }
     progress += singleFileProgress;
   }

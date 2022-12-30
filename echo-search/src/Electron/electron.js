@@ -40,7 +40,7 @@ function createWindow() {
     mainWindow.loadURL("http://localhost:3000");
   } else {
     const fePath = path.join(__dirname, "..", "..", "build", "index.html");
-    mainWindow.loadFile(fePath);    
+    mainWindow.loadFile(fePath);
   }
 
   // Open the DevTools.
@@ -87,6 +87,10 @@ ipcMain.on("search:start", async (e, query) => {
       mainWindow.webContents.send("search:progress", progress);
     const onComplete = (message) =>
       mainWindow.webContents.send("search:complete", message);
-    echoSearch(query, onComplete, onError, onProgress);
+    try {
+      await echoSearch(query, onComplete, onError, onProgress);
+    } catch (error) {
+      onError({ message: `Search failed`, error });
+    }
   }
 });
