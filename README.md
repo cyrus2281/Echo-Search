@@ -14,7 +14,8 @@ the app is written with Electron (Node) for the backend, and React (JavaScript) 
 
 ### Windows
 
-1. Download the windows installer from [Release Folder]("./release/windows/echo-search-2.1.0%20Setup.exe")
+1. Download the windows installer from [Release Folder](https://github.com/cyrus2281/Eco-Search/blob/forge/release/windows/echo-search-2.1.0%20Setup.exe).
+    - There should be a `Download` button next to the file.
 2. Install the app by running the file.
 3. a shortcut should appear on your desktop.
 
