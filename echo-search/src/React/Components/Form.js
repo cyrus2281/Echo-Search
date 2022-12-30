@@ -77,7 +77,7 @@ function Form() {
     const onComplete = (event) => {
       enqueueSnackbar(event.message, {
         variant: "success",
-        autoHideDuration: 3000,
+        autoHideDuration: 2000,
       });
       setIsRunning(false);
     };
