@@ -1,0 +1,47 @@
+{
+  "name": "echo-search",
+  "productName": "echo-search",
+  "version": "2.1.0",
+  "description": "An application to search and replace strings in files recursively",
+  "main": ".webpack/main",
+  "scripts": {
+    "start": "cross-env NODE_ENV=development electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "lint": "echo \"No linting configured\"",
+    "make:win": "electron-forge make --platform=win32 --arch=x64",
+    "make:linux": "electron-forge make --platform=linux --arch=x64",
+    "make:mac": "electron-forge make --platform=darwin --arch=x64"
+  },
+  "keywords": [],
+  "author": "Cyrus Mobini",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.20.7",
+    "@babel/preset-react": "^7.18.6",
+    "@electron-forge/cli": "^6.0.4",
+    "@electron-forge/maker-deb": "^6.0.4",
+    "@electron-forge/maker-rpm": "^6.0.4",
+    "@electron-forge/maker-squirrel": "^6.0.4",
+    "@electron-forge/maker-zip": "^6.0.4",
+    "@electron-forge/plugin-webpack": "^6.0.4",
+    "@vercel/webpack-asset-relocator-loader": "^1.7.3",
+    "cross-env": "^7.0.3",
+    "babel-loader": "^9.1.0",
+    "css-loader": "^6.7.3",
+    "electron": "22.0.0",
+    "node-loader": "^2.0.0",
+    "style-loader": "^3.3.1"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@mui/icons-material": "^5.11.0",
+    "@mui/material": "^5.11.0",
+    "electron-squirrel-startup": "^1.0.0",
+    "notistack": "^2.0.8",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}
