@@ -1,0 +1,78 @@
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<!--
+@author: Cyrus Mobini
+@version 2.4.0.3 May 2021
+https://github.com/cyrus2281
+
+-->
+<GridPane fx:controller="com.ecocyrus.ecosearch.Controller" fx:id="gridPane"
+          xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
+    <ImageView
+            fx:id="imageView"
+            fitHeight="200.0"
+            fitWidth="250.0"
+            pickOnBounds="true"
+            preserveRatio="true"
+            GridPane.columnIndex="0" GridPane.rowIndex="0"
+    >
+        <image>
+            <Image
+                    url="/com/ecocyrus/ecosearch/EcoCyrusLogo.png"
+                    backgroundLoading="true"
+            />
+        </image>
+    </ImageView>
+
+    <Label text="Eco Search" GridPane.columnIndex="1" GridPane.rowIndex="0">
+        <font>
+            <Font name="System Bold" size="24.0"/>
+        </font>
+    </Label>
+
+    <Label text="Select the path" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+    <Button fx:id="pathInput" text="select" GridPane.columnIndex="2" GridPane.rowIndex="2" onAction="#getPath"/>
+    <Label text="" fx:id="pathLoc" GridPane.columnIndex="0" GridPane.rowIndex="3" GridPane.columnSpan="4"/>
+
+    <Label text="Enter the search string" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+    <TextArea fx:id="findInput" GridPane.rowIndex="4" GridPane.columnIndex="2" GridPane.columnSpan="2" maxWidth="400"
+              maxHeight="100"/>
+
+    <Label text="Enter the replace string" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+    <TextArea fx:id="replaceInput" GridPane.rowIndex="5" GridPane.columnIndex="2" GridPane.columnSpan="2" maxWidth="400"
+              maxHeight="100"/>
+    <FlowPane hgap="10" vgap="10" GridPane.columnIndex="0" GridPane.rowIndex="7" GridPane.columnSpan="4" minHeight="60">
+        <Label text="File types:"/>
+        <CheckBox fx:id="txt" text="text"/>
+        <CheckBox fx:id="python" text="python" GridPane.columnIndex="2" GridPane.rowIndex="6"/>
+        <CheckBox fx:id="java" text="java" GridPane.columnIndex="3" GridPane.rowIndex="6"/>
+        <CheckBox fx:id="js" text="JavaScript" GridPane.columnIndex="4" GridPane.rowIndex="6"/>
+        <CheckBox fx:id="css" text="css" GridPane.columnIndex="0" GridPane.rowIndex="7"/>
+        <CheckBox fx:id="html" text="html"/>
+        <CheckBox fx:id="php" text="php"/>
+        <CheckBox fx:id="fxml" text="fxml"/>
+        <CheckBox fx:id="sql" text="sql"/>
+        <CheckBox fx:id="bash" text="bash"/>
+        <CheckBox fx:id="ino" text="arduino"/>
+        <CheckBox fx:id="cs" text="C#"/>
+        <TextField fx:id="others" promptText="Others (comma separated)" minWidth="210"/>
+    </FlowPane>
+
+    <Button fx:id="runAppBtn" text="Find and Replace All" GridPane.columnIndex="0" GridPane.rowIndex="10"
+            onAction="#runFindReplace"/>
+    <ProgressBar fx:id="progressBar" GridPane.rowIndex="10" GridPane.columnIndex="1"/>
+    <CheckBox fx:id="moreDetails" text="Long Details" GridPane.columnIndex="2" GridPane.rowIndex="10" selected="true"/>
+    <Label text="Result:" fx:id="resultOutput" GridPane.columnIndex="0" GridPane.rowIndex="11"/>
+    <TextArea fx:id="detailsResult" GridPane.rowIndex="12" GridPane.columnIndex="0" GridPane.columnSpan="3"
+              editable="false" maxWidth="600" minHeight="200"/>
+    <HBox GridPane.columnIndex="0" GridPane.rowIndex="13" GridPane.columnSpan="4" alignment="CENTER_LEFT">
+    <Label text="Copyright&#169;"/>
+    <Hyperlink text="ecocyrus.com" onAction="#handleLinkCyrus"/>
+        <Label text="\@"/>
+        <Hyperlink text="Cyrus Mobini" onAction="#handleLinkGithub"/>
+    <Label text="- version 2.4.0.3 May 2021"/>
+    </HBox>
+</GridPane>

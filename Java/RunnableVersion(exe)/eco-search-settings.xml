@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch4jConfig>
+  <dontWrapJar>false</dontWrapJar>
+  <headerType>gui</headerType>
+  <jar>D:\Leon\Programing\Projects\Eco-Search\RunnableVersion(exe)\Eco-Search.jar</jar>
+  <outfile>D:\Leon\Programing\Projects\Eco-Search\RunnableVersion(exe)\Eco-Search.exe</outfile>
+  <errTitle></errTitle>
+  <cmdLine></cmdLine>
+  <chdir>.</chdir>
+  <priority>normal</priority>
+  <downloadUrl>http://java.com/download</downloadUrl>
+  <supportUrl></supportUrl>
+  <stayAlive>false</stayAlive>
+  <restartOnCrash>false</restartOnCrash>
+  <manifest></manifest>
+  <icon>D:\Leon\Learning Resources\Web Design\Practice\Projects\Eco Cyrus\logo\eco search\logo-b.ico</icon>
+  <jre>
+    <path></path>
+    <bundledJre64Bit>false</bundledJre64Bit>
+    <bundledJreAsFallback>false</bundledJreAsFallback>
+    <minVersion>1.8</minVersion>
+    <maxVersion></maxVersion>
+    <jdkPreference>preferJre</jdkPreference>
+    <runtimeBits>64/32</runtimeBits>
+  </jre>
+  <versionInfo>
+    <fileVersion>2.4.0.3</fileVersion>
+    <txtFileVersion>2.4.0.3</txtFileVersion>
+    <fileDescription>Find and replace strings in all files</fileDescription>
+    <copyright>ecocyrus.com @ Cyrus Mobini</copyright>
+    <productVersion>2.4.0.3</productVersion>
+    <txtProductVersion>2.4.0.3</txtProductVersion>
+    <productName>Eco-Search</productName>
+    <companyName>EcoCyrus</companyName>
+    <internalName>Cyrus Mobini</internalName>
+    <originalFilename>Eco-Search.exe</originalFilename>
+    <trademarks>ecocyrus</trademarks>
+    <language>ENGLISH_US</language>
+  </versionInfo>
+</launch4jConfig>
