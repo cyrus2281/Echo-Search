@@ -11,15 +11,15 @@ the app is written with Electron (Node) for the backend, and React (JavaScript) 
 <hr>
 
 ## Echo Search Empty
-<img src="./releases/images/baseapp.png" />
+<img src="./images/baseapp.png" />
 <hr>
 
 ## Echo Search Filled
-<img src="./releases/images/filled.png" />
+<img src="./images/filled.png" />
 <hr>
 
 ## Echo Search Sample output
-<img src="./releases/images/running.png" />
+<img src="./images/running.png" />
 <hr>
 
 

@@ -36,6 +36,9 @@ function Output({ isRunning }) {
         allMessages.current.push(message);
         setMessages([...allMessages.current]);
       }
+      if (update.mode === "error" && update.error) {
+        console.error(update.error);
+      }
       if (progress) {
         const roundedProgress = Math.round(progress * 10) / 10;
         const heading = `Updating files. ${roundedProgress}% completed.`;

@@ -1,7 +1,7 @@
 /**
  *   Echo Search <Frontend>
  *
- *   An algorithm to search and replace strings in files recursively
+ *   An application to search and replace strings in files recursively
  *
  *   author: Cyrus Mobini
  *
@@ -12,9 +12,10 @@
  *
  *
  */
+import './index.css';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './React/App';
+import App from './App';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
