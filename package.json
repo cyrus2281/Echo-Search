@@ -9,13 +9,13 @@
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
-    "lint": "echo \"No linting configured\""
+    "lint": "echo \"No linting configured\"",
+    "make:win": "electron-forge make --platform=win32 --arch=x64",
+    "make:linux": "electron-forge make --platform=linux --arch=x64",
+    "make:mac": "electron-forge make --platform=darwin --arch=x64"
   },
   "keywords": [],
-  "author": {
-    "name": "Cyrus Mobini",
-    "email": "miladmobini2@gmail.com"
-  },
+  "author": "Cyrus Mobini",
   "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.20.7",

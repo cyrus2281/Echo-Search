@@ -1,14 +1,11 @@
 module.exports = {
   packagerConfig: {
-    icon: 'src/icons/icon',
+    icon: './src/icons/icon',
   },
   rebuildConfig: {},
   makers: [
     {
       name: '@electron-forge/maker-squirrel',
-      config: {
-        setupIcon: 'src/icons/icon',
-      },
     },
     {
       name: '@electron-forge/maker-zip',
@@ -18,7 +15,7 @@ module.exports = {
       name: '@electron-forge/maker-deb',
       config: {
         options: {
-          icon: 'src/icons/icon.png'
+          icon: './src/icons/icon.png'
         }
       }
     },
