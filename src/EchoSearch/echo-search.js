@@ -69,6 +69,10 @@ const crawlDirectory = async (directory, fileTypes = [], excludes = []) => {
   return files;
 };
 
+const escapeSearchQuery = (searchQuery) => {
+  return searchQuery.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
+};
+
 /**
  * replace a string in a given text value
  * @param {string} text the text to search in
@@ -80,11 +84,14 @@ const replaceString = (text, query) => {
 
   const flags = regexFlags.join("");
 
-  const reg = isRegex
-    ? RegExp(searchQuery, flags)
-    : matchWhole
-    ? RegExp(`\\b${searchQuery}\\b`, flags)
-    : RegExp(searchQuery, flags);
+  let reg;
+  if (isRegex) {
+    reg = RegExp(searchQuery, flags);
+  } else {
+    reg = matchWhole
+      ? RegExp(`\\b${escapeSearchQuery(searchQuery)}\\b`, flags)
+      : (reg = RegExp(escapeSearchQuery(searchQuery), flags));
+  }
 
   // if the text doesn't have the search query or is empty
   if (!text.match(reg) || text.length === 0) {
