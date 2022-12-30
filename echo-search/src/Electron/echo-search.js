@@ -6,7 +6,7 @@ const path = require("path");
  * @typedef {Object} QueryParam
  * @property {string|RegExp} searchQuery the search query (string or regex)
  * @property {string} replaceQuery the replacement string
- * @property {boolean} caseSensitive whether the search is case sensitive or not
+ * @property {string[]} regexFlags regular expression modifier flags
  * @property {boolean} isRegex whether the search query is a regex or not
  * @property {boolean} matchWhole whether the search query should match the whole word or not
  */
@@ -27,7 +27,7 @@ const path = require("path");
  * @param {string[]} excludes the directories/files to exclude. Empty array for no exclusion
  * @returns {string[]} files sub-files in the directory
  */
-const crawlDirectory = async (directory, fileTypes, excludes) => {
+const crawlDirectory = async (directory, fileTypes = [], excludes = []) => {
   const files = [];
   const items = await fs.promises.readdir(directory, { withFileTypes: true });
   for (const item of items) {
@@ -62,10 +62,10 @@ const crawlDirectory = async (directory, fileTypes, excludes) => {
  * @returns {false|string} false if the text doesn't have the search query or is empty, otherwise returns the new text
  */
 const replaceString = (text, query) => {
-  const { searchQuery, replaceQuery, caseSensitive, isRegex, matchWhole } =
+  const { searchQuery, replaceQuery, regexFlags, isRegex, matchWhole } =
     query;
 
-  const flags = caseSensitive ? "g" : "gi";
+  const flags = regexFlags.join("");
 
   const reg = isRegex
     ? RegExp(searchQuery, flags)
@@ -73,7 +73,7 @@ const replaceString = (text, query) => {
     ? RegExp(`\\b${searchQuery}\\b`, flags)
     : RegExp(searchQuery, flags);
 
-  console.log("check", reg, text.match(reg));
+  console.log(reg);
   // if the text doesn't have the search query or is empty
   if (!text.match(reg) || text.length === 0) {
     return false;
@@ -115,6 +115,8 @@ const echoSearch = async (echoSearchQuery, onComplete, onError, onUpdate) => {
   }
   const singleFileProgress = 100 / files.length;
   let updatedFilesCount = 0;
+  // wait for 100ms to let the UI update
+  await new Promise((resolve) => setTimeout(resolve, 100));
   onUpdate &&
     onUpdate({
       progress,
@@ -130,6 +132,12 @@ const echoSearch = async (echoSearchQuery, onComplete, onError, onUpdate) => {
           onUpdate({
             progress,
             message: `Updated ${file}`,
+            mode: "info",
+          });
+      } else {
+        onUpdate &&
+          onUpdate({
+            progress,
             mode: "info",
           });
       }

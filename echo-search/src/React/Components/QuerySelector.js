@@ -14,34 +14,50 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import AbcIcon from "@mui/icons-material/Abc";
 import SpaceBarIcon from "@mui/icons-material/SpaceBar";
 
-function QuerySelector({ form }) {
+function QuerySelector({ form, channel }) {
   const [search, setSearch] = useState("");
   const [replace, setReplace] = useState("");
-  const [caseSensitive, setCaseSensitive] = useState(false);
+  const [caseInsensitive, setCaseInsensitive] = useState(false);
   const [regex, setRegex] = useState(false);
   const [matchWhole, setMatchWhole] = useState(false);
 
-  if (!form.current.query) {
-    form.current.query = {};
-  }
+  const updateCaseInsensitivity = (checked) => {
+    setCaseInsensitive(checked);
+    channel.current.isCaseInsensitive = checked;
+    if (channel.current.caseInsensitivity?.setFlag) {
+      channel.current.caseInsensitivity.setFlag(checked);
+    } else {
+      if (checked) {
+        if (!form.current.query.regexFlags.includes("i")) {
+          form.current.query.regexFlags.push("i");
+        }
+      } else {
+        form.current.query.regexFlags = form.current.query.regexFlags.filter(
+          (flag) => flag !== "i"
+        );
+      }
+    }
+  };
+
+  channel.current.caseInsensitivity.setToggle = (checked) =>
+    setCaseInsensitive(checked);
 
   useEffect(() => {
     form.current.query.searchQuery = search;
     form.current.query.replaceQuery = replace;
-    form.current.query.caseSensitive = caseSensitive;
     form.current.query.isRegex = regex;
     form.current.query.matchWhole = matchWhole;
-  }, [search, replace, caseSensitive, regex, matchWhole]);
+  }, [search, replace, regex, matchWhole]);
 
   const searchLabel = regex ? "Regular Expression" : "Search Query";
   const searchLabelOptions =
-    caseSensitive || matchWhole
+    caseInsensitive || matchWhole
       ? " (" +
         (matchWhole
-          ? caseSensitive
-            ? "Case Sensitive, Match Whole"
+          ? caseInsensitive
+            ? "Case Insensitive, Match Whole"
             : "Match Whole"
-          : "Case Sensitive") +
+          : "Case Insensitive") +
         ")"
       : "";
 
@@ -114,13 +130,13 @@ function QuerySelector({ form }) {
         gap={2}
       >
         <Typography variant="body2">Options: </Typography>
-        <Tooltip title="Match case">
+        <Tooltip title="Ignore matching case">
           <ToggleButton
-            value="caseSensitive"
-            selected={caseSensitive}
-            onChange={(e) => setCaseSensitive(!caseSensitive)}
+            value="caseInsensitive"
+            selected={caseInsensitive}
+            onChange={(e) => updateCaseInsensitivity(!caseInsensitive)}
           >
-            <FontDownloadIcon sx={{ mr: 1 }} /> Case Sensitive
+            <FontDownloadIcon sx={{ mr: 1 }} /> Case Insensitive
           </ToggleButton>
         </Tooltip>
         <Tooltip title="Use regular expression instead of simple text query">

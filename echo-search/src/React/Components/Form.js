@@ -11,6 +11,8 @@ import DirectorySelector from "./DirectorySelector";
 import InclusionSelector from "./InclusionSelector";
 import Output from "./Output";
 import QuerySelector from "./QuerySelector";
+import AdvancedSettings from "./AdvancedSettings";
+import { defaultRegexFlagsValues } from "./RegexFlags";
 
 const { ipcSend, ipcListen } = window.api;
 
@@ -37,7 +39,8 @@ const validateForm = (form) => {
 };
 
 function Form() {
-  const formData = useRef({});
+  const formData = useRef({ query: { regexFlags: [...defaultRegexFlagsValues] } });
+  const biDirectionalChannel = useRef({ caseInsensitivity: {} });
   const { enqueueSnackbar } = useSnackbar();
   const [isRunning, setIsRunning] = React.useState(false);
   const [showOutput, setShowOutput] = React.useState(false);
@@ -106,12 +109,17 @@ function Form() {
         </Grid>
         <Grid item xs={12}>
           <Item>
-            <QuerySelector form={formData} />
+            <QuerySelector form={formData} channel={biDirectionalChannel} />
           </Item>
         </Grid>
         <Grid item xs={12}>
           <Item>
             <InclusionSelector form={formData} />
+          </Item>
+        </Grid>
+        <Grid item xs={12}>
+          <Item>
+            <AdvancedSettings form={formData} channel={biDirectionalChannel} />
           </Item>
         </Grid>
         <Grid item xs={8} margin="auto">

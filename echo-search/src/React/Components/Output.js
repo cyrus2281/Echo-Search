@@ -31,14 +31,17 @@ function Output({ isRunning }) {
   useEffect(() => {
     const showProgress = (update) => {
       const progress = update.progress;
-      const message = { message: update.message, mode: getMode(update.mode) };
-      allMessages.current.push(message);
-      if (progress) {
-        const heading = `Updating files. ${progress}% completed.`;
-        setHeading(heading);
-        setProgress(progress);
+      if (update.message) {
+        const message = { message: update.message, mode: getMode(update.mode) };
+        allMessages.current.push(message);
+        setMessages([...allMessages.current]);
       }
-      setMessages([...allMessages.current]);
+      if (progress) {
+        const roundedProgress = Math.round(progress * 10) / 10;
+        const heading = `Updating files. ${roundedProgress}% completed.`;
+        setHeading(heading);
+        setProgress(roundedProgress);
+      }
     };
     return ipcListen("search:progress", showProgress);
   }, [messages]);
@@ -66,10 +69,12 @@ function Output({ isRunning }) {
     return ipcListen("search:fail", showError);
   }, [messages]);
 
+  const barColor = hasError ? "error" : progress === 100 ? "success" : "primary";
+
   return (
     <Box sx={{ width: "100%" }}>
       <LinearProgress
-        color={hasError ? "error" : "primary"}
+        color={barColor}
         variant={
           isRunning
             ? progress

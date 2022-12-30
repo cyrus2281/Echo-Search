@@ -52,9 +52,9 @@ function ExcludeSelector({ form }) {
         }}
       >
         <Box sx={{ width: "100%", display: "flex", alignItems: "center" }}>
-          <Typography variant="body1">Sub-Directories To Exclude:</Typography>
+          <Typography variant="body1">Files/Directories To Exclude:</Typography>
           <Tooltip
-            title="Path can complete or partial, a text or a regular expression."
+            title="Path can complete or partial match. It can also be used to exclude specific file extensions."
             sx={{ ml: 1 }}
           >
             <IconButton>
@@ -64,8 +64,8 @@ function ExcludeSelector({ form }) {
           <TextField
             id="exclude"
             variant="standard"
-            placeholder="e.g. node_modules, .git, .vscode, etc."
-            sx={{ flexGrow: 1, ml: 2 }}
+            placeholder="e.g. node_modules, .git, .class, etc."
+            sx={{ flexGrow: 1, ml: 1 }}
             onChange={(e) => setExclude(e.target.value)}
             value={exclude}
             onKeyDown={(e) => {
