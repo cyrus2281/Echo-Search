@@ -40,7 +40,6 @@ function DirectorySelector({ form }) {
         });
         return;
       }
-      const a = [];
       if (directories.some((dir) => directory.includes(dir))) {
         enqueueSnackbar(
           "Can not select a child of an already selected directory. Please remove the parent first.",

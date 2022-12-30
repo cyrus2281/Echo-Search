@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import Divider from "@mui/material/Divider";
 import Box from "@mui/material/Box";

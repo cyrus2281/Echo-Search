@@ -2,23 +2,18 @@ import React, { useEffect, useState } from "react";
 
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import Checkbox from "@mui/material/Checkbox";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import FormControlLabel from "@mui/material/FormControlLabel";
 
 export const defaultRegexFlags = {
   global: true,
   multiline: false,
   insensitive: false,
-  extended: false,
-  single: false,
+  sticky: false,
   unicode: false,
-  unGreedy: false,
-  anchored: false,
-  jChanged: false,
-  dollarEndOnly: false,
+  single: false,
+  indices: false,
 };
 
 export const defaultRegexFlagsValues = ["g"];
@@ -47,13 +42,10 @@ function RegexFlags({ form, channel }) {
     flags.global && regexFlags.push("g");
     flags.multiline && regexFlags.push("m");
     flags.insensitive && regexFlags.push("i");
-    flags.extended && regexFlags.push("x");
-    flags.single && regexFlags.push("s");
     flags.unicode && regexFlags.push("u");
-    flags.unGreedy && regexFlags.push("U");
-    flags.anchored && regexFlags.push("A");
-    flags.dollarEndOnly && regexFlags.push("D");
-    flags.jChanged && regexFlags.push("J");
+    flags.sticky && regexFlags.push("y");
+    flags.single && regexFlags.push("s");
+    flags.indices && regexFlags.push("d");
     form.current.query.regexFlags = regexFlags;
   }, [flags]);
 
@@ -129,43 +121,7 @@ function RegexFlags({ form, channel }) {
           </Box>
         </Tooltip>
         <Tooltip
-          title="x modifier: extended. Spaces and text after a # in the pattern are ignored"
-          sx={{ ml: 1 }}
-        >
-          <Box display="flex" justifyContent="flex-start" alignItems="center">
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={flags.extended}
-                  onChange={(e) => {
-                    setFlags({ ...flags, extended: e.target.checked });
-                  }}
-                />
-              }
-              label="Extended"
-            />
-          </Box>
-        </Tooltip>
-        <Tooltip
-          title="s modifier: single line. Dot matches newline characters"
-          sx={{ ml: 1 }}
-        >
-          <Box display="flex" justifyContent="flex-start" alignItems="center">
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={flags.single}
-                  onChange={(e) => {
-                    setFlags({ ...flags, single: e.target.checked });
-                  }}
-                />
-              }
-              label="Single"
-            />
-          </Box>
-        </Tooltip>
-        <Tooltip
-          title="u modifier: unicode. Pattern strings are treated as UTF-16. Also causes escape sequences to match unicode characters"
+          title="u modifier: unicode. Enable all unicode features and interpret all unicode escape sequences as such"
           sx={{ ml: 1 }}
         >
           <Box display="flex" justifyContent="flex-start" alignItems="center">
@@ -183,74 +139,56 @@ function RegexFlags({ form, channel }) {
           </Box>
         </Tooltip>
         <Tooltip
-          title="U modifier: Ungreedy. The match becomes lazy by default. Now a ? following a quantifier makes it greedy"
+          title="y modifier: sticky. Force the pattern to only match consecutive matches from where the previous match ended."
           sx={{ ml: 1 }}
         >
           <Box display="flex" justifyContent="flex-start" alignItems="center">
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={flags.unGreedy}
+                  checked={flags.sticky}
                   onChange={(e) => {
-                    setFlags({ ...flags, unGreedy: e.target.checked });
+                    setFlags({ ...flags, sticky: e.target.checked });
                   }}
                 />
               }
-              label="Un-greedy"
+              label="Sticky"
             />
           </Box>
         </Tooltip>
         <Tooltip
-          title="A modifier: Anchored. The pattern is forced to become anchored at the start of the search, or at the position of the last successful match, equivalent to a \G"
+          title="s modifier: single line. Dot matches newline characters"
           sx={{ ml: 1 }}
         >
           <Box display="flex" justifyContent="flex-start" alignItems="center">
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={flags.anchored}
+                  checked={flags.single}
                   onChange={(e) => {
-                    setFlags({ ...flags, anchored: e.target.checked });
+                    setFlags({ ...flags, single: e.target.checked });
                   }}
                 />
               }
-              label="Anchored"
+              label="Single-line"
             />
           </Box>
         </Tooltip>
         <Tooltip
-          title="J modifier: Allow duplicate subpattern names"
+          title="d modifier: indices. The JavaScript regex engine now returns the indices at which the regex matched in the subject string."
           sx={{ ml: 1 }}
         >
           <Box display="flex" justifyContent="flex-start" alignItems="center">
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={flags.jChanged}
+                  checked={flags.indices}
                   onChange={(e) => {
-                    setFlags({ ...flags, jChanged: e.target.checked });
+                    setFlags({ ...flags, indices: e.target.checked });
                   }}
                 />
               }
-              label="J-Changed"
-            />
-          </Box>
-        </Tooltip>
-        <Tooltip
-          title="D modifier: Dollar. Force the a dollar sign, $, to always match end of the string, instead of end of the line. This option is ignored if the m-flag is set"
-          sx={{ ml: 1 }}
-        >
-          <Box display="flex" justifyContent="flex-start" alignItems="center">
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={flags.dollarEndOnly}
-                  onChange={(e) => {
-                    setFlags({ ...flags, dollarEndOnly: e.target.checked });
-                  }}
-                />
-              }
-              label="Dollar end only"
+              label="Indices"
             />
           </Box>
         </Tooltip>
