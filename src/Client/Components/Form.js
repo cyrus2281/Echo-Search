@@ -5,6 +5,7 @@ import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import { styled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
 
 import Banner from "./Banner";
 import DirectorySelector from "./DirectorySelector";
@@ -13,6 +14,7 @@ import Output from "./Output";
 import QuerySelector from "./QuerySelector";
 import AdvancedSettings from "./AdvancedSettings";
 import { defaultRegexFlagsValues } from "./RegexFlags";
+import Footer from "./Footer";
 
 const { ipcSend, ipcListen } = window.api;
 
@@ -39,7 +41,9 @@ const validateForm = (form) => {
 };
 
 function Form() {
-  const formData = useRef({ query: { regexFlags: [...defaultRegexFlagsValues] } });
+  const formData = useRef({
+    query: { regexFlags: [...defaultRegexFlagsValues] },
+  });
   const biDirectionalChannel = useRef({ caseInsensitivity: {} });
   const { enqueueSnackbar } = useSnackbar();
   const [isRunning, setIsRunning] = React.useState(false);
@@ -88,59 +92,75 @@ function Form() {
   }, [enqueueSnackbar]);
 
   return (
-    <Paper
-      elevation={5}
+    <Box
       sx={{
         height: "100%",
         width: "100%",
-        maxWidth: "1000px",
-        padding: "1rem",
         margin: "1rem",
+        display: "flex",
+        flexDirection: 'column',
+        alignItems: "center",
+        justifyContent: "space-between",
       }}
     >
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <Banner />
-        </Grid>
-        <Grid item xs={12}>
-          <Item>
-            <DirectorySelector form={formData} />
-          </Item>
-        </Grid>
-        <Grid item xs={12}>
-          <Item>
-            <QuerySelector form={formData} channel={biDirectionalChannel} />
-          </Item>
-        </Grid>
-        <Grid item xs={12}>
-          <Item>
-            <InclusionSelector form={formData} />
-          </Item>
-        </Grid>
-        <Grid item xs={12}>
-          <Item>
-            <AdvancedSettings form={formData} channel={biDirectionalChannel} />
-          </Item>
-        </Grid>
-        <Grid item xs={8} margin="auto">
-          <Button
-            disabled={isRunning}
-            variant="contained"
-            fullWidth
-            onClick={onSubmit}
-          >
-            Run
-          </Button>
-        </Grid>
-        <Grid item xs={12}>
-          {showOutput && (
+      <Paper
+        elevation={5}
+        sx={{
+          height: "100%",
+          width: "100%",
+          maxWidth: "1000px",
+          padding: "1rem",
+          margin: '0 auto'
+        }}
+      >
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <Banner />
+          </Grid>
+          <Grid item xs={12}>
             <Item>
-              <Output isRunning={isRunning} />
+              <DirectorySelector form={formData} />
             </Item>
-          )}
+          </Grid>
+          <Grid item xs={12}>
+            <Item>
+              <QuerySelector form={formData} channel={biDirectionalChannel} />
+            </Item>
+          </Grid>
+          <Grid item xs={12}>
+            <Item>
+              <InclusionSelector form={formData} />
+            </Item>
+          </Grid>
+          <Grid item xs={12}>
+            <Item>
+              <AdvancedSettings
+                form={formData}
+                channel={biDirectionalChannel}
+              />
+            </Item>
+          </Grid>
+          <Grid item xs={8} margin="auto">
+            <Button
+              disabled={isRunning}
+              variant="contained"
+              fullWidth
+              onClick={onSubmit}
+            >
+              Run
+            </Button>
+          </Grid>
+          <Grid item xs={12}>
+            {showOutput && (
+              <Item>
+                <Output isRunning={isRunning} />
+              </Item>
+            )}
+          </Grid>
         </Grid>
-      </Grid>
-    </Paper>
+      </Paper>
+      <Footer />
+    </Box>
   );
 }
 

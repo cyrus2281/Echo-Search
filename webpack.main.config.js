@@ -1,3 +1,6 @@
+const webpack = require('webpack')
+const package = require('./package.json')
+
 module.exports = {
   /**
    * This is the main entry point for your application, it's the first file
@@ -8,4 +11,13 @@ module.exports = {
   module: {
     rules: require('./webpack.rules'),
   },
+  plugins: [
+    new webpack.DefinePlugin({
+      'process.env.PACKAGE': JSON.stringify({
+        version: package.version,
+        author: package.author,
+        homepage: package.homepage,
+      }),
+    }),
+  ]
 };
