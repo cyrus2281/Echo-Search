@@ -1,10 +1,6 @@
 # Eco-Search
 
-<img src="https://img.shields.io/github/v/release/cyrus2281/Echo-Search?color=00ff00" />
-<img src="https://img.shields.io/github/package-json/v/cyrus2281/Echo-Search" />
-<img src="https://img.shields.io/github/license/cyrus2281/Echo-Search" /> 
-<img src="https://img.shields.io/github/package-json/dependency-version/cyrus2281/Echo-Search/react?logo=react&color=lightblue" />
-<img src="https://img.shields.io/github/package-json/dependency-version/cyrus2281/Echo-Search/dev/electron?logo=electron&color=lightblue&logoColor=lightblue" />
+<img src="https://img.shields.io/github/v/release/cyrus2281/Echo-Search?color=00ff00" /> <img src="https://img.shields.io/github/package-json/v/cyrus2281/Echo-Search" /> <img src="https://img.shields.io/github/license/cyrus2281/Echo-Search" /> <img src="https://img.shields.io/github/package-json/dependency-version/cyrus2281/Echo-Search/react?logo=react&color=lightblue" /> <img src="https://img.shields.io/github/package-json/dependency-version/cyrus2281/Echo-Search/dev/electron?logo=electron&color=lightblue&logoColor=lightblue" />
 
 <br>
 
