@@ -13,8 +13,14 @@
  *
  */
 
-const { app, BrowserWindow, ipcMain, dialog, Menu } = require("electron");
-const path = require("path");
+const {
+  app,
+  BrowserWindow,
+  ipcMain,
+  dialog,
+  Menu,
+  shell,
+} = require("electron");
 const echoSearch = require("./EchoSearch/echo-search");
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -44,10 +50,10 @@ const createWindow = () => {
   // and load the index.html of the app.
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
-    // Open the DevTools.
-    if (isDev) {
-      mainWindow.webContents.openDevTools({ mode: "detach" });
-    }
+  // Open the DevTools.
+  if (isDev) {
+    mainWindow.webContents.openDevTools({ mode: "detach" });
+  }
 };
 
 Menu.setApplicationMenu(null);
@@ -100,4 +106,12 @@ ipcMain.on("search:start", async (e, query) => {
       onError({ message: `Search failed`, error });
     }
   }
+});
+
+ipcMain.on("open:url", async (e, { url }) => {
+  url && shell.openExternal(url);
+});
+
+ipcMain.on("info:pkg:request", async () => {
+  mainWindow.webContents.send("info:pkg:response", process.env.PACKAGE);
 });
