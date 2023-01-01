@@ -395,7 +395,7 @@ describe("Echo-Search.js", function () {
             searchQuery: testUtils.regexQuery,
             replaceQuery: testUtils.replacementText,
             regexFlags: ["g"],
-            isRegex: false,
+            isRegex: true,
             matchWhole: true,
           },
           directories: [testDir],
