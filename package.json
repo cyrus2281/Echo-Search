@@ -1,18 +1,19 @@
 {
   "name": "echo-search",
   "productName": "echo-search",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "An application to search and replace strings in files recursively",
   "main": ".webpack/main",
   "scripts": {
     "start": "cross-env NODE_ENV=development electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
-    "publish": "electron-forge publish",
-    "lint": "echo \"No linting configured\"",
     "make:win": "electron-forge make --platform=win32 --arch=x64",
     "make:linux": "electron-forge make --platform=linux --arch=x64",
-    "make:mac": "electron-forge make --platform=darwin --arch=x64"
+    "make:mac": "electron-forge make --platform=darwin --arch=x64",
+    "publish": "electron-forge publish",
+    "test": "mocha",
+    "test:watch": "mocha -w"
   },
   "keywords": [],
   "author": {
@@ -42,6 +43,7 @@
     "cross-env": "^7.0.3",
     "css-loader": "^6.7.3",
     "electron": "22.0.0",
+    "mocha": "^10.2.0",
     "node-loader": "^2.0.0",
     "style-loader": "^3.3.1",
     "webpack": "^5.75.0"

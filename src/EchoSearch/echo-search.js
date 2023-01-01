@@ -69,6 +69,11 @@ const crawlDirectory = async (directory, fileTypes = [], excludes = []) => {
   return files;
 };
 
+/**
+ * Escape a search query to be used in a regex
+ * @param {string} searchQuery
+ * @returns {string} regex escaped search query
+ */
 const escapeSearchQuery = (searchQuery) => {
   return searchQuery.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
 };
@@ -83,6 +88,7 @@ const replaceString = (text, query) => {
   const { searchQuery, replaceQuery, regexFlags, isRegex, matchWhole } = query;
 
   const flags = regexFlags.join("");
+  const replaceFunction = flags.includes("g") ? "replaceAll" : "replace";
 
   let reg;
   if (isRegex) {
@@ -97,7 +103,7 @@ const replaceString = (text, query) => {
   if (!text.match(reg) || text.length === 0) {
     return false;
   }
-  return text.replaceAll(reg, replaceQuery);
+  return text[replaceFunction](reg, replaceQuery);
 };
 
 /**
@@ -176,7 +182,7 @@ const echoSearch = async (echoSearchQuery, onComplete, onError, onUpdate) => {
   }
   onComplete &&
     onComplete({
-      message: `Search Completed: ${updatedFilesCount} files updated`,
+      message: `Search Completed: ${updatedFilesCount} files updated.`,
     });
 };
 
