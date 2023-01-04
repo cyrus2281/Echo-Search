@@ -106,10 +106,11 @@ function Form() {
     return ipcListen("search:processID", onReceiveID);
   }, []);
 
-  const buttonProps = isRunning && processID ?
-    { variant: "outlined", color: 'error' } :
-    { variant: "contained", disabled: isRunning }
-
+  const buttonProps =
+    isRunning && processID
+      ? { variant: "outlined", color: "error" }
+      : { variant: "contained", disabled: isRunning };
+      
   return (
     <Box
       sx={{
@@ -117,7 +118,7 @@ function Form() {
         width: "100%",
         margin: "1rem",
         display: "flex",
-        flexDirection: 'column',
+        flexDirection: "column",
         alignItems: "center",
         justifyContent: "space-between",
       }}
@@ -129,7 +130,7 @@ function Form() {
           width: "100%",
           maxWidth: "1000px",
           padding: "1rem",
-          margin: '0 auto'
+          margin: "0 auto",
         }}
       >
         <Grid container spacing={2}>
@@ -160,11 +161,7 @@ function Form() {
             </Item>
           </Grid>
           <Grid item xs={8} margin="auto">
-            <Button
-              {...buttonProps}
-              fullWidth
-              onClick={onButtonClick}
-            >
+            <Button {...buttonProps} fullWidth onClick={onButtonClick}>
               {isRunning && processID ? "Cancel" : "Run"}
             </Button>
           </Grid>

@@ -41,6 +41,8 @@ const path = require("path");
  * @property {Promise<void>} search a promise that starts the search
  */
 
+const searchInterruptedErrorMessage = "Search Interrupted: User Cancelled";
+
 /**
  * get all files in a directory and subdirectories
  * @param {string} directory the directory to crawl in
@@ -49,8 +51,13 @@ const path = require("path");
  * @param {{cancel: boolean}} ref an object that has a reference to whether the process is cancelled or not
  * @returns {string[]} files sub-files in the directory
  */
-const crawlDirectory = async (directory, fileTypes = [], excludes = [], ref) => {
-  if (ref.cancel) throw new Error("Search Interrupted: User Cancelled");
+const crawlDirectory = async (
+  directory,
+  fileTypes = [],
+  excludes = [],
+  ref
+) => {
+  if (ref.cancel) throw new Error(searchInterruptedErrorMessage);
   const files = [];
   const items = await fs.promises.readdir(directory, { withFileTypes: true });
   for (const item of items) {
@@ -148,21 +155,26 @@ const echoSearch = (echoSearchQuery, onComplete, onError, onUpdate) => {
   const { directories, fileTypes, excludes, query } = echoSearchQuery;
   const ref = {
     cancel: false,
-  }
+  };
   async function search() {
     try {
       let progress = 0;
       const files = [];
-      if (ref.cancel) throw new Error("Search Interrpted: User Cancelled");
+      if (ref.cancel) throw new Error(searchInterruptedErrorMessage);
       for (const directory of directories) {
-        const dirFiles = await crawlDirectory(directory, fileTypes, excludes, ref);
+        const dirFiles = await crawlDirectory(
+          directory,
+          fileTypes,
+          excludes,
+          ref
+        );
         files.push(...dirFiles);
       }
       const singleFileProgress = 100 / files.length;
       let updatedFilesCount = 0;
       // wait for 100ms to let the UI update
       await new Promise((resolve) => setTimeout(resolve, 100));
-      if (ref.cancel) throw new Error("Search Interrupted: User Cancelled");
+      if (ref.cancel) throw new Error(searchInterruptedErrorMessage);
       onUpdate &&
         onUpdate({
           progress,
@@ -170,7 +182,7 @@ const echoSearch = (echoSearchQuery, onComplete, onError, onUpdate) => {
           mode: "success",
         });
       for (const file of files) {
-        if (ref.cancel) throw new Error("Search Interrupted: User Cancelled");
+        if (ref.cancel) throw new Error(searchInterruptedErrorMessage);
         try {
           const updatedFile = await replaceStringInFile(file, query);
           if (updatedFile !== false) {
@@ -204,19 +216,20 @@ const echoSearch = (echoSearchQuery, onComplete, onError, onUpdate) => {
           message: `Search Completed: ${updatedFilesCount} files updated.`,
         });
     } catch (error) {
-      onError && onError({
-        message: error.message,
-        mode: "error",
-        error: error,
-      });
+      onError &&
+        onError({
+          message: error.message,
+          mode: "error",
+          error: error,
+        });
     }
   }
 
   return {
     cancel: () => {
-      ref.cancel = true
+      ref.cancel = true;
     },
-    search
+    search,
   };
 };
 
