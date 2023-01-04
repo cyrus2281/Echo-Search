@@ -17,56 +17,52 @@ const path = require("path");
 const testUtils = require("./test.utils.js");
 const echoSearch = require("../src/EchoSearch/echo-search.js");
 
+const testDir = path.join(__dirname, "testDir");
+
 describe("Echo-Search.js", function () {
+  // make test environment
   beforeEach(function () {
-    const dirPath = path.join(__dirname, "testDir");
-    // make test environment
-    const makeTextEnv = () => {
-      // create directory testDir
-      fs.mkdirSync(dirPath);
-      // create directory A
-      fs.mkdirSync(path.join(dirPath, "A"));
-      // create directory B
-      fs.mkdirSync(path.join(dirPath, "B"));
-      // create directory C
-      fs.mkdirSync(path.join(dirPath, "A", "C"));
-      // create file1.txt
-      fs.writeFileSync(path.join(dirPath, "file1.txt"), testUtils.originalText);
-      // create file2.js
-      fs.writeFileSync(
-        path.join(dirPath, "A", "file2.md"),
-        testUtils.originalText
-      );
-      // create file3.js
-      fs.writeFileSync(
-        path.join(dirPath, "B", "file3.txt"),
-        testUtils.originalText
-      );
-      // create file4.js
-      fs.writeFileSync(
-        path.join(dirPath, "A", "C", "file4.js"),
-        testUtils.originalText
-      );
-    };
-
-    // force remove directory testDir and recreate it
-    if (fs.existsSync(dirPath))
-      fs.rm(dirPath, { recursive: true, force: true }, makeTextEnv);
-    else makeTextEnv();
+    // create directory testDir
+    fs.mkdirSync(testDir);
+    // create directory A
+    fs.mkdirSync(path.join(testDir, "A"));
+    // create directory B
+    fs.mkdirSync(path.join(testDir, "B"));
+    // create directory C
+    fs.mkdirSync(path.join(testDir, "A", "C"));
+    // create file1.txt
+    fs.writeFileSync(path.join(testDir, "file1.txt"), testUtils.originalText);
+    // create file2.js
+    fs.writeFileSync(
+      path.join(testDir, "A", "file2.md"),
+      testUtils.originalText
+    );
+    // create file3.js
+    fs.writeFileSync(
+      path.join(testDir, "B", "file3.txt"),
+      testUtils.originalText
+    );
+    // create file4.js
+    fs.writeFileSync(
+      path.join(testDir, "A", "C", "file4.js"),
+      testUtils.originalText
+    );
   });
-
-  after(function (done) {
-    const dirPath = path.join(__dirname, "testDir");
+  // cleaning test environment
+  afterEach(function (done) {
+    const testDir = path.join(__dirname, "testDir");
     // force remove directory testDir
-    if (fs.existsSync(dirPath)) {
-      fs.rm(dirPath, { recursive: true, force: true }, done);
+    if (fs.existsSync(testDir)) {
+      fs.rm(testDir, { recursive: true, force: true }, done);
+    } else {
+      done();
     }
   });
 
   describe("# File Count", function () {
     it("Single Directory - No Customization", function (done) {
       const fileCountText = "Found 4 files.";
-      const testDir = path.join(__dirname, "testDir");
+
       const searchParam = {
         query: {
           searchQuery: "HelloWorld",
@@ -93,11 +89,11 @@ describe("Echo-Search.js", function () {
             }
           }
         }
-      );
+      ).search();
     });
     it("Single Directory - with inclusion", function (done) {
       const fileCountText = "Found 3 files.";
-      const testDir = path.join(__dirname, "testDir");
+
       const searchParam = {
         query: {
           searchQuery: "HelloWorld",
@@ -124,11 +120,11 @@ describe("Echo-Search.js", function () {
             }
           }
         }
-      );
+      ).search();
     });
     it("Single Directory - with exclusion", function (done) {
       const fileCountText = "Found 3 files.";
-      const testDir = path.join(__dirname, "testDir");
+
       const searchParam = {
         query: {
           searchQuery: "HelloWorld",
@@ -155,11 +151,11 @@ describe("Echo-Search.js", function () {
             }
           }
         }
-      );
+      ).search();
     });
     it("Multi Directory - No Customization", function (done) {
       const fileCountText = "Found 3 files.";
-      const testDir = path.join(__dirname, "testDir");
+
       const searchParam = {
         query: {
           searchQuery: "HelloWorld",
@@ -186,11 +182,11 @@ describe("Echo-Search.js", function () {
             }
           }
         }
-      );
+      ).search();
     });
     it("Multi Directory - with inclusion", function (done) {
       const fileCountText = "Found 2 files.";
-      const testDir = path.join(__dirname, "testDir");
+
       const searchParam = {
         query: {
           searchQuery: "HelloWorld",
@@ -217,11 +213,11 @@ describe("Echo-Search.js", function () {
             }
           }
         }
-      );
+      ).search();
     });
     it("Multi Directory - with exclusion", function (done) {
       const fileCountText = "Found 2 files.";
-      const testDir = path.join(__dirname, "testDir");
+
       const searchParam = {
         query: {
           searchQuery: "HelloWorld",
@@ -248,13 +244,12 @@ describe("Echo-Search.js", function () {
             }
           }
         }
-      );
+      ).search();
     });
   });
 
   describe("# Search And Replace", function () {
     it("Simple - no flags", function (done) {
-      const testDir = path.join(__dirname, "testDir");
       const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
       const completionMessage = "Search Completed: 4 files updated.";
       const searchParam = {
@@ -268,19 +263,18 @@ describe("Echo-Search.js", function () {
         directories: [testDir],
       };
       echoSearch(searchParam, ({ message }) => {
-        // read file and check if the content is replaced
-        const fileContent = fs.readFileSync(testDirFile1, "utf8");
         try {
+          // read file and check if the content is replaced
+          const fileContent = fs.readFileSync(testDirFile1, "utf8");
           assert.strictEqual(fileContent, testUtils.simpleReplaceText);
           assert.strictEqual(message, completionMessage);
           done();
         } catch (err) {
           done(err);
         }
-      });
+      }).search();
     });
     it("partial query - matchWhole off", function (done) {
-      const testDir = path.join(__dirname, "testDir");
       const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
       const completionMessage = "Search Completed: 4 files updated.";
       const searchParam = {
@@ -294,19 +288,18 @@ describe("Echo-Search.js", function () {
         directories: [testDir],
       };
       echoSearch(searchParam, ({ message }) => {
-        // read file and check if the content is replaced
-        const fileContent = fs.readFileSync(testDirFile1, "utf8");
         try {
+          // read file and check if the content is replaced
+          const fileContent = fs.readFileSync(testDirFile1, "utf8");
           assert.strictEqual(fileContent, testUtils.partialReplacedText);
           assert.strictEqual(message, completionMessage);
           done();
         } catch (err) {
           done(err);
         }
-      });
+      }).search();
     });
     it("partial query - matchWhole on", function (done) {
-      const testDir = path.join(__dirname, "testDir");
       const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
       const completionMessage = "Search Completed: 0 files updated.";
       const searchParam = {
@@ -320,22 +313,21 @@ describe("Echo-Search.js", function () {
         directories: [testDir],
       };
       echoSearch(searchParam, ({ message }) => {
-        // read file and check if the content is replaced
-        const fileContent = fs.readFileSync(testDirFile1, "utf8");
         try {
+          // read file and check if the content is replaced
+          const fileContent = fs.readFileSync(testDirFile1, "utf8");
           assert.strictEqual(fileContent, testUtils.originalText);
           assert.strictEqual(message, completionMessage);
           done();
         } catch (err) {
           done(err);
         }
-      });
+      }).search();
     });
   });
 
   describe("# Regex Query", function () {
     it("Simple Query", function (done) {
-      const testDir = path.join(__dirname, "testDir");
       const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
       const completionMessage = "Search Completed: 4 files updated.";
       const searchParam = {
@@ -349,19 +341,18 @@ describe("Echo-Search.js", function () {
         directories: [testDir],
       };
       echoSearch(searchParam, ({ message }) => {
-        // read file and check if the content is replaced
-        const fileContent = fs.readFileSync(testDirFile1, "utf8");
         try {
+          // read file and check if the content is replaced
+          const fileContent = fs.readFileSync(testDirFile1, "utf8");
           assert.strictEqual(fileContent, testUtils.simpleReplaceText);
           assert.strictEqual(message, completionMessage);
           done();
         } catch (err) {
           done(err);
         }
-      });
+      }).search();
     });
     it("Complex Query", function (done) {
-      const testDir = path.join(__dirname, "testDir");
       const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
       const completionMessage = "Search Completed: 4 files updated.";
       const searchParam = {
@@ -375,74 +366,104 @@ describe("Echo-Search.js", function () {
         directories: [testDir],
       };
       echoSearch(searchParam, ({ message }) => {
-        // read file and check if the content is replaced
-        const fileContent = fs.readFileSync(testDirFile1, "utf8");
         try {
+          // read file and check if the content is replaced
+          const fileContent = fs.readFileSync(testDirFile1, "utf8");
           assert.strictEqual(fileContent, testUtils.regexReplaceText);
           assert.strictEqual(message, completionMessage);
           done();
         } catch (err) {
           done(err);
         }
-      });
+      }).search();
     });
     it("Regex with isRegex off", function (done) {
-        const testDir = path.join(__dirname, "testDir");
-        const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
-        const completionMessage = "Search Completed: 0 files updated.";
-        const searchParam = {
-          query: {
-            searchQuery: testUtils.regexQuery,
-            replaceQuery: testUtils.replacementText,
-            regexFlags: ["g"],
-            isRegex: false,
-            matchWhole: true,
-          },
-          directories: [testDir],
-        };
-        echoSearch(searchParam, ({ message }) => {
+      const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
+      const completionMessage = "Search Completed: 0 files updated.";
+      const searchParam = {
+        query: {
+          searchQuery: testUtils.regexQuery,
+          replaceQuery: testUtils.replacementText,
+          regexFlags: ["g"],
+          isRegex: false,
+          matchWhole: true,
+        },
+        directories: [testDir],
+      };
+      echoSearch(searchParam, ({ message }) => {
+        try {
           // read file and check if the content is replaced
           const fileContent = fs.readFileSync(testDirFile1, "utf8");
+          assert.strictEqual(fileContent, testUtils.originalText);
+          assert.strictEqual(message, completionMessage);
+          done();
+        } catch (err) {
+          done(err);
+        }
+      }).search();
+    });
+    it("Canceling Request", function (done) {
+      const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
+      const expectedErrorMessage = "Search Interrupted: User Cancelled";
+      const searchParam = {
+        query: {
+          searchQuery: testUtils.searchQuery,
+          replaceQuery: testUtils.replacementText,
+          regexFlags: ["g"],
+          isRegex: true,
+          matchWhole: true,
+        },
+        directories: [testDir],
+      };
+      const { search, cancel } = echoSearch(
+        searchParam,
+        () => {
+          done(new Error("Search was not canceled"));
+        },
+        ({ message }) => {
           try {
+            // read file and check if the content is replaced
+            const fileContent = fs.readFileSync(testDirFile1, "utf8");
             assert.strictEqual(fileContent, testUtils.originalText);
-            assert.strictEqual(message, completionMessage);
+            assert.strictEqual(message, expectedErrorMessage);
             done();
           } catch (err) {
             done(err);
           }
-        });
-      });
+        }
+      );
+      search();
+      cancel();
+    });
   });
 
   describe("# Regex Modifier Flags", function () {
     it("Non Global - without 'g' flag", function (done) {
-        const testDir = path.join(__dirname, "testDir");
-        const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
-        const completionMessage = "Search Completed: 4 files updated.";
-        const searchParam = {
-          query: {
-            searchQuery: testUtils.searchQuery,
-            replaceQuery: testUtils.replacementText,
-            regexFlags: [],
-            isRegex: true,
-            matchWhole: true,
-          },
-          directories: [testDir],
-        };
-        echoSearch(searchParam, ({ message }) => {
+      const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
+      const completionMessage = "Search Completed: 4 files updated.";
+      const searchParam = {
+        query: {
+          searchQuery: testUtils.searchQuery,
+          replaceQuery: testUtils.replacementText,
+          regexFlags: [],
+          isRegex: true,
+          matchWhole: true,
+        },
+        directories: [testDir],
+      };
+      echoSearch(searchParam, ({ message }) => {
+        try {
           // read file and check if the content is replaced
           const fileContent = fs.readFileSync(testDirFile1, "utf8");
-          try {
-            assert.strictEqual(fileContent, testUtils.nonGlobalReplaceText);
-            assert.strictEqual(message, completionMessage);
-            done();
-          } catch (err) {
-            done(err);
-          }
-        });
-      });
+          assert.strictEqual(fileContent, testUtils.nonGlobalReplaceText);
+          assert.strictEqual(message, completionMessage);
+          done();
+        } catch (err) {
+          done(err);
+        }
+      }).search();
+    });
     it("Case Sensitive - without 'i' flag", function (done) {
-      const testDir = path.join(__dirname, "testDir");
       const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
       const completionMessage = "Search Completed: 4 files updated.";
       const searchParam = {
@@ -456,19 +477,18 @@ describe("Echo-Search.js", function () {
         directories: [testDir],
       };
       echoSearch(searchParam, ({ message }) => {
-        // read file and check if the content is replaced
-        const fileContent = fs.readFileSync(testDirFile1, "utf8");
         try {
+          // read file and check if the content is replaced
+          const fileContent = fs.readFileSync(testDirFile1, "utf8");
           assert.strictEqual(fileContent, testUtils.caseSensitiveText);
           assert.strictEqual(message, completionMessage);
           done();
         } catch (err) {
           done(err);
         }
-      });
+      }).search();
     });
     it("Case InSensitive - with 'i' flag", function (done) {
-      const testDir = path.join(__dirname, "testDir");
       const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
       const completionMessage = "Search Completed: 4 files updated.";
       const searchParam = {
@@ -482,16 +502,16 @@ describe("Echo-Search.js", function () {
         directories: [testDir],
       };
       echoSearch(searchParam, ({ message }) => {
-        // read file and check if the content is replaced
-        const fileContent = fs.readFileSync(testDirFile1, "utf8");
         try {
+          // read file and check if the content is replaced
+          const fileContent = fs.readFileSync(testDirFile1, "utf8");
           assert.strictEqual(fileContent, testUtils.caseInsensitiveText);
           assert.strictEqual(message, completionMessage);
           done();
         } catch (err) {
           done(err);
         }
-      });
+      }).search();
     });
   });
 });

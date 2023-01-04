@@ -80,7 +80,7 @@ app.on("activate", () => {
   }
 });
 
-const processes = {}
+const processes = {};
 
 ipcMain.on("directory:select", async () => {
   const result = await dialog.showOpenDialog(mainWindow, {
@@ -95,34 +95,36 @@ ipcMain.on("directory:select", async () => {
 
 ipcMain.on("search:start", async (e, query) => {
   if (query) {
-    const processID = "process-" + Date.now().toString()
+    const processID = "process-" + Date.now().toString();
 
     const onError = (error) => {
       mainWindow.webContents.send("search:fail", error);
-      delete processes[processID]
-    }
+      delete processes[processID];
+    };
     const onProgress = (progress) => {
       mainWindow.webContents.send("search:progress", progress);
-    }
+    };
     const onComplete = (message) => {
       mainWindow.webContents.send("search:complete", message);
-      delete processes[processID]
-    }
-    const {
-      search,
-      cancel
-    } = echoSearch(query, onComplete, onError, onProgress);
+      delete processes[processID];
+    };
+    const { search, cancel } = echoSearch(
+      query,
+      onComplete,
+      onError,
+      onProgress
+    );
     processes[processID] = {
-      cancel
-    }
+      cancel,
+    };
     mainWindow.webContents.send("search:processID", { processID });
-    await search()
+    await search();
   }
 });
 
 ipcMain.on("search:cancel", async (e, { processID }) => {
   if (processID && processes[processID] && processes[processID].cancel) {
-    processes[processID].cancel()
+    processes[processID].cancel();
   }
 });
 
