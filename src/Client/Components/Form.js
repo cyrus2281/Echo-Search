@@ -47,20 +47,25 @@ function Form() {
   const biDirectionalChannel = useRef({ caseInsensitivity: {} });
   const { enqueueSnackbar } = useSnackbar();
   const [isRunning, setIsRunning] = React.useState(false);
+  const [processID, setProcessID] = React.useState("");
   const [showOutput, setShowOutput] = React.useState(false);
 
-  const onSubmit = (e) => {
-    const hasError = validateForm(formData);
-    console.log(formData.current, hasError);
-    if (hasError.length) {
-      hasError.forEach((error) =>
-        enqueueSnackbar(error, { variant: "error", autoHideDuration: 3000 })
-      );
-      return;
+  const onButtonClick = (e) => {
+    if (isRunning && processID) {
+      ipcSend("search:cancel", { processID });
+    } else {
+      const hasError = validateForm(formData);
+      console.log(formData.current, hasError);
+      if (hasError.length) {
+        hasError.forEach((error) =>
+          enqueueSnackbar(error, { variant: "error", autoHideDuration: 3000 })
+        );
+        return;
+      }
+      showOutput && setShowOutput(false);
+      setIsRunning(true);
+      ipcSend("search:start", formData.current);
     }
-    showOutput && setShowOutput(false);
-    setIsRunning(true);
-    ipcSend("search:start", formData.current);
   };
 
   useEffect(() => {
@@ -75,7 +80,9 @@ function Form() {
         variant: "error",
         autoHideDuration: 3000,
       });
+      console.log(error.error);
       setIsRunning(false);
+      setProcessID("");
     };
     return ipcListen("search:fail", showError);
   }, [enqueueSnackbar]);
@@ -87,10 +94,23 @@ function Form() {
         autoHideDuration: 2000,
       });
       setIsRunning(false);
+      setProcessID("");
     };
     return ipcListen("search:complete", onComplete);
   }, [enqueueSnackbar]);
 
+  useEffect(() => {
+    const onReceiveID = (event) => {
+      setProcessID(event.processID);
+    };
+    return ipcListen("search:processID", onReceiveID);
+  }, []);
+
+  const buttonProps =
+    isRunning && processID
+      ? { variant: "outlined", color: "error" }
+      : { variant: "contained", disabled: isRunning };
+      
   return (
     <Box
       sx={{
@@ -98,7 +118,7 @@ function Form() {
         width: "100%",
         margin: "1rem",
         display: "flex",
-        flexDirection: 'column',
+        flexDirection: "column",
         alignItems: "center",
         justifyContent: "space-between",
       }}
@@ -110,7 +130,7 @@ function Form() {
           width: "100%",
           maxWidth: "1000px",
           padding: "1rem",
-          margin: '0 auto'
+          margin: "0 auto",
         }}
       >
         <Grid container spacing={2}>
@@ -141,13 +161,8 @@ function Form() {
             </Item>
           </Grid>
           <Grid item xs={8} margin="auto">
-            <Button
-              disabled={isRunning}
-              variant="contained"
-              fullWidth
-              onClick={onSubmit}
-            >
-              Run
+            <Button {...buttonProps} fullWidth onClick={onButtonClick}>
+              {isRunning && processID ? "Cancel" : "Run"}
             </Button>
           </Grid>
           <Grid item xs={12}>
