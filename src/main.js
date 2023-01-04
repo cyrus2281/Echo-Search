@@ -20,6 +20,7 @@ const {
   dialog,
   Menu,
   shell,
+  MenuItem
 } = require("electron");
 const echoSearch = require("./EchoSearch/echo-search");
 
@@ -46,6 +47,7 @@ const createWindow = () => {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
   });
+  mainWindow.setMenuBarVisibility(false)
 
   // and load the index.html of the app.
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
@@ -56,7 +58,12 @@ const createWindow = () => {
   }
 };
 
-Menu.setApplicationMenu(null);
+const menu = new Menu()
+menu.append(new MenuItem({
+  role:'editMenu'
+}))
+Menu.setApplicationMenu(menu);
+
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
