@@ -20,6 +20,8 @@ const getMode = (mode) => {
   }
 };
 
+const FAILED_SEARCH_HEADING = "Operation was not completely successful.";
+
 function Output({ isRunning }) {
   // due to async nature of useState, we might miss some messages
   const allMessages = useRef([]);
@@ -40,7 +42,7 @@ function Output({ isRunning }) {
         console.error(update.error);
       }
       if (progress) {
-        const roundedProgress = Math.round(progress * 10) / 10;
+        const roundedProgress = (Math.round(progress * 10) / 10).toFixed(1);
         const heading = `Updating files. ${roundedProgress}% completed.`;
         setHeading(heading);
         setProgress(roundedProgress);
@@ -64,7 +66,6 @@ function Output({ isRunning }) {
     const showError = (error) => {
       const message = { message: error.message, mode: getMode("error") };
       allMessages.current.push(message);
-      setHeading("Operation was not completely successful.");
       setProgress(100);
       setHasError(true);
       setMessages([...allMessages.current]);
@@ -72,7 +73,11 @@ function Output({ isRunning }) {
     return ipcListen("search:fail", showError);
   }, [messages]);
 
-  const barColor = hasError ? "error" : progress === 100 ? "success" : "primary";
+  const barColor = hasError
+    ? "error"
+    : progress === 100
+    ? "success"
+    : "primary";
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -88,7 +93,7 @@ function Output({ isRunning }) {
         value={isRunning ? progress : 100}
       />
       <Typography variant="h6" sx={{ py: 2 }}>
-        {heading}
+        {hasError ? FAILED_SEARCH_HEADING : heading}
       </Typography>
       <Divider />
       <Box sx={{ width: "100%" }}>

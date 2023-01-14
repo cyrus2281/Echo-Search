@@ -12,8 +12,8 @@
  *
  *
  */
-const fs = require("fs");
-const path = require("path");
+import fs from "fs";
+import path from "path";
 
 /**
  * Search Query parameter
@@ -26,37 +26,33 @@ const path = require("path");
  */
 
 /**
- * EchoSearch search parameter
- * @typedef {Object} EchoSearchParam
- * @property {QueryParam} query the search query
- * @property {string[]} directories the directories to search in
- * @property {string[]} fileTypes the file types to search for. Empty array for all files
- * @property {string[]} excludes the directories/files to exclude. Empty array for no exclusion
- */
-
-/**
  * EchoSearch Instance
  * @typedef {Object} SearchInstance
  * @property {Function} cancel a function to cancel the search request
  * @property {Promise<void>} search a promise that starts the search
  */
 
-const searchInterruptedErrorMessage = "Search Interrupted: User Cancelled";
+/**
+ * User cancelled search error message
+ */
+export const searchInterruptedErrorMessage =
+  "Search Interrupted: User Cancelled";
 
 /**
- * get all files in a directory and subdirectories
- * @param {string} directory the directory to crawl in
+ * get all files in a directory and append subdirectories to queue
+ * @param {string} directory the directory to search in
  * @param {string[]} fileTypes the file types to search for. Empty array for all files
  * @param {string[]} excludes the directories/files to exclude. Empty array for no exclusion
+ * @param {string[]} queue sub-directories to be searched. Each directory will be appended to the queue
  * @param {{cancel: boolean}} ref an object that has a reference to whether the process is cancelled or not
  * @returns {string[]} files sub-files in the directory
  */
-const crawlDirectory = async (
+export const crawlDirectory = async (
   directory,
   fileTypes = [],
   excludes = [],
-  ref = {},
   queue = [],
+  ref = {}
 ) => {
   if (ref.cancel) throw new Error(searchInterruptedErrorMessage);
   const files = [];
@@ -96,7 +92,7 @@ const escapeSearchQuery = (searchQuery) => {
  * @param {QueryParam} query the search query
  * @returns {false|string} false if the text doesn't have the search query or is empty, otherwise returns the new text
  */
-const replaceString = (text, query) => {
+export const replaceString = (text, query) => {
   const { searchQuery, replaceQuery, regexFlags, isRegex, matchWhole } = query;
 
   const flags = regexFlags.join("");
@@ -124,7 +120,7 @@ const replaceString = (text, query) => {
  * @param {QueryParam} query the search query
  * @returns {false|void} false if the file doesn't have the search query or is empty, otherwise write the new text into file
  */
-const replaceStringInFile = async (filePath, query) => {
+export const replaceStringInFile = async (filePath, query) => {
   const text = await fs.promises.readFile(filePath, { encoding: "utf-8" });
   if (/\ufffd/.test(text)) {
     return false;
@@ -136,103 +132,3 @@ const replaceStringInFile = async (filePath, query) => {
   await fs.promises.writeFile(filePath, newText, { encoding: "utf-8" });
 };
 
-// getting all the files in each directory
-// search and replacing the string in each file
-/**
- *
- * @param {EchoSearchParam} echoSearchQuery the search query
- * @param {Function} onComplete a function to call when the search is complete
- * @param {Function} onError a function to call when the search fails
- * @param {Function} onUpdate a function to call when there is a progress update (eg. total files, file updated, etc.)
- * @return {SearchInstance} Search Instance
- */
-const echoSearch = (echoSearchQuery, onComplete, onError, onUpdate) => {
-  const { directories, fileTypes, excludes, query } = echoSearchQuery;
-  const ref = {
-    cancel: false,
-  };
-  async function search() {
-    try {
-      let progress = 0;
-      const files = [];
-      if (ref.cancel) throw new Error(searchInterruptedErrorMessage);
-      const queue = [...directories];
-      while (queue.length > 0) {
-        const directory = queue.shift()
-        const dirFiles = await crawlDirectory(
-          directory,
-          fileTypes,
-          excludes,
-          ref,
-          queue
-        );
-        files.push(...dirFiles);
-      }
-      const singleFileProgress = 100 / files.length;
-      let updatedFilesCount = 0;
-      // wait for 100ms to let the UI update
-      await new Promise((resolve) => setTimeout(resolve, 100));
-      if (ref.cancel) throw new Error(searchInterruptedErrorMessage);
-      onUpdate &&
-        onUpdate({
-          progress,
-          message: `Found ${files.length.toLocaleString()} files.`,
-          mode: "success",
-        });
-      const startTime = Date.now();
-      for (const file of files) {
-        if (ref.cancel) throw new Error(searchInterruptedErrorMessage);
-        try {
-          const updatedFile = await replaceStringInFile(file, query);
-          if (updatedFile !== false) {
-            updatedFilesCount++;
-            onUpdate &&
-              onUpdate({
-                progress,
-                message: `Updated ${file}`,
-                mode: "info",
-              });
-          } else {
-            onUpdate &&
-              onUpdate({
-                progress,
-                mode: "info",
-              });
-          }
-        } catch (error) {
-          onUpdate &&
-            onUpdate({
-              progress,
-              message: `Couldn't read file ${file}`,
-              mode: "error",
-              error,
-            });
-        }
-        progress += singleFileProgress;
-      }
-      const endTime = Date.now();
-      const timeTaken = (endTime - startTime) / 1000;
-      onComplete &&
-        onComplete({
-          message: `Search Completed: ${updatedFilesCount} files updated. Time taken: ${timeTaken} seconds.`,
-        });
-    } catch (error) {
-      console.error(error);
-      onError &&
-        onError({
-          message: error.message,
-          mode: "error",
-          error: error,
-        });
-    }
-  }
-
-  return {
-    cancel: () => {
-      ref.cancel = true;
-    },
-    search,
-  };
-};
-
-module.exports = echoSearch;

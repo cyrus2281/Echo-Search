@@ -20,9 +20,9 @@ const {
   dialog,
   Menu,
   shell,
-  MenuItem
+  MenuItem,
 } = require("electron");
-const echoSearch = require("./EchoSearch/echo-search");
+const { echoSearch } = require("./EchoSearch/echo-search.mjs");
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
@@ -47,7 +47,7 @@ const createWindow = () => {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
   });
-  mainWindow.setMenuBarVisibility(false)
+  mainWindow.setMenuBarVisibility(false);
 
   // and load the index.html of the app.
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
@@ -58,12 +58,13 @@ const createWindow = () => {
   }
 };
 
-const menu = new Menu()
-menu.append(new MenuItem({
-  role:'editMenu'
-}))
+const menu = new Menu();
+menu.append(
+  new MenuItem({
+    role: "editMenu",
+  })
+);
 Menu.setApplicationMenu(menu);
-
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
