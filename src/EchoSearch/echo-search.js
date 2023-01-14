@@ -55,7 +55,8 @@ const crawlDirectory = async (
   directory,
   fileTypes = [],
   excludes = [],
-  ref
+  ref = {},
+  queue = [],
 ) => {
   if (ref.cancel) throw new Error(searchInterruptedErrorMessage);
   const files = [];
@@ -63,13 +64,7 @@ const crawlDirectory = async (
   for (const item of items) {
     if (item.isDirectory()) {
       if (!excludes.some((exc) => item.name.includes(exc))) {
-        const nestedFiles = await crawlDirectory(
-          path.join(directory, item.name),
-          fileTypes,
-          excludes,
-          ref
-        );
-        files.push(...nestedFiles);
+        queue.push(path.join(directory, item.name));
       }
     } else {
       if (!excludes.some((exc) => item.name.includes(exc))) {
@@ -161,12 +156,15 @@ const echoSearch = (echoSearchQuery, onComplete, onError, onUpdate) => {
       let progress = 0;
       const files = [];
       if (ref.cancel) throw new Error(searchInterruptedErrorMessage);
-      for (const directory of directories) {
+      const queue = [...directories];
+      while (queue.length > 0) {
+        const directory = queue.shift()
         const dirFiles = await crawlDirectory(
           directory,
           fileTypes,
           excludes,
-          ref
+          ref,
+          queue
         );
         files.push(...dirFiles);
       }
@@ -178,7 +176,7 @@ const echoSearch = (echoSearchQuery, onComplete, onError, onUpdate) => {
       onUpdate &&
         onUpdate({
           progress,
-          message: `Found ${files.length} files.`,
+          message: `Found ${files.length.toLocaleString()} files.`,
           mode: "success",
         });
       for (const file of files) {
@@ -216,6 +214,7 @@ const echoSearch = (echoSearchQuery, onComplete, onError, onUpdate) => {
           message: `Search Completed: ${updatedFilesCount} files updated.`,
         });
     } catch (error) {
+      console.error(error);
       onError &&
         onError({
           message: error.message,
