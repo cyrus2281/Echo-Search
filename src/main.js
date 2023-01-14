@@ -22,6 +22,7 @@ const {
   shell,
   MenuItem,
 } = require("electron");
+const os = require("os");
 const { echoSearch } = require("./EchoSearch/echo-search.mjs");
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -142,4 +143,9 @@ ipcMain.on("open:url", async (e, { url }) => {
 
 ipcMain.on("info:pkg:request", async () => {
   mainWindow.webContents.send("info:pkg:response", process.env.PACKAGE);
+});
+
+ipcMain.on("info:cores:request", async () => {
+  // Number of available cores
+  mainWindow.webContents.send("info:cores:response", os.cpus().length);
 });

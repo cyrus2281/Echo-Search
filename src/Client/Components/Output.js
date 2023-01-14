@@ -42,8 +42,8 @@ function Output({ isRunning }) {
         console.error(update.error);
       }
       if (progress) {
-        const roundedProgress = (Math.round(progress * 10) / 10).toFixed(1);
-        const heading = `Updating files. ${roundedProgress}% completed.`;
+        const roundedProgress = (Math.round(progress * 10) / 10);
+        const heading = `Updating files. ${roundedProgress.toFixed(1)}% completed.`;
         setHeading(heading);
         setProgress(roundedProgress);
       }
@@ -104,6 +104,19 @@ function Output({ isRunning }) {
             overflow: "auto",
             pt: 2,
             pl: 2,
+            "&::-webkit-scrollbar": {
+              width: "0.3em",
+              height: "0.5em",
+            },
+            "&::-webkit-scrollbar-track": {
+              boxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
+              webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              backgroundColor: "rgba(0,0,0,.1)",
+              outline: "1px solid slategrey",
+              borderRadius: "5px",
+            }
           }}
         >
           {messages.map((msg, i) => (

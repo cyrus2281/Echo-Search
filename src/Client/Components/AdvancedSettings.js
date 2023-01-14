@@ -8,23 +8,26 @@ import ListItemText from "@mui/material/ListItemText";
 import Collapse from "@mui/material/Collapse";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
+import Divider from "@mui/material/Divider";
 import { useSnackbar } from "notistack";
 
 import RegexFlags, { defaultRegexFlagsValues } from "./RegexFlags";
+import MultiThreading from "./MultiThreading";
 
-function AdvancedSettings({ form, channel}) {
+function AdvancedSettings({ form, channel }) {
   const [open, setOpen] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
   const handleClick = () => {
     setOpen(!open);
   };
-  
+
   const clearCustomization = () => {
-    if (
-      !open &&
-      (form.current.query.regexFlags?.length)
-    ) {
+    if (!open) {
+      // Clearing multi-threading settings
+      form.current.isMultiThreaded = false;
+      form.current.numOfThreads = undefined;
+      // clearing regex flag modifiers settings
       channel.current.caseInsensitivity.setFlag = null;
       const info = "Cleared advanced settings.";
       enqueueSnackbar(info, { variant: "info", autoHideDuration: 3000 });
@@ -60,7 +63,13 @@ function AdvancedSettings({ form, channel}) {
               }}
             >
               <Box sx={{ width: "100%" }}>
-                <RegexFlags form={form} channel={channel}/>
+                <MultiThreading form={form} />
+              </Box>
+              <Box sx={{ width: "100%" }}>
+                <Divider />
+              </Box>
+              <Box sx={{ width: "100%" }}>
+                <RegexFlags form={form} channel={channel} />
               </Box>
             </Box>
           </ListItem>
