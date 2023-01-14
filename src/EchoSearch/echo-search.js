@@ -179,6 +179,7 @@ const echoSearch = (echoSearchQuery, onComplete, onError, onUpdate) => {
           message: `Found ${files.length.toLocaleString()} files.`,
           mode: "success",
         });
+      const startTime = Date.now();
       for (const file of files) {
         if (ref.cancel) throw new Error(searchInterruptedErrorMessage);
         try {
@@ -209,9 +210,11 @@ const echoSearch = (echoSearchQuery, onComplete, onError, onUpdate) => {
         }
         progress += singleFileProgress;
       }
+      const endTime = Date.now();
+      const timeTaken = (endTime - startTime) / 1000;
       onComplete &&
         onComplete({
-          message: `Search Completed: ${updatedFilesCount} files updated.`,
+          message: `Search Completed: ${updatedFilesCount} files updated. Time taken: ${timeTaken} seconds.`,
         });
     } catch (error) {
       console.error(error);
