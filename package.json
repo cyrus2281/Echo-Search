@@ -1,7 +1,7 @@
 {
   "name": "echo-search",
   "productName": "echo-search",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "description": "An application to search and replace strings in files recursively",
   "main": ".webpack/main",
   "scripts": {
@@ -13,7 +13,9 @@
     "make:mac": "electron-forge make --platform=darwin --arch=x64",
     "publish": "electron-forge publish",
     "test": "mocha",
-    "test:watch": "mocha -w"
+    "test:watch": "mocha -w",
+    "update:minor": "npm version minor",
+    "update:patch": "npm version patch --no-git-tag-version --no-commit-hooks"
   },
   "keywords": [],
   "author": {
