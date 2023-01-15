@@ -6,11 +6,11 @@
 
 This application will crawl recursively through the given parent directory and will look for the given string/regular expression in all text files and replace it with the given string.
 
-You can select multiple parents, mark search as case insensitive or matching whole words, include specific files types, exclude paths or file types, and even configure the regex search modifier flags.
+You can select multiple parents, mark search as case insensitive or matching whole words, include specific files types, exclude paths or file types, and even configure the regex search modifier flags. You can use concurrency to run the application on multiple threads.
 
-you get live report on the search happening in the provided console in the app.
+You get live report on the search happening in the provided console in the app.
 
-the app is written with Electron (Node) for the backend, and React (JavaScript) for the frontend.
+The app is written with Electron (Node) for the backend, and React (JavaScript) for the frontend.
 
 <br>
 
@@ -21,13 +21,15 @@ the app is written with Electron (Node) for the backend, and React (JavaScript) 
    - Open the latest release
    - From `Assets` download the version for your operating system
      - Windows: echo-search-X.X.X.WIN.Setup.exe
+     - MacOS: echo-search-darwin-x64-X.X.X.zip
+     - Linux: clone the code and run `npm i && npm run make:linux`
 
 2. Install the app by running the file.
 3. a shortcut should appear on your desktop/app bar.
 
 That's it. Enjoy the app.
 
-# Pictures
+# Demo of Application
 
 ### Echo Search Empty
 
