@@ -80,7 +80,7 @@ function Form() {
         variant: "error",
         autoHideDuration: 3000,
       });
-      console.log(error.error);
+      console.error(error.error);
       setIsRunning(false);
       setProcessID("");
     };

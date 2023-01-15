@@ -52,7 +52,7 @@ function MultiThreading({ form }) {
     return ipcListen("info:cores:response", (totalCores) => {
       // Set 80% of total cores as max number of threads
       setMaxNumOfThreads(Math.floor(totalCores * 0.8));
-      setNumOfThreads(Math.floor(totalCores * 0.5));
+      setNumOfThreads(Math.min(Math.floor(totalCores * 0.5), 6));
     });
   }, []);
 

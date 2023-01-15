@@ -128,14 +128,14 @@ const multiThreadedSearch = async (
             query,
           },
         });
-        worker.on("message", (data) => {
+        worker.on("message", async (data) => {
           const { type } = data;
           if (type === "terminate") {
-            worker.terminate();
+            await worker.terminate();
             workers.splice(workers.indexOf(worker), 1);
             if (workers.length === 0) {
               // Closing cancel channel
-              cancelChannel.close();
+              setTimeout(() => cancelChannel.close());
               resolve(true);
             }
           } else if (type === "progress") {
@@ -249,7 +249,6 @@ export const echoSearch = (echoSearchQuery, onComplete, onError, onUpdate) => {
           message: `Search Completed: ${ref.updatedFilesCount} files updated. Time taken: ${timeTaken} seconds.`,
         });
     } catch (error) {
-      console.error(error);
       onError &&
         onError({
           message: error.message,
