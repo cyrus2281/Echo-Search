@@ -134,6 +134,8 @@ const multiThreadedSearch = async (
             worker.terminate();
             workers.splice(workers.indexOf(worker), 1);
             if (workers.length === 0) {
+              // Closing cancel channel
+              cancelChannel.close();
               resolve(true);
             }
           } else if (type === "progress") {
