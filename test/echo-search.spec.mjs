@@ -11,11 +11,13 @@
  *   - file1.txt
  */
 
-const assert = require("assert");
-const fs = require("fs");
-const path = require("path");
-const testUtils = require("./test.utils.js");
-const echoSearch = require("../src/EchoSearch/echo-search.js");
+import assert from "assert";
+import fs from "fs";
+import path from "path";
+import testUtils from "./test.utils.js";
+import { echoSearch } from "../src/EchoSearch/echo-search.mjs";
+import * as url from "url";
+const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
 
 const testDir = path.join(__dirname, "testDir");
 
@@ -251,7 +253,7 @@ describe("Echo-Search.js", function () {
   describe("# Search And Replace", function () {
     it("Simple - no flags", function (done) {
       const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
-      const completionMessage = "Search Completed: 4 files updated.";
+      const completionMessage = /Search Completed: 4 files updated/;
       const searchParam = {
         query: {
           searchQuery: testUtils.searchQuery,
@@ -267,7 +269,7 @@ describe("Echo-Search.js", function () {
           // read file and check if the content is replaced
           const fileContent = fs.readFileSync(testDirFile1, "utf8");
           assert.strictEqual(fileContent, testUtils.simpleReplaceText);
-          assert.strictEqual(message, completionMessage);
+          assert.match(message, completionMessage);
           done();
         } catch (err) {
           done(err);
@@ -276,7 +278,7 @@ describe("Echo-Search.js", function () {
     });
     it("partial query - matchWhole off", function (done) {
       const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
-      const completionMessage = "Search Completed: 4 files updated.";
+      const completionMessage = /Search Completed: 4 files updated/;
       const searchParam = {
         query: {
           searchQuery: testUtils.partialQuery,
@@ -292,7 +294,7 @@ describe("Echo-Search.js", function () {
           // read file and check if the content is replaced
           const fileContent = fs.readFileSync(testDirFile1, "utf8");
           assert.strictEqual(fileContent, testUtils.partialReplacedText);
-          assert.strictEqual(message, completionMessage);
+          assert.match(message, completionMessage);
           done();
         } catch (err) {
           done(err);
@@ -301,7 +303,7 @@ describe("Echo-Search.js", function () {
     });
     it("partial query - matchWhole on", function (done) {
       const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
-      const completionMessage = "Search Completed: 0 files updated.";
+      const completionMessage = /Search Completed: 0 files updated/;
       const searchParam = {
         query: {
           searchQuery: testUtils.partialQuery,
@@ -317,85 +319,7 @@ describe("Echo-Search.js", function () {
           // read file and check if the content is replaced
           const fileContent = fs.readFileSync(testDirFile1, "utf8");
           assert.strictEqual(fileContent, testUtils.originalText);
-          assert.strictEqual(message, completionMessage);
-          done();
-        } catch (err) {
-          done(err);
-        }
-      }).search();
-    });
-  });
-
-  describe("# Regex Query", function () {
-    it("Simple Query", function (done) {
-      const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
-      const completionMessage = "Search Completed: 4 files updated.";
-      const searchParam = {
-        query: {
-          searchQuery: testUtils.searchQuery,
-          replaceQuery: testUtils.replacementText,
-          regexFlags: ["g"],
-          isRegex: true,
-          matchWhole: true,
-        },
-        directories: [testDir],
-      };
-      echoSearch(searchParam, ({ message }) => {
-        try {
-          // read file and check if the content is replaced
-          const fileContent = fs.readFileSync(testDirFile1, "utf8");
-          assert.strictEqual(fileContent, testUtils.simpleReplaceText);
-          assert.strictEqual(message, completionMessage);
-          done();
-        } catch (err) {
-          done(err);
-        }
-      }).search();
-    });
-    it("Complex Query", function (done) {
-      const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
-      const completionMessage = "Search Completed: 4 files updated.";
-      const searchParam = {
-        query: {
-          searchQuery: testUtils.regexQuery,
-          replaceQuery: testUtils.replacementText,
-          regexFlags: ["g"],
-          isRegex: true,
-          matchWhole: true,
-        },
-        directories: [testDir],
-      };
-      echoSearch(searchParam, ({ message }) => {
-        try {
-          // read file and check if the content is replaced
-          const fileContent = fs.readFileSync(testDirFile1, "utf8");
-          assert.strictEqual(fileContent, testUtils.regexReplaceText);
-          assert.strictEqual(message, completionMessage);
-          done();
-        } catch (err) {
-          done(err);
-        }
-      }).search();
-    });
-    it("Regex with isRegex off", function (done) {
-      const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
-      const completionMessage = "Search Completed: 0 files updated.";
-      const searchParam = {
-        query: {
-          searchQuery: testUtils.regexQuery,
-          replaceQuery: testUtils.replacementText,
-          regexFlags: ["g"],
-          isRegex: false,
-          matchWhole: true,
-        },
-        directories: [testDir],
-      };
-      echoSearch(searchParam, ({ message }) => {
-        try {
-          // read file and check if the content is replaced
-          const fileContent = fs.readFileSync(testDirFile1, "utf8");
-          assert.strictEqual(fileContent, testUtils.originalText);
-          assert.strictEqual(message, completionMessage);
+          assert.match(message, completionMessage);
           done();
         } catch (err) {
           done(err);
@@ -410,7 +334,7 @@ describe("Echo-Search.js", function () {
           searchQuery: testUtils.searchQuery,
           replaceQuery: testUtils.replacementText,
           regexFlags: ["g"],
-          isRegex: true,
+          isRegex: false,
           matchWhole: true,
         },
         directories: [testDir],
@@ -435,12 +359,117 @@ describe("Echo-Search.js", function () {
       search();
       cancel();
     });
+    it("With Concurrency", function (done) {
+      const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
+      const completionMessage = /Search Completed: 4 files updated/;
+      const searchParam = {
+        query: {
+          searchQuery: testUtils.searchQuery,
+          replaceQuery: testUtils.replacementText,
+          regexFlags: ["g"],
+          isRegex: false,
+          matchWhole: false,
+        },
+        directories: [testDir],
+        isMultiThreaded: true,
+        numOfThreads: 2,
+      };
+      echoSearch(searchParam, ({ message }) => {
+        try {
+          // read file and check if the content is replaced
+          const fileContent = fs.readFileSync(testDirFile1, "utf8");
+          assert.strictEqual(fileContent, testUtils.simpleReplaceText);
+          assert.match(message, completionMessage);
+          done();
+        } catch (err) {
+          done(err);
+        }
+      }).search();
+    });
+  });
+
+  describe("# Regex Query", function () {
+    it("Simple Query", function (done) {
+      const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
+      const completionMessage = /Search Completed: 4 files updated/;
+      const searchParam = {
+        query: {
+          searchQuery: testUtils.searchQuery,
+          replaceQuery: testUtils.replacementText,
+          regexFlags: ["g"],
+          isRegex: true,
+          matchWhole: true,
+        },
+        directories: [testDir],
+      };
+      echoSearch(searchParam, ({ message }) => {
+        try {
+          // read file and check if the content is replaced
+          const fileContent = fs.readFileSync(testDirFile1, "utf8");
+          assert.strictEqual(fileContent, testUtils.simpleReplaceText);
+          assert.match(message, completionMessage);
+          done();
+        } catch (err) {
+          done(err);
+        }
+      }).search();
+    });
+    it("Complex Query", function (done) {
+      const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
+      const completionMessage = /Search Completed: 4 files updated/;
+      const searchParam = {
+        query: {
+          searchQuery: testUtils.regexQuery,
+          replaceQuery: testUtils.replacementText,
+          regexFlags: ["g"],
+          isRegex: true,
+          matchWhole: true,
+        },
+        directories: [testDir],
+      };
+      echoSearch(searchParam, ({ message }) => {
+        try {
+          // read file and check if the content is replaced
+          const fileContent = fs.readFileSync(testDirFile1, "utf8");
+          assert.strictEqual(fileContent, testUtils.regexReplaceText);
+          assert.match(message, completionMessage);
+          done();
+        } catch (err) {
+          done(err);
+        }
+      }).search();
+    });
+    it("Regex with isRegex off", function (done) {
+      const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
+      const completionMessage = /Search Completed: 0 files updated/;
+      const searchParam = {
+        query: {
+          searchQuery: testUtils.regexQuery,
+          replaceQuery: testUtils.replacementText,
+          regexFlags: ["g"],
+          isRegex: false,
+          matchWhole: true,
+        },
+        directories: [testDir],
+      };
+      echoSearch(searchParam, ({ message }) => {
+        try {
+          // read file and check if the content is replaced
+          const fileContent = fs.readFileSync(testDirFile1, "utf8");
+          assert.strictEqual(fileContent, testUtils.originalText);
+          assert.match(message, completionMessage);
+          done();
+        } catch (err) {
+          done(err);
+        }
+      }).search();
+    });
   });
 
   describe("# Regex Modifier Flags", function () {
     it("Non Global - without 'g' flag", function (done) {
       const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
-      const completionMessage = "Search Completed: 4 files updated.";
+      const completionMessage = /Search Completed: 4 files updated/;
       const searchParam = {
         query: {
           searchQuery: testUtils.searchQuery,
@@ -456,7 +485,7 @@ describe("Echo-Search.js", function () {
           // read file and check if the content is replaced
           const fileContent = fs.readFileSync(testDirFile1, "utf8");
           assert.strictEqual(fileContent, testUtils.nonGlobalReplaceText);
-          assert.strictEqual(message, completionMessage);
+          assert.match(message, completionMessage);
           done();
         } catch (err) {
           done(err);
@@ -465,7 +494,7 @@ describe("Echo-Search.js", function () {
     });
     it("Case Sensitive - without 'i' flag", function (done) {
       const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
-      const completionMessage = "Search Completed: 4 files updated.";
+      const completionMessage = /Search Completed: 4 files updated/;
       const searchParam = {
         query: {
           searchQuery: testUtils.caseSensitiveQuery,
@@ -481,7 +510,7 @@ describe("Echo-Search.js", function () {
           // read file and check if the content is replaced
           const fileContent = fs.readFileSync(testDirFile1, "utf8");
           assert.strictEqual(fileContent, testUtils.caseSensitiveText);
-          assert.strictEqual(message, completionMessage);
+          assert.match(message, completionMessage);
           done();
         } catch (err) {
           done(err);
@@ -490,7 +519,7 @@ describe("Echo-Search.js", function () {
     });
     it("Case InSensitive - with 'i' flag", function (done) {
       const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
-      const completionMessage = "Search Completed: 4 files updated.";
+      const completionMessage = /Search Completed: 4 files updated/;
       const searchParam = {
         query: {
           searchQuery: testUtils.caseSensitiveQuery,
@@ -506,7 +535,7 @@ describe("Echo-Search.js", function () {
           // read file and check if the content is replaced
           const fileContent = fs.readFileSync(testDirFile1, "utf8");
           assert.strictEqual(fileContent, testUtils.caseInsensitiveText);
-          assert.strictEqual(message, completionMessage);
+          assert.match(message, completionMessage);
           done();
         } catch (err) {
           done(err);

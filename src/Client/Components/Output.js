@@ -20,6 +20,8 @@ const getMode = (mode) => {
   }
 };
 
+const FAILED_SEARCH_HEADING = "Operation was not completely successful.";
+
 function Output({ isRunning }) {
   // due to async nature of useState, we might miss some messages
   const allMessages = useRef([]);
@@ -40,8 +42,8 @@ function Output({ isRunning }) {
         console.error(update.error);
       }
       if (progress) {
-        const roundedProgress = Math.round(progress * 10) / 10;
-        const heading = `Updating files. ${roundedProgress}% completed.`;
+        const roundedProgress = (Math.round(progress * 10) / 10);
+        const heading = `Updating files. ${roundedProgress.toFixed(1)}% completed.`;
         setHeading(heading);
         setProgress(roundedProgress);
       }
@@ -64,7 +66,6 @@ function Output({ isRunning }) {
     const showError = (error) => {
       const message = { message: error.message, mode: getMode("error") };
       allMessages.current.push(message);
-      setHeading("Operation was not completely successful.");
       setProgress(100);
       setHasError(true);
       setMessages([...allMessages.current]);
@@ -72,7 +73,11 @@ function Output({ isRunning }) {
     return ipcListen("search:fail", showError);
   }, [messages]);
 
-  const barColor = hasError ? "error" : progress === 100 ? "success" : "primary";
+  const barColor = hasError
+    ? "error"
+    : progress === 100
+    ? "success"
+    : "primary";
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -88,7 +93,7 @@ function Output({ isRunning }) {
         value={isRunning ? progress : 100}
       />
       <Typography variant="h6" sx={{ py: 2 }}>
-        {heading}
+        {hasError ? FAILED_SEARCH_HEADING : heading}
       </Typography>
       <Divider />
       <Box sx={{ width: "100%" }}>
@@ -99,6 +104,19 @@ function Output({ isRunning }) {
             overflow: "auto",
             pt: 2,
             pl: 2,
+            "&::-webkit-scrollbar": {
+              width: "0.3em",
+              height: "0.5em",
+            },
+            "&::-webkit-scrollbar-track": {
+              boxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
+              webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              backgroundColor: "rgba(0,0,0,.1)",
+              outline: "1px solid slategrey",
+              borderRadius: "5px",
+            }
           }}
         >
           {messages.map((msg, i) => (
