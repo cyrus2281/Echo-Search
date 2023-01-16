@@ -326,6 +326,31 @@ describe("Echo-Search.js", function () {
         }
       }).search();
     });
+    it("Multi-line Query", function (done) {
+      const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
+      const completionMessage = /Search Completed: 4 files updated/;
+      const searchParam = {
+        query: {
+          searchQuery: testUtils.multiLineSearchQuery,
+          replaceQuery: testUtils.replacementText,
+          regexFlags: ["g"],
+          isRegex: false,
+          matchWhole: false,
+        },
+        directories: [testDir],
+      };
+      echoSearch(searchParam, ({ message }) => {
+        try {
+          // read file and check if the content is replaced
+          const fileContent = fs.readFileSync(testDirFile1, "utf8");
+          assert.strictEqual(fileContent, testUtils.multiLineReplacedText);
+          assert.match(message, completionMessage);
+          done();
+        } catch (err) {
+          done(err);
+        }
+      }).search();
+    });
     it("Canceling Request", function (done) {
       const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
       const expectedErrorMessage = "Search Interrupted: User Cancelled";
