@@ -77,6 +77,7 @@ function QuerySelector({ form, channel }) {
               id="search"
               label={searchLabel + searchLabelOptions}
               variant="standard"
+              multiline
               fullWidth
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -105,6 +106,7 @@ function QuerySelector({ form, channel }) {
               id="replace"
               label="Replace Value"
               variant="standard"
+              multiline
               fullWidth
               onChange={(e) => setReplace(e.target.value)}
             />
