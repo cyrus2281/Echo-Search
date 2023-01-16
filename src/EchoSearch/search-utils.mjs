@@ -78,12 +78,18 @@ export const crawlDirectory = async (
 };
 
 /**
- * Escape a search query to be used in a regex
- * @param {string} searchQuery
+ * Escape a search query to be used in a regex.
+ * Escape new line for both window and Linux/Unix
+ * @param {string} searchQuery search string 
+ * @param {boolean} isRegex whether to escape all special characters or not
  * @returns {string} regex escaped search query
  */
-const escapeSearchQuery = (searchQuery) => {
-  return searchQuery.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
+const escapeSearchQuery = (searchQuery, isRegex) => {
+  return isRegex
+    ? searchQuery.replace(/\n/g, "\r?\n")
+    : searchQuery
+        .replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&")
+        .replace(/\n/g, "\r?\n");
 };
 
 /**
@@ -100,7 +106,7 @@ export const replaceString = (text, query) => {
 
   let reg;
   if (isRegex) {
-    reg = RegExp(searchQuery, flags);
+    reg = RegExp(escapeSearchQuery(searchQuery, isRegex), flags);
   } else {
     reg = matchWhole
       ? RegExp(`\\b${escapeSearchQuery(searchQuery)}\\b`, flags)
@@ -131,4 +137,3 @@ export const replaceStringInFile = async (filePath, query) => {
   }
   await fs.promises.writeFile(filePath, newText, { encoding: "utf-8" });
 };
-

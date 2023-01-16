@@ -6,9 +6,11 @@
 
 This application will crawl recursively through the given parent directory and will look for the given string/regular expression in all text files and replace it with the given string.
 
-You can select multiple parents, mark search as case insensitive or matching whole words, include specific files types, exclude paths or file types, and even configure the regex search modifier flags. You can use concurrency to run the application on multiple threads.
+You can select multiple parent directories, mark search as case insensitive or matching whole words, provide a multi-line search query, include specific files types, exclude paths or file types, and even configure the regex search modifier flags. You can use concurrency to run the application on multiple threads.
 
 You get live report on the search happening in the provided console in the app.
+
+This app is only for text based files and can NOT be used with files such as pdf, doc, excel, etc.
 
 The app is written with Electron (Node) for the backend, and React (JavaScript) for the frontend.
 

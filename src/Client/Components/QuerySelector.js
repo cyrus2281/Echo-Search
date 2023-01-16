@@ -75,8 +75,10 @@ function QuerySelector({ form, channel }) {
             <SearchIcon sx={{ color: "action.active", mr: 1, my: 0.5 }} />
             <TextField
               id="search"
+              maxRows={5}
               label={searchLabel + searchLabelOptions}
               variant="standard"
+              multiline
               fullWidth
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -105,6 +107,8 @@ function QuerySelector({ form, channel }) {
               id="replace"
               label="Replace Value"
               variant="standard"
+              maxRows={5}
+              multiline
               fullWidth
               onChange={(e) => setReplace(e.target.value)}
             />
