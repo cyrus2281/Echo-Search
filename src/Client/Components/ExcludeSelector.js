@@ -90,18 +90,6 @@ function ExcludeSelector({ form }) {
             pr:2,
             overflow: "auto",
             maxHeight: 150,
-            "&::-webkit-scrollbar": {
-              width: "0.3em",
-            },
-            "&::-webkit-scrollbar-track": {
-              boxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
-              webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
-            },
-            "&::-webkit-scrollbar-thumb": {
-              backgroundColor: "rgba(0,0,0,.1)",
-              outline: "1px solid slategrey",
-              borderRadius: "5px",
-            },
           }}
         >
           {excludes.map((value, index) => (

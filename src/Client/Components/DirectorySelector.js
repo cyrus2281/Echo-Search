@@ -99,18 +99,6 @@ function DirectorySelector({ form }) {
             overflow: "auto",
             mr: 2,
             maxHeight: 150,
-            "&::-webkit-scrollbar": {
-              width: "0.3em",
-            },
-            "&::-webkit-scrollbar-track": {
-              boxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
-              webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
-            },
-            "&::-webkit-scrollbar-thumb": {
-              backgroundColor: "rgba(0,0,0,.1)",
-              outline: "1px solid slategrey",
-              borderRadius: "5px",
-            },
           }}
         >
           {directories.map((value, index) => (
