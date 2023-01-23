@@ -8,7 +8,7 @@ This application will crawl recursively through the given parent directory and w
 
 You can select multiple parent directories, mark search as case insensitive or matching whole words, provide a multi-line search query, include specific files types, exclude paths or file types, and even configure the regex search modifier flags. You can use concurrency to run the application on multiple threads.
 
-You get live report on the search happening in the provided console in the app.
+You get a live report on the search happening in the provided console in the app and you can open each file with desktop's default app or in the respective folder.
 
 This app is only for text based files and can NOT be used with files such as pdf, doc, excel, etc.
 

@@ -19,14 +19,15 @@ const MultiThreadingTooltip = styled(({ className, ...props }) => (
     title={
       <Typography color="inherit">
         <b>Concurrency</b> means multiple searches happening at the same time.
-        This does not always mean faster results. Concurrency depends on
-        different factors such as the <em>number of threads</em>,{" "}
-        <em>power of each core</em>, and the <em>amount of available memory</em>
-        . Note that concurrency uses considerably more amount memory. Please be
-        sure not overload your system memory. With Concurrency you might feel
-        some asynchronously or missing in messages. <br></br> You're not allowed to
-        use more than <b>80%</b> of your CPU cores.<br></br> We recommend testing
-        with different number of threads to find the best performance.
+        Higher number of threads does NOT mean faster results. Concurrency
+        depends on different factors such as the <em>number of threads</em>,
+        <em> power of each core</em>, and the
+        <em> amount of available memory</em>. Note that concurrency uses
+        considerably more amount memory. Please be sure not overload your system
+        memory. With Concurrency you might feel some asynchronously or miss some
+        messages. <br></br> You're not allowed to use more than <b>80%</b> of
+        your CPU cores.<br></br> We recommend testing with different number of
+        threads to find the best performance.
       </Typography>
     }
   />
@@ -52,7 +53,7 @@ function MultiThreading({ form }) {
     return ipcListen("info:cores:response", (totalCores) => {
       // Set 80% of total cores as max number of threads
       setMaxNumOfThreads(Math.floor(totalCores * 0.8));
-      setNumOfThreads(Math.min(Math.floor(totalCores * 0.5), 6));
+      setNumOfThreads(Math.min(Math.floor(totalCores * 0.5), 4));
     });
   }, []);
 
@@ -91,7 +92,7 @@ function MultiThreading({ form }) {
             valueLabelFormat={(value) => value + " Threads"}
             valueLabelDisplay="auto"
             step={1}
-            min={1}
+            min={2}
             max={maxNumOfThreads}
             marks
           />
