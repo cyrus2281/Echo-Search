@@ -48,6 +48,14 @@ import {
  */
 
 /**
+ * Message prefix for update and match
+ */
+export const MESSAGE_PREFIX = {
+  update: "Updated: ",
+  match: "Matched: ",
+};
+
+/**
  * Perform a search in a single thread for the given files base on the given query
  * @param {string[]} files files to search in
  * @param {QueryParam} query search query
@@ -69,8 +77,8 @@ const singleThreadedSearch = async (files, query, onUpdate, ref) => {
         onUpdate &&
           onUpdate({
             progress: ref.progress,
-            message: `Updated ${file}`,
-            mode: "info",
+            message: MESSAGE_PREFIX.update + file,
+            mode: "update",
           });
       } else {
         // file was not updated, increasing progress
@@ -147,8 +155,8 @@ const multiThreadedSearch = async (
               onUpdate &&
                 onUpdate({
                   progress: ref.progress,
-                  message: `Updated ${data.file}`,
-                  mode: "info",
+                  message: MESSAGE_PREFIX.update + data.file,
+                  mode: "update",
                 });
             } else {
               // File was not updated, increasing progress
@@ -246,7 +254,7 @@ export const echoSearch = (echoSearchQuery, onComplete, onError, onUpdate) => {
       const timeTaken = (endTime - startTime) / 1000;
       onComplete &&
         onComplete({
-          message: `Search Completed: ${ref.updatedFilesCount} files updated. Time taken: ${timeTaken} seconds.`,
+          message: `Search Completed: ${ref.updatedFilesCount.toLocaleString()} files updated. Time taken: ${timeTaken} seconds.`,
         });
     } catch (error) {
       onError &&

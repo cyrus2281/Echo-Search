@@ -46,12 +46,15 @@ function Form() {
   });
   const biDirectionalChannel = useRef({ caseInsensitivity: {} });
   const { enqueueSnackbar } = useSnackbar();
-  const [isRunning, setIsRunning] = React.useState(false);
   const [processID, setProcessID] = React.useState("");
+  const [isRunning, setIsRunning] = React.useState(false);
+  const [disableBtn, setDisableBtn] = React.useState(false);
   const [showOutput, setShowOutput] = React.useState(false);
 
   const onButtonClick = (e) => {
+    if (disableBtn) return;
     if (isRunning && processID) {
+      setDisableBtn(true);
       ipcSend("search:cancel", { processID });
     } else {
       const hasError = validateForm(formData);
@@ -63,6 +66,7 @@ function Form() {
         return;
       }
       showOutput && setShowOutput(false);
+      setDisableBtn(true);
       setIsRunning(true);
       ipcSend("search:start", formData.current);
     }
@@ -81,6 +85,7 @@ function Form() {
         autoHideDuration: 3000,
       });
       console.error(error.error);
+      setDisableBtn(false);
       setIsRunning(false);
       setProcessID("");
     };
@@ -93,6 +98,7 @@ function Form() {
         variant: "success",
         autoHideDuration: 2000,
       });
+      setDisableBtn(false);
       setIsRunning(false);
       setProcessID("");
     };
@@ -102,6 +108,7 @@ function Form() {
   useEffect(() => {
     const onReceiveID = (event) => {
       setProcessID(event.processID);
+      setDisableBtn(false);
     };
     return ipcListen("search:processID", onReceiveID);
   }, []);
@@ -109,8 +116,8 @@ function Form() {
   const buttonProps =
     isRunning && processID
       ? { variant: "outlined", color: "error" }
-      : { variant: "contained", disabled: isRunning };
-      
+      : { variant: "contained" };
+
   return (
     <Box
       sx={{
@@ -161,8 +168,17 @@ function Form() {
             </Item>
           </Grid>
           <Grid item xs={8} margin="auto">
-            <Button {...buttonProps} fullWidth onClick={onButtonClick}>
-              {isRunning && processID ? "Cancel" : "Run"}
+            <Button
+              {...buttonProps}
+              fullWidth
+              disabled={disableBtn}
+              onClick={onButtonClick}
+            >
+              {isRunning && processID
+                ? disableBtn
+                  ? "Canceling"
+                  : "Cancel"
+                : "Run"}
             </Button>
           </Grid>
           <Grid item xs={12}>

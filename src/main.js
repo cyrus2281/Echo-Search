@@ -141,6 +141,14 @@ ipcMain.on("open:url", async (e, { url }) => {
   url && shell.openExternal(url);
 });
 
+ipcMain.on("open:file", async (e, { filePath }) => {
+  filePath && shell.openPath(filePath);
+});
+
+ipcMain.on("open:folder", async (e, { filePath }) => {
+  filePath && shell.showItemInFolder(filePath);
+});
+
 ipcMain.on("info:pkg:request", async () => {
   mainWindow.webContents.send("info:pkg:response", process.env.PACKAGE);
 });
