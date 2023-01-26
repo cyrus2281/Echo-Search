@@ -1,19 +1,54 @@
 import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import Link from "@mui/material/Link";
 
 const { ipcSend, ipcListen } = window.api;
 
+const getReleaseUrl = (homepage) => {
+  const repo = homepage.split("/").slice(-2).join("/").split("#")[0];
+  const releaseUrl = `https://api.github.com/repos/${repo}/releases/latest`;
+  return releaseUrl;
+};
+
+const getLatestReleaseUrl = async (homepage, currentVersion) => {
+  const releaseUrl = getReleaseUrl(homepage);
+  let latestReleaseUrl;
+  try {
+    const response = await fetch(releaseUrl);
+    const data = await response.json();
+    const latestVersion = data.name.split("v")[1];
+    if (currentVersion.startsWith(latestVersion)) {
+      // The current version is the latest release
+      return null;
+    }
+    latestReleaseUrl = data.html_url;
+  } catch {
+    return null;
+  }
+  return latestReleaseUrl;
+};
+
 function Footer() {
   const [pkg, setPkg] = useState();
+  const [latestRelease, setLatestRelease] = useState();
 
   const onNameClick = () => {
-    ipcSend("open:url", {url: pkg?.author.url});
+    ipcSend("open:url", { url: pkg?.author.url });
   };
 
   useEffect(() => {
-    ipcSend("info:pkg:request")
-    return ipcListen("info:pkg:response", setPkg);
+    ipcSend("info:pkg:request");
+    return ipcListen("info:pkg:response", async (pkg) => {
+      setPkg(pkg);
+      if (pkg?.homepage && pkg?.version) {
+        const latestRelease = await getLatestReleaseUrl(
+          pkg.homepage,
+          pkg.version
+        );
+        setLatestRelease(latestRelease);
+      }
+    });
   }, []);
 
   return (
@@ -37,7 +72,19 @@ function Footer() {
           {pkg?.author.name}
         </Typography>
       </Typography>
-      <Typography variant="caption">Version {pkg?.version}</Typography>
+      <Typography variant="caption">
+        Version {pkg?.version}
+        {latestRelease && (
+          <Link
+            pl={1}
+            variant="caption"
+            sx={{ cursor: "pointer" }}
+            onClick={() => ipcSend("open:url", { url: latestRelease })}
+          >
+            (Newer Version Available)
+          </Link>
+        )}
+      </Typography>
     </Box>
   );
 }
