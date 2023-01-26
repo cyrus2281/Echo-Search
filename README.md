@@ -1,7 +1,9 @@
 # Eco-Search
-
-<img src="https://img.shields.io/github/v/release/cyrus2281/Echo-Search?color=00ff00" /> <img src="https://img.shields.io/github/package-json/v/cyrus2281/Echo-Search" /> <img src="https://img.shields.io/github/license/cyrus2281/Echo-Search" /> <img src="https://img.shields.io/github/package-json/dependency-version/cyrus2281/Echo-Search/react?logo=react&color=lightblue" /> <img src="https://img.shields.io/github/package-json/dependency-version/cyrus2281/Echo-Search/dev/electron?logo=electron&color=lightblue&logoColor=lightblue" />
-
+[![release](https://img.shields.io/github/v/release/cyrus2281/Echo-Search?color=00ff00)](https://github.com/cyrus2281/Echo-Search/releases)
+[![version](https://img.shields.io/github/package-json/v/cyrus2281/Echo-Search)](https://github.com/cyrus2281/Echo-Search)
+[![License](https://img.shields.io/github/license/cyrus2281/echo-search)](https://github.com/cyrus2281/Echo-Search/blob/main/LICENSE)
+[![react](https://img.shields.io/github/package-json/dependency-version/cyrus2281/Echo-Search/react?logo=react&color=lightblue)](https://reactjs.org/)
+[![electron](https://img.shields.io/github/package-json/dependency-version/cyrus2281/Echo-Search/dev/electron?logo=electron&color=lightblue&logoColor=lightblue)](https://www.electronjs.org/)
 <br>
 
 This application will crawl recursively through the given parent directory and will look for the given string/regular expression in all text files and replace it with the given string.
