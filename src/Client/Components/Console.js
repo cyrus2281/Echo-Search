@@ -15,18 +15,18 @@ const MESSAGE_PREFIX = {
 };
 
 const getItemTextStyle = (msg) => {
-    const style = {
-        color: msg.mode,
-        wordBreak: "break-all",
-    }
-    if (msg.isFile) {
-        style.cursor = "pointer";
-        style["&:hover"] = {
-            textDecoration: "underline",
-        }
-    }
-    return style;    
-}
+  const style = {
+    color: msg.mode,
+    wordBreak: "break-all",
+  };
+  if (msg.isFile) {
+    style.cursor = "pointer";
+    style["&:hover"] = {
+      textDecoration: "underline",
+    };
+  }
+  return style;
+};
 
 const openFile = (msg, inFolder) => {
   let filePath;
@@ -41,14 +41,16 @@ const openFile = (msg, inFolder) => {
   ipcSend(request, { filePath });
 };
 
+let lastMeasuredLength = 0; // to prevent recreating the interval on message update
 function Console({ messagesRef }) {
   const [messages, setMessages] = React.useState([]);
+  lastMeasuredLength = messages.length;
 
   useEffect(() => {
     // To prevent the renderer from freezing/slowing down,
     // due to the flood of messages, updating 3 times a second.
     const interval = setInterval(() => {
-      if (messagesRef.current.length !== messages.length) {
+      if (messagesRef.current.length !== lastMeasuredLength) {
         setMessages(messagesRef.current);
       }
     }, 250);
@@ -92,10 +94,7 @@ function Console({ messagesRef }) {
               )
             }
           >
-            <ListItemText
-              sx={getItemTextStyle(msg)}
-              primary={msg.message}
-            />
+            <ListItemText sx={getItemTextStyle(msg)} primary={msg.message} />
           </Tooltip>
         </ListItem>
       ))}

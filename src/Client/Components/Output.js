@@ -3,6 +3,10 @@ import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
+import ClearIcon from "@mui/icons-material/CancelPresentation";
+
 import Console from "./Console";
 
 const { ipcListen } = window.api;
@@ -110,12 +114,24 @@ function Output({ isRunning }) {
         }
         value={isRunning ? progress : 100}
       />
-      <Typography variant="h6" sx={{ py: 2 }}>
+      <Typography variant="h6" sx={{ py: 2, position: "relative" }}>
         {hasError ? FAILED_SEARCH_HEADING : heading}
+        <Tooltip title="Clear output">
+          <IconButton
+            size="small"
+            sx={{
+              position: "absolute",
+              right: 10,
+            }}
+            onClick={() => (allMessages.current = [])}
+          >
+            <ClearIcon />
+          </IconButton>
+        </Tooltip>
       </Typography>
       <Divider />
       <Box sx={{ width: "100%" }}>
-        <Console  messagesRef={allMessages}/>
+        <Console messagesRef={allMessages} />
       </Box>
     </Box>
   );
