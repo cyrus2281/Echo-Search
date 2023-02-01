@@ -6,7 +6,7 @@ import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import FileIcon from "@mui/icons-material/InsertDriveFile";
 import FolderIcon from "@mui/icons-material/Folder";
-import { MESSAGE_PREFIX } from "../../constants.mjs";
+import { CHANNELS, MESSAGE_PREFIX } from "../../constants.mjs";
 
 const { ipcSend } = window.api;
 

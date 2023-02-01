@@ -5,8 +5,7 @@
  *
  *   author: Cyrus Mobini
  *
- *   Licensed under the MIT license.
- *   http://www.opensource.org/licenses/mit-license.php
+ *   Licensed under the BSD 3-Clause license.
  *
  *   Copyright 2023 Cyrus Mobini (https://github.com/cyrus2281)
  *
@@ -19,7 +18,7 @@ import path from "path";
  * Search Query parameter
  * @typedef {Object} QueryParam
  * @property {string|RegExp} searchQuery the search query (string or regex)
- * @property {string} replaceQuery the replacement string
+ * @property {string|false} replaceQuery the replacement string, false if search only
  * @property {string[]} regexFlags regular expression modifier flags
  * @property {boolean} isRegex whether the search query is a regex or not
  * @property {boolean} matchWhole whether the search query should match the whole word or not
@@ -96,7 +95,8 @@ const escapeSearchQuery = (searchQuery, isRegex) => {
  * replace a string in a given text value
  * @param {string} text the text to search in
  * @param {QueryParam} query the search query
- * @returns {false|string} false if the text doesn't have the search query or is empty, otherwise returns the new text
+ * @returns {boolean|string} false if search query is not found or is empty, 
+ * true if it's a search only, otherwise the new text
  */
 export const replaceString = (text, query) => {
   const { searchQuery, replaceQuery, regexFlags, isRegex, matchWhole } = query;
@@ -117,6 +117,10 @@ export const replaceString = (text, query) => {
   if (!text.match(reg) || text.length === 0) {
     return false;
   }
+  if (replaceQuery === false) {
+    // search only: found match, no replace
+    return true
+  }
   return text[replaceFunction](reg, replaceQuery);
 };
 
@@ -124,16 +128,18 @@ export const replaceString = (text, query) => {
  * read a file and replace a string in it
  * @param {string} filePath the file path to search in
  * @param {QueryParam} query the search query
- * @returns {false|void} false if the file doesn't have the search query or is empty, otherwise write the new text into file
+ * @returns {Promise<false|void>} false if the file doesn't have the search query or is empty, otherwise write the new text into file
  */
 export const replaceStringInFile = async (filePath, query) => {
   const text = await fs.promises.readFile(filePath, { encoding: "utf-8" });
   if (/\ufffd/.test(text)) {
     return false;
   }
-  const newText = replaceString(text, query);
-  if (newText === false) {
-    return false;
+  const result = replaceString(text, query);
+  if (typeof result === 'boolean') {
+    // type is boolean if there was no match found
+    // or it is a search only operation
+    return result;
   }
-  await fs.promises.writeFile(filePath, newText, { encoding: "utf-8" });
+  await fs.promises.writeFile(filePath, result, { encoding: "utf-8" });
 };

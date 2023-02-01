@@ -12,7 +12,11 @@
  *
  */
 import { Worker, BroadcastChannel } from "worker_threads";
-import { MESSAGE_MODES, MESSAGE_PREFIX, WORKER_CHANNELS } from "../constants.mjs";
+import {
+  MESSAGE_MODES,
+  MESSAGE_PREFIX,
+  WORKER_CHANNELS,
+} from "../constants.mjs";
 import {
   crawlDirectory,
   replaceStringInFile,
@@ -47,7 +51,6 @@ import {
  * @property {Promise<void>} search a promise that starts the search
  */
 
-
 /**
  * Perform a search in a single thread for the given files base on the given query
  * @param {string[]} files files to search in
@@ -70,7 +73,11 @@ const singleThreadedSearch = async (files, query, onUpdate, ref) => {
         onUpdate &&
           onUpdate({
             progress: ref.progress,
-            message: MESSAGE_PREFIX.UPDATE + file,
+            // if updateFile is true, it means it's a search only operation
+            message:
+              (updatedFile === true
+                ? MESSAGE_PREFIX.MATCH
+                : MESSAGE_PREFIX.UPDATE) + file,
             mode: MESSAGE_MODES.UPDATE,
           });
       } else {
@@ -148,7 +155,10 @@ const multiThreadedSearch = async (
               onUpdate &&
                 onUpdate({
                   progress: ref.progress,
-                  message: MESSAGE_PREFIX.UPDATE + data.file,
+                  message:
+                    (data.isSearchOnly
+                      ? MESSAGE_PREFIX.MATCH
+                      : MESSAGE_PREFIX.UPDATE) + data.file,
                   mode: MESSAGE_MODES.UPDATE,
                 });
             } else {
@@ -156,7 +166,7 @@ const multiThreadedSearch = async (
               onUpdate &&
                 onUpdate({
                   progress: ref.progress,
-                  mode: MESSAGE_MODES.INFO
+                  mode: MESSAGE_MODES.INFO,
                 });
             }
           } else if (type === WORKER_CHANNELS.ERROR) {
@@ -232,7 +242,7 @@ export const echoSearch = (echoSearchQuery, onComplete, onError, onUpdate) => {
         onUpdate({
           progress: ref.progress,
           message: `Found ${files.length.toLocaleString()} files.`,
-          mode: MESSAGE_MODES.SUCCESS
+          mode: MESSAGE_MODES.SUCCESS,
         });
       // Starting the search and replace in the files
       const startTime = Date.now();
@@ -245,9 +255,13 @@ export const echoSearch = (echoSearchQuery, onComplete, onError, onUpdate) => {
       }
       const endTime = Date.now();
       const timeTaken = (endTime - startTime) / 1000;
+      const isSearchOnly = query.replaceQuery === false;
       onComplete &&
         onComplete({
-          message: `Search Completed: ${ref.updatedFilesCount.toLocaleString()} files updated. Time taken: ${timeTaken} seconds.`,
+          message:
+            `Search Completed: ${ref.updatedFilesCount.toLocaleString()} files ` +
+            (isSearchOnly ? "matched" : "updated") +
+            `. Time taken: ${timeTaken} seconds.`,
         });
     } catch (error) {
       onError &&

@@ -50,6 +50,7 @@ const search = async () => {
         postMessage({
           file,
           type: WORKER_CHANNELS.PROGRESS,
+          isSearchOnly: updatedFile === true
         });
       } else {
         // file was not updated, just updating progress
