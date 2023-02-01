@@ -35,7 +35,10 @@ const validateForm = (form) => {
   if (!form.current.query?.searchQuery?.trim()) {
     errors.push("You need a search query.");
   }
-  if (!form.current.query?.replaceQuery?.trim()) {
+  if (
+    form.current.query?.replaceQuery !== false && // search only
+    !form.current.query?.replaceQuery?.trim()
+  ) {
     errors.push("You need a replace query.");
   }
   return errors;

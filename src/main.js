@@ -36,10 +36,10 @@ let mainWindow;
 const createWindow = () => {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 800,
+    width: 850,
     height: 1000,
-    minWidth: 600,
-    minHeight: 500,
+    minWidth: 650,
+    minHeight: 550,
     icon: "icons/icon.png",
     webPreferences: {
       nodeIntegration: false,

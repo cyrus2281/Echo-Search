@@ -7,16 +7,19 @@ import Tooltip from "@mui/material/Tooltip";
 import ToggleButton from "@mui/material/ToggleButton";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import Collapse from "@mui/material/Collapse";
 import SearchIcon from "@mui/icons-material/Search";
 import FindReplaceIcon from "@mui/icons-material/FindReplace";
 import FontDownloadIcon from "@mui/icons-material/FontDownload";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import AbcIcon from "@mui/icons-material/Abc";
 import SpaceBarIcon from "@mui/icons-material/SpaceBar";
+import SearchOffIcon from "@mui/icons-material/SearchOff";
 
 function QuerySelector({ form, channel }) {
   const [search, setSearch] = useState("");
   const [replace, setReplace] = useState("");
+  const [isSearchOnly, setIsSearchOnly] = useState(false);
   const [caseInsensitive, setCaseInsensitive] = useState(false);
   const [regex, setRegex] = useState(false);
   const [matchWhole, setMatchWhole] = useState(false);
@@ -44,10 +47,10 @@ function QuerySelector({ form, channel }) {
 
   useEffect(() => {
     form.current.query.searchQuery = search;
-    form.current.query.replaceQuery = replace;
+    form.current.query.replaceQuery = isSearchOnly ? false : replace;
     form.current.query.isRegex = regex;
     form.current.query.matchWhole = matchWhole;
-  }, [search, replace, regex, matchWhole]);
+  }, [search, replace, regex, matchWhole, isSearchOnly]);
 
   const searchLabel = regex ? "Regular Expression" : "Search Query";
   const searchLabelOptions =
@@ -94,34 +97,42 @@ function QuerySelector({ form, channel }) {
         </Box>
       </Grid>
       <Grid item xs={12} mx={2}>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-end",
-          }}
+        <Collapse
+          in={!isSearchOnly}
+          timeout="auto"
+          // onExited={clearCustomization}
         >
-          <Box sx={{ width: "93%", display: "flex", alignItems: "flex-end" }}>
-            <FindReplaceIcon sx={{ color: "action.active", mr: 1, my: 0.5 }} />
-            <TextField
-              id="replace"
-              label="Replace Value"
-              variant="standard"
-              maxRows={5}
-              multiline
-              fullWidth
-              onChange={(e) => setReplace(e.target.value)}
-            />
-          </Box>
-          <Tooltip
-            title="Replace value should be a normal text."
-            sx={{ pr: 1 }}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "flex-end",
+            }}
           >
-            <IconButton>
-              <InfoOutlinedIcon />
-            </IconButton>
-          </Tooltip>
-        </Box>
+            <Box sx={{ width: "93%", display: "flex", alignItems: "flex-end" }}>
+              <FindReplaceIcon
+                sx={{ color: "action.active", mr: 1, my: 0.5 }}
+              />
+              <TextField
+                id="replace"
+                label="Replace Value"
+                variant="standard"
+                maxRows={5}
+                multiline
+                fullWidth
+                onChange={(e) => setReplace(e.target.value)}
+              />
+            </Box>
+            <Tooltip
+              title="Replace value should be a normal text. Can be turned off by activating 'search only'."
+              sx={{ pr: 1 }}
+            >
+              <IconButton>
+                <InfoOutlinedIcon />
+              </IconButton>
+            </Tooltip>
+          </Box>
+        </Collapse>
       </Grid>
       <Grid
         item
@@ -134,9 +145,20 @@ function QuerySelector({ form, channel }) {
         gap={2}
       >
         <Typography variant="body2">Options: </Typography>
+        <Tooltip title="Perform a search only operation. (No replace query)">
+          <ToggleButton
+            value="searchOnly"
+            size="small"
+            selected={isSearchOnly}
+            onChange={(e) => setIsSearchOnly(!isSearchOnly)}
+          >
+            <SearchOffIcon sx={{ mr: 1 }} /> Search Only
+          </ToggleButton>
+        </Tooltip>
         <Tooltip title="Ignore matching case">
           <ToggleButton
             value="caseInsensitive"
+            size="small"
             selected={caseInsensitive}
             onChange={(e) => updateCaseInsensitivity(!caseInsensitive)}
           >
@@ -146,6 +168,7 @@ function QuerySelector({ form, channel }) {
         <Tooltip title="Use regular expression instead of simple text query">
           <ToggleButton
             value="regex"
+            size="small"
             selected={regex}
             onChange={(e) => {
               if (!regex) {
@@ -158,13 +181,14 @@ function QuerySelector({ form, channel }) {
           </ToggleButton>
         </Tooltip>
         {!regex && (
-          <Tooltip title="Should completely match (no partial match)">
+          <Tooltip title="Should completely match the whole word (no partial match)">
             <ToggleButton
               value="matchWhole"
+              size="small"
               selected={matchWhole}
               onChange={(e) => setMatchWhole(!matchWhole)}
             >
-              <SpaceBarIcon sx={{ mr: 1 }} /> Match Whole Word
+              <SpaceBarIcon sx={{ mr: 1 }} /> Match Whole
             </ToggleButton>
           </Tooltip>
         )}

@@ -13,7 +13,6 @@ export const defaultRegexFlags = {
   sticky: false,
   unicode: false,
   single: false,
-  indices: false,
 };
 
 export const defaultRegexFlagsValues = ["g"];
@@ -45,7 +44,6 @@ function RegexFlags({ form, channel }) {
     flags.unicode && regexFlags.push("u");
     flags.sticky && regexFlags.push("y");
     flags.single && regexFlags.push("s");
-    flags.indices && regexFlags.push("d");
     form.current.query.regexFlags = regexFlags;
   }, [flags]);
 
@@ -171,24 +169,6 @@ function RegexFlags({ form, channel }) {
                 />
               }
               label="Single-line"
-            />
-          </Box>
-        </Tooltip>
-        <Tooltip
-          title="d modifier: indices. The JavaScript regex engine now returns the indices at which the regex matched in the subject string."
-          sx={{ ml: 1 }}
-        >
-          <Box display="flex" justifyContent="flex-start" alignItems="center">
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={flags.indices}
-                  onChange={(e) => {
-                    setFlags({ ...flags, indices: e.target.checked });
-                  }}
-                />
-              }
-              label="Indices"
             />
           </Box>
         </Tooltip>
