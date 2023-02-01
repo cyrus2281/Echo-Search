@@ -8,6 +8,7 @@ import Typography from "@mui/material/Typography";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import Switch from "@mui/material/Switch";
 import Slider from "@mui/material/Slider";
+import { CHANNELS } from "../../constants.mjs";
 
 const { ipcSend, ipcListen } = window.api;
 
@@ -49,8 +50,8 @@ function MultiThreading({ form }) {
   }, [isMultiThreaded, numOfThreads]);
 
   useEffect(() => {
-    ipcSend("info:cores:request");
-    return ipcListen("info:cores:response", (totalCores) => {
+    ipcSend(CHANNELS.INFO_CORES_REQUEST);
+    return ipcListen(CHANNELS.INFO_CORES_RESPONSE, (totalCores) => {
       // Set 80% of total cores as max number of threads
       setMaxNumOfThreads(Math.floor(totalCores * 0.8));
       setNumOfThreads(Math.min(Math.floor(totalCores * 0.5), 4));

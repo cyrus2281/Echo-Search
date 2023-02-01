@@ -5,14 +5,14 @@
  *
  *   author: Cyrus Mobini
  *
- *   Licensed under the MIT license.
- *   http://www.opensource.org/licenses/mit-license.php
+ *   Licensed under the BSD 3-Clause license.
  *
  *   Copyright 2023 Cyrus Mobini (https://github.com/cyrus2281)
  *
  *
  */
 import { Worker, BroadcastChannel } from "worker_threads";
+import { MESSAGE_MODES, MESSAGE_PREFIX, WORKER_CHANNELS } from "../constants.mjs";
 import {
   crawlDirectory,
   replaceStringInFile,
@@ -23,7 +23,7 @@ import {
  * Search Query parameter
  * @typedef {Object} QueryParam
  * @property {string|RegExp} searchQuery the search query (string or regex)
- * @property {string} replaceQuery the replacement string
+ * @property {string|false} replaceQuery the replacement string, false if search only
  * @property {string[]} regexFlags regular expression modifier flags
  * @property {boolean} isRegex whether the search query is a regex or not
  * @property {boolean} matchWhole whether the search query should match the whole word or not
@@ -47,13 +47,6 @@ import {
  * @property {Promise<void>} search a promise that starts the search
  */
 
-/**
- * Message prefix for update and match
- */
-export const MESSAGE_PREFIX = {
-  update: "Updated: ",
-  match: "Matched: ",
-};
 
 /**
  * Perform a search in a single thread for the given files base on the given query
@@ -77,15 +70,15 @@ const singleThreadedSearch = async (files, query, onUpdate, ref) => {
         onUpdate &&
           onUpdate({
             progress: ref.progress,
-            message: MESSAGE_PREFIX.update + file,
-            mode: "update",
+            message: MESSAGE_PREFIX.UPDATE + file,
+            mode: MESSAGE_MODES.UPDATE,
           });
       } else {
         // file was not updated, increasing progress
         onUpdate &&
           onUpdate({
             progress: ref.progress,
-            mode: "info",
+            mode: MESSAGE_MODES.INFO,
           });
       }
     } catch (error) {
@@ -93,7 +86,7 @@ const singleThreadedSearch = async (files, query, onUpdate, ref) => {
         onUpdate({
           progress: ref.progress,
           message: `Couldn't read file ${file}`,
-          mode: "error",
+          mode: MESSAGE_MODES.ERROR,
           error,
         });
     }
@@ -125,7 +118,7 @@ const multiThreadedSearch = async (
       const perWorker = Math.ceil(files.length / numOfThreads);
       // List of workers
       const workers = [];
-      const cancelChannel = new BroadcastChannel("cancel");
+      const cancelChannel = new BroadcastChannel(WORKER_CHANNELS.CANCEL);
 
       for (let i = 0; i < numOfThreads; i++) {
         if (ref.cancel) throw new Error(searchInterruptedErrorMessage);
@@ -138,7 +131,7 @@ const multiThreadedSearch = async (
         });
         worker.on("message", async (data) => {
           const { type } = data;
-          if (type === "terminate") {
+          if (type === WORKER_CHANNELS.TERMINATE) {
             await worker.terminate();
             workers.splice(workers.indexOf(worker), 1);
             if (workers.length === 0) {
@@ -146,7 +139,7 @@ const multiThreadedSearch = async (
               setTimeout(() => cancelChannel.close());
               resolve(true);
             }
-          } else if (type === "progress") {
+          } else if (type === WORKER_CHANNELS.PROGRESS) {
             // Updating progress
             ref.progress += singleFileProgress;
             if (data.file) {
@@ -155,31 +148,31 @@ const multiThreadedSearch = async (
               onUpdate &&
                 onUpdate({
                   progress: ref.progress,
-                  message: MESSAGE_PREFIX.update + data.file,
-                  mode: "update",
+                  message: MESSAGE_PREFIX.UPDATE + data.file,
+                  mode: MESSAGE_MODES.UPDATE,
                 });
             } else {
               // File was not updated, increasing progress
               onUpdate &&
                 onUpdate({
                   progress: ref.progress,
-                  mode: "info",
+                  mode: MESSAGE_MODES.INFO
                 });
             }
-          } else if (type === "error") {
+          } else if (type === WORKER_CHANNELS.ERROR) {
             // Updating progress
             ref.progress += singleFileProgress;
             onUpdate &&
               onUpdate({
                 progress: ref.progress,
                 message: data.message,
-                mode: "error",
+                mode: MESSAGE_MODES.ERROR,
                 error: data.error,
               });
           }
           // broadcasting cancel message to all workers
           if (ref.cancel) {
-            cancelChannel.postMessage("cancel");
+            cancelChannel.postMessage(WORKER_CHANNELS.CANCEL);
             reject(new Error(searchInterruptedErrorMessage));
           }
         });
@@ -239,7 +232,7 @@ export const echoSearch = (echoSearchQuery, onComplete, onError, onUpdate) => {
         onUpdate({
           progress: ref.progress,
           message: `Found ${files.length.toLocaleString()} files.`,
-          mode: "success",
+          mode: MESSAGE_MODES.SUCCESS
         });
       // Starting the search and replace in the files
       const startTime = Date.now();
@@ -260,7 +253,7 @@ export const echoSearch = (echoSearchQuery, onComplete, onError, onUpdate) => {
       onError &&
         onError({
           message: error.message,
-          mode: "error",
+          mode: MESSAGE_MODES.ERROR,
           error: error,
         });
     }

@@ -8,11 +8,12 @@ import Tooltip from "@mui/material/Tooltip";
 import ClearIcon from "@mui/icons-material/CancelPresentation";
 
 import Console from "./Console";
+import { CHANNELS, MESSAGE_MODES } from "../../constants.mjs";
 
 const { ipcListen } = window.api;
 
 const FAILED_SEARCH_HEADING = "Operation was not completely successful.";
-const MESSAGE_MODES = {
+const MESSAGE_MODES_STYLES = {
   success: "success.main",
   error: "error.main",
   info: "text.primary",
@@ -22,22 +23,18 @@ const getMessage = (msg) => {
   let message = msg.message;
   let mode, isFile;
   switch (msg.mode) {
-    case "success":
-      mode = MESSAGE_MODES.success;
+    case MESSAGE_MODES.SUCCESS:
+      mode = MESSAGE_MODES_STYLES.success;
       break;
-    case "error":
-      mode = MESSAGE_MODES.error;
+    case MESSAGE_MODES.ERROR:
+      mode = MESSAGE_MODES_STYLES.error;
       break;
-    case "update":
-      mode = MESSAGE_MODES.info;
-      isFile = true;
-      break;
-    case "match":
-      mode = MESSAGE_MODES.info;
+    case MESSAGE_MODES.UPDATE:
+      mode = MESSAGE_MODES_STYLES.info;
       isFile = true;
       break;
     default:
-      mode = MESSAGE_MODES.info;
+      mode = MESSAGE_MODES_STYLES.info;
   }
   return {
     message,
@@ -60,7 +57,7 @@ function Output({ isRunning }) {
         const message = getMessage(update);
         allMessages.current.push(message);
       }
-      if (update.mode === "error" && update.error) {
+      if (update.mode === MESSAGE_MODES.ERROR && update.error) {
         console.error(update.error);
       }
       if (progress) {
@@ -72,27 +69,27 @@ function Output({ isRunning }) {
         setProgress(roundedProgress);
       }
     };
-    return ipcListen("search:progress", showProgress);
+    return ipcListen(CHANNELS.SEARCH_PROGRESS, showProgress);
   }, []);
 
   useEffect(() => {
     const onComplete = (event) => {
-      const message = { message: event.message, mode: MESSAGE_MODES.success };
+      const message = { message: event.message, mode: MESSAGE_MODES_STYLES.success };
       allMessages.current.push(message);
       setHeading("All Done!");
       setProgress(100);
     };
-    return ipcListen("search:complete", onComplete);
+    return ipcListen(CHANNELS.SEARCH_COMPLETE, onComplete);
   }, []);
 
   useEffect(() => {
     const showError = (error) => {
-      const message = { message: error.message, mode: MESSAGE_MODES.error };
+      const message = { message: error.message, mode: MESSAGE_MODES_STYLES.error };
       allMessages.current.push(message);
       setProgress(100);
       setHasError(true);
     };
-    return ipcListen("search:fail", showError);
+    return ipcListen(CHANNELS.SEARCH_FAIL, showError);
   }, []);
 
   const barColor = hasError

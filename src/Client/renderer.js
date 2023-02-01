@@ -5,8 +5,7 @@
  *
  *   author: Cyrus Mobini
  *
- *   Licensed under the MIT license.
- *   http://www.opensource.org/licenses/mit-license.php
+ *   Licensed under the BSD 3-Clause license.
  *
  *   Copyright 2023 Cyrus Mobini (https://github.com/cyrus2281)
  *

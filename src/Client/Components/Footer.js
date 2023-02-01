@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Link from "@mui/material/Link";
+import { CHANNELS } from "../../constants.mjs";
 
 const { ipcSend, ipcListen } = window.api;
 
@@ -34,12 +35,12 @@ function Footer() {
   const [latestRelease, setLatestRelease] = useState();
 
   const onNameClick = () => {
-    ipcSend("open:url", { url: pkg?.author.url });
+    ipcSend(CHANNELS.OPEN_URL, { url: pkg?.author.url });
   };
 
   useEffect(() => {
-    ipcSend("info:pkg:request");
-    return ipcListen("info:pkg:response", async (pkg) => {
+    ipcSend(CHANNELS.INFO_PKG_REQUEST);
+    return ipcListen(CHANNELS.INFO_PKG_RESPONSE, async (pkg) => {
       setPkg(pkg);
       if (pkg?.homepage && pkg?.version) {
         const latestRelease = await getLatestReleaseUrl(
@@ -79,7 +80,7 @@ function Footer() {
             pl={1}
             variant="caption"
             sx={{ cursor: "pointer" }}
-            onClick={() => ipcSend("open:url", { url: latestRelease })}
+            onClick={() => ipcSend(CHANNELS.OPEN_URL, { url: latestRelease })}
           >
             (Newer Version Available)
           </Link>

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
@@ -6,13 +6,9 @@ import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import FileIcon from "@mui/icons-material/InsertDriveFile";
 import FolderIcon from "@mui/icons-material/Folder";
+import { MESSAGE_PREFIX } from "../../constants.mjs";
 
 const { ipcSend } = window.api;
-
-const MESSAGE_PREFIX = {
-  update: "Updated: ",
-  match: "Matched: ",
-};
 
 const getItemTextStyle = (msg) => {
   const style = {
@@ -30,27 +26,28 @@ const getItemTextStyle = (msg) => {
 
 const openFile = (msg, inFolder) => {
   let filePath;
-  const request = inFolder ? "open:folder" : "open:file";
-  if (msg.includes(MESSAGE_PREFIX.update)) {
-    filePath = msg.replace(MESSAGE_PREFIX.update, "");
-  } else if (msg.includes(MESSAGE_PREFIX.match)) {
-    filePath = msg.replace(MESSAGE_PREFIX.match, "");
+  const request = inFolder ? CHANNELS.OPEN_FOLDER : CHANNELS.OPEN_FILE;
+  if (msg.includes(MESSAGE_PREFIX.UPDATE)) {
+    filePath = msg.replace(MESSAGE_PREFIX.UPDATE, "");
+  } else if (msg.includes(MESSAGE_PREFIX.MATCH)) {
+    filePath = msg.replace(MESSAGE_PREFIX.MATCH, "");
   } else {
     filePath = msg;
   }
   ipcSend(request, { filePath });
 };
 
-let lastMeasuredLength = 0; // to prevent recreating the interval on message update
 function Console({ messagesRef }) {
+  // to prevent recreating the interval on message update
+  const lastMeasuredLength = useRef(0);
   const [messages, setMessages] = React.useState([]);
-  lastMeasuredLength = messages.length;
+  lastMeasuredLength.current = messages.length;
 
   useEffect(() => {
     // To prevent the renderer from freezing/slowing down,
     // due to the flood of messages, updating 3 times a second.
     const interval = setInterval(() => {
-      if (messagesRef.current.length !== lastMeasuredLength) {
+      if (messagesRef.current.length !== lastMeasuredLength.current) {
         setMessages(messagesRef.current);
       }
     }, 250);
