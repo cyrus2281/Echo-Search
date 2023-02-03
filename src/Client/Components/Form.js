@@ -15,6 +15,7 @@ import QuerySelector from "./QuerySelector";
 import AdvancedSettings from "./AdvancedSettings";
 import { defaultRegexFlagsValues } from "./RegexFlags";
 import Footer from "./Footer";
+import { CHANNELS } from "../../constants.mjs";
 
 const { ipcSend, ipcListen } = window.api;
 
@@ -34,7 +35,10 @@ const validateForm = (form) => {
   if (!form.current.query?.searchQuery?.trim()) {
     errors.push("You need a search query.");
   }
-  if (!form.current.query?.replaceQuery?.trim()) {
+  if (
+    form.current.query?.replaceQuery !== false && // search only
+    !form.current.query?.replaceQuery?.trim()
+  ) {
     errors.push("You need a replace query.");
   }
   return errors;
@@ -55,7 +59,7 @@ function Form() {
     if (disableBtn) return;
     if (isRunning && processID) {
       setDisableBtn(true);
-      ipcSend("search:cancel", { processID });
+      ipcSend(CHANNELS.SEARCH_CANCEL, { processID });
     } else {
       const hasError = validateForm(formData);
       console.log(formData.current, hasError);
@@ -68,7 +72,7 @@ function Form() {
       showOutput && setShowOutput(false);
       setDisableBtn(true);
       setIsRunning(true);
-      ipcSend("search:start", formData.current);
+      ipcSend(CHANNELS.SEARCH_START, formData.current);
     }
   };
 
@@ -89,7 +93,7 @@ function Form() {
       setIsRunning(false);
       setProcessID("");
     };
-    return ipcListen("search:fail", showError);
+    return ipcListen(CHANNELS.SEARCH_FAIL, showError);
   }, [enqueueSnackbar]);
 
   useEffect(() => {
@@ -102,7 +106,7 @@ function Form() {
       setIsRunning(false);
       setProcessID("");
     };
-    return ipcListen("search:complete", onComplete);
+    return ipcListen(CHANNELS.SEARCH_COMPLETE, onComplete);
   }, [enqueueSnackbar]);
 
   useEffect(() => {
@@ -110,7 +114,7 @@ function Form() {
       setProcessID(event.processID);
       setDisableBtn(false);
     };
-    return ipcListen("search:processID", onReceiveID);
+    return ipcListen(CHANNELS.SEARCH_PROCESS_ID, onReceiveID);
   }, []);
 
   const buttonProps =

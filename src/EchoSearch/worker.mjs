@@ -4,6 +4,7 @@ import {
   workerData,
   isMainThread,
 } from "worker_threads";
+import { WORKER_CHANNELS } from "../constants.mjs";
 import { replaceStringInFile } from "./search-utils.mjs";
 
 if (isMainThread) {
@@ -14,7 +15,7 @@ const { files = [], query } = workerData;
 const ref = { cancel: false };
 
 // listen for cancel message on broadcast channel
-const cancelChannel = new BroadcastChannel("cancel");
+const cancelChannel = new BroadcastChannel(WORKER_CHANNELS.CANCEL);
 cancelChannel.onmessage = () => {
   ref.cancel = true;
 };
@@ -37,7 +38,7 @@ const search = async () => {
     if (ref.cancel) {
       // request termination
       postMessage({
-        type: "terminate",
+        type: WORKER_CHANNELS.TERMINATE,
       });
       return;
     }
@@ -48,17 +49,18 @@ const search = async () => {
         // file was updated
         postMessage({
           file,
-          type: "progress",
+          type: WORKER_CHANNELS.PROGRESS,
+          isSearchOnly: updatedFile === true
         });
       } else {
         // file was not updated, just updating progress
         postMessage({
-          type: "progress",
+          type: WORKER_CHANNELS.PROGRESS,
         });
       }
     } catch (error) {
       postMessage({
-        type: "error",
+        type: WORKER_CHANNELS.ERROR,
         message: `Couldn't read file ${file}`,
         error,
       });
@@ -66,7 +68,7 @@ const search = async () => {
   }
   // search is done, request termination
   postMessage({
-    type: "terminate",
+    type: WORKER_CHANNELS.TERMINATE,
   });
 };
 

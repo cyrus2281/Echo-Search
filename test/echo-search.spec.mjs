@@ -413,6 +413,86 @@ describe("Echo-Search.js", function () {
     });
   });
 
+  describe("# Search Only", function () {
+    it("Simple - no flags", function (done) {
+      const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
+      const completionMessage = /Search Completed: 4 files matched/;
+      const searchParam = {
+        query: {
+          searchQuery: testUtils.searchQuery,
+          replaceQuery: false,
+          regexFlags: ["g"],
+          isRegex: false,
+          matchWhole: false,
+        },
+        directories: [testDir],
+      };
+      echoSearch(searchParam, ({ message }) => {
+        try {
+          // read file and check if the content is replaced
+          const fileContent = fs.readFileSync(testDirFile1, "utf8");
+          assert.strictEqual(fileContent, testUtils.originalText);
+          assert.match(message, completionMessage);
+          done();
+        } catch (err) {
+          done(err);
+        }
+      }).search();
+    });
+    it("Multi-line Query", function (done) {
+      const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
+      const completionMessage = /Search Completed: 4 files matched/;
+      const searchParam = {
+        query: {
+          searchQuery: testUtils.multiLineSearchQuery,
+          replaceQuery: false,
+          regexFlags: ["g"],
+          isRegex: false,
+          matchWhole: false,
+        },
+        directories: [testDir],
+      };
+      echoSearch(searchParam, ({ message }) => {
+        try {
+          // read file and check if the content is replaced
+          const fileContent = fs.readFileSync(testDirFile1, "utf8");
+          assert.strictEqual(fileContent, testUtils.originalText);
+          assert.match(message, completionMessage);
+          done();
+        } catch (err) {
+          done(err);
+        }
+      }).search();
+    });
+    it("With Concurrency", function (done) {
+      const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
+      const completionMessage = /Search Completed: 4 files matched/;
+      const searchParam = {
+        query: {
+          searchQuery: testUtils.searchQuery,
+          replaceQuery: false,
+          regexFlags: ["g"],
+          isRegex: false,
+          matchWhole: false,
+        },
+        directories: [testDir],
+        isMultiThreaded: true,
+        numOfThreads: 2,
+      };
+      echoSearch(searchParam, ({ message }) => {
+        try {
+          // read file and check if the content is replaced
+          const fileContent = fs.readFileSync(testDirFile1, "utf8");
+          assert.strictEqual(fileContent, testUtils.originalText);
+          assert.match(message, completionMessage);
+          done();
+        } catch (err) {
+          done(err);
+        }
+      }).search();
+    });
+  });
+
   describe("# Regex Query", function () {
     it("Simple Query", function (done) {
       const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");

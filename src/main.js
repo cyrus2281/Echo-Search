@@ -5,8 +5,7 @@
  *
  *   author: Cyrus Mobini
  *
- *   Licensed under the MIT license.
- *   http://www.opensource.org/licenses/mit-license.php
+ *   Licensed under the BSD 3-Clause license.
  *
  *   Copyright 2023 Cyrus Mobini (https://github.com/cyrus2281)
  *
@@ -23,6 +22,7 @@ const {
   MenuItem,
 } = require("electron");
 const os = require("os");
+const { CHANNELS } = require("./constants.mjs");
 const { echoSearch } = require("./EchoSearch/echo-search.mjs");
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -36,10 +36,10 @@ let mainWindow;
 const createWindow = () => {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 800,
+    width: 850,
     height: 1000,
-    minWidth: 600,
-    minHeight: 500,
+    minWidth: 650,
+    minHeight: 550,
     icon: "icons/icon.png",
     webPreferences: {
       nodeIntegration: false,
@@ -91,30 +91,30 @@ app.on("activate", () => {
 
 const processes = {};
 
-ipcMain.on("directory:select", async () => {
+ipcMain.on(CHANNELS.DIRECTORY_SELECT, async () => {
   const result = await dialog.showOpenDialog(mainWindow, {
     properties: ["openDirectory"],
     buttonLabel: "Select directory",
     title: "Parent directory for recursive search",
   });
   if (result.filePaths && result.filePaths.length) {
-    mainWindow.webContents.send("directory:selected", result.filePaths[0]);
+    mainWindow.webContents.send(CHANNELS.DIRECTORY_SELECTED, result.filePaths[0]);
   }
 });
 
-ipcMain.on("search:start", async (e, query) => {
+ipcMain.on(CHANNELS.SEARCH_START, async (e, query) => {
   if (query) {
     const processID = "process-" + Date.now().toString();
 
     const onError = (error) => {
-      mainWindow.webContents.send("search:fail", error);
+      mainWindow.webContents.send(CHANNELS.SEARCH_FAIL, error);
       delete processes[processID];
     };
     const onProgress = (progress) => {
-      mainWindow.webContents.send("search:progress", progress);
+      mainWindow.webContents.send(CHANNELS.SEARCH_PROGRESS, progress);
     };
     const onComplete = (message) => {
-      mainWindow.webContents.send("search:complete", message);
+      mainWindow.webContents.send(CHANNELS.SEARCH_COMPLETE, message);
       delete processes[processID];
     };
     const { search, cancel } = echoSearch(
@@ -126,34 +126,34 @@ ipcMain.on("search:start", async (e, query) => {
     processes[processID] = {
       cancel,
     };
-    mainWindow.webContents.send("search:processID", { processID });
+    mainWindow.webContents.send(CHANNELS.SEARCH_PROCESS_ID, { processID });
     await search();
   }
 });
 
-ipcMain.on("search:cancel", async (e, { processID }) => {
+ipcMain.on(CHANNELS.SEARCH_CANCEL, async (e, { processID }) => {
   if (processID && processes[processID] && processes[processID].cancel) {
     processes[processID].cancel();
   }
 });
 
-ipcMain.on("open:url", async (e, { url }) => {
+ipcMain.on(CHANNELS.OPEN_URL, async (e, { url }) => {
   url && shell.openExternal(url);
 });
 
-ipcMain.on("open:file", async (e, { filePath }) => {
+ipcMain.on(CHANNELS.OPEN_FILE, async (e, { filePath }) => {
   filePath && shell.openPath(filePath);
 });
 
-ipcMain.on("open:folder", async (e, { filePath }) => {
+ipcMain.on(CHANNELS.OPEN_FOLDER, async (e, { filePath }) => {
   filePath && shell.showItemInFolder(filePath);
 });
 
-ipcMain.on("info:pkg:request", async () => {
-  mainWindow.webContents.send("info:pkg:response", process.env.PACKAGE);
+ipcMain.on(CHANNELS.INFO_PKG_REQUEST, async () => {
+  mainWindow.webContents.send(CHANNELS.INFO_PKG_RESPONSE, process.env.PACKAGE);
 });
 
-ipcMain.on("info:cores:request", async () => {
+ipcMain.on(CHANNELS.INFO_CORES_REQUEST, async () => {
   // Number of available cores
-  mainWindow.webContents.send("info:cores:response", os.cpus().length);
+  mainWindow.webContents.send(CHANNELS.INFO_CORES_RESPONSE, os.cpus().length);
 });

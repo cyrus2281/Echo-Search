@@ -15,6 +15,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useSnackbar } from "notistack";
+import { CHANNELS } from "../../constants.mjs";
 
 const { ipcSend, ipcListen } = window.api;
 
@@ -23,7 +24,7 @@ function DirectorySelector({ form }) {
   const [directories, setDirectories] = useState([]);
 
   const onSelectDirectory = () => {
-    ipcSend("directory:select");
+    ipcSend(CHANNELS.DIRECTORY_SELECT);
   };
 
   const onRemoveDirectory = (index) => {
@@ -32,7 +33,7 @@ function DirectorySelector({ form }) {
   };
 
   useEffect(() => {
-    return ipcListen("directory:selected", (directory) => {
+    return ipcListen(CHANNELS.DIRECTORY_SELECTED, (directory) => {
       if (directories.includes(directory)) {
         enqueueSnackbar("Directory already selected.", {
           variant: "error",
