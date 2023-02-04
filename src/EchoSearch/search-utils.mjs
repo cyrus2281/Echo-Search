@@ -79,7 +79,7 @@ export const crawlDirectory = async (
 /**
  * Escape a search query to be used in a regex.
  * Escape new line for both window and Linux/Unix
- * @param {string} searchQuery search string 
+ * @param {string} searchQuery search string
  * @param {boolean} isRegex whether to escape all special characters or not
  * @returns {string} regex escaped search query
  */
@@ -95,7 +95,7 @@ const escapeSearchQuery = (searchQuery, isRegex) => {
  * replace a string in a given text value
  * @param {string} text the text to search in
  * @param {QueryParam} query the search query
- * @returns {boolean|string} false if search query is not found or is empty, 
+ * @returns {boolean|string} false if search query is not found or is empty,
  * true if it's a search only, otherwise the new text
  */
 export const replaceString = (text, query) => {
@@ -119,7 +119,7 @@ export const replaceString = (text, query) => {
   }
   if (replaceQuery === false) {
     // search only: found match, no replace
-    return true
+    return true;
   }
   return text[replaceFunction](reg, replaceQuery);
 };
@@ -136,7 +136,7 @@ export const replaceStringInFile = async (filePath, query) => {
     return false;
   }
   const result = replaceString(text, query);
-  if (typeof result === 'boolean') {
+  if (typeof result === "boolean") {
     // type is boolean if there was no match found
     // or it is a search only operation
     return result;

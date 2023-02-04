@@ -24,6 +24,7 @@ const {
 const os = require("os");
 const { CHANNELS } = require("./constants.mjs");
 const { echoSearch } = require("./EchoSearch/echo-search.mjs");
+const { storeStatusUpdate } = require("./store.js");
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
@@ -32,6 +33,7 @@ if (require("electron-squirrel-startup")) {
 
 const isDev = process.env.NODE_ENV === "development";
 
+// Window 
 let mainWindow;
 const createWindow = () => {
   // Create the browser window.
@@ -89,6 +91,7 @@ app.on("activate", () => {
   }
 });
 
+// Channels and processes
 const processes = {};
 
 ipcMain.on(CHANNELS.DIRECTORY_SELECT, async () => {
@@ -116,6 +119,10 @@ ipcMain.on(CHANNELS.SEARCH_START, async (e, query) => {
     const onComplete = (message) => {
       mainWindow.webContents.send(CHANNELS.SEARCH_COMPLETE, message);
       delete processes[processID];
+      const dialogProps = storeStatusUpdate(message)
+      if (dialogProps) {
+        mainWindow.webContents.send(CHANNELS.OPEN_DIALOG, dialogProps);
+      }
     };
     const { search, cancel } = echoSearch(
       query,
