@@ -15,6 +15,7 @@ import { Worker, BroadcastChannel } from "worker_threads";
 import {
   MESSAGE_MODES,
   MESSAGE_PREFIX,
+  SEARCH_TYPES,
   WORKER_CHANNELS,
 } from "../constants.mjs";
 import {
@@ -220,8 +221,13 @@ export const echoSearch = (echoSearchQuery, onComplete, onError, onUpdate) => {
   // Search Instance
   async function search() {
     try {
-      const files = [];
+      // wait for 100ms to let the UI update
+      await new Promise((resolve) => setTimeout(resolve, 100));
       if (ref.cancel) throw new Error(searchInterruptedErrorMessage);
+      // Starting the search and replace in the files
+      const startTime = Date.now();
+      // file paths
+      const files = [];
       // Getting all the files by crawling in the directories
       const queue = [...directories];
       while (queue.length > 0) {
@@ -235,17 +241,12 @@ export const echoSearch = (echoSearchQuery, onComplete, onError, onUpdate) => {
         );
         files.push(...dirFiles);
       }
-      // wait for 100ms to let the UI update
-      await new Promise((resolve) => setTimeout(resolve, 100));
-      if (ref.cancel) throw new Error(searchInterruptedErrorMessage);
       onUpdate &&
         onUpdate({
           progress: ref.progress,
           message: `Found ${files.length.toLocaleString()} files.`,
           mode: MESSAGE_MODES.SUCCESS,
         });
-      // Starting the search and replace in the files
-      const startTime = Date.now();
       if (isMultiThreaded) {
         // Using multiple threads
         await multiThreadedSearch(files, query, numOfThreads, onUpdate, ref);
@@ -262,6 +263,9 @@ export const echoSearch = (echoSearchQuery, onComplete, onError, onUpdate) => {
             `Search Completed: ${ref.updatedFilesCount.toLocaleString()} files ` +
             (isSearchOnly ? "matched" : "updated") +
             `. Time taken: ${timeTaken} seconds.`,
+          totalCount: files.length,
+          updatedCount: ref.updatedFilesCount,
+          searchType: isSearchOnly ? SEARCH_TYPES.MATCH : SEARCH_TYPES.REPLACE,
         });
     } catch (error) {
       onError &&

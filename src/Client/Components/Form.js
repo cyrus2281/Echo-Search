@@ -16,6 +16,7 @@ import AdvancedSettings from "./AdvancedSettings";
 import { defaultRegexFlagsValues } from "./RegexFlags";
 import Footer from "./Footer";
 import { CHANNELS } from "../../constants.mjs";
+import DialogAlert from "./DialogAlert";
 
 const { ipcSend, ipcListen } = window.api;
 
@@ -132,6 +133,7 @@ function Form() {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "space-between",
+        maxWidth: "1000px",
       }}
     >
       <Paper
@@ -139,7 +141,6 @@ function Form() {
         sx={{
           height: "100%",
           width: "100%",
-          maxWidth: "1000px",
           padding: "1rem",
           margin: "0 auto",
         }}
@@ -195,6 +196,7 @@ function Form() {
         </Grid>
       </Paper>
       <Footer />
+      <DialogAlert />
     </Box>
   );
 }

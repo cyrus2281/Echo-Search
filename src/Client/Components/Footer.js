@@ -2,6 +2,10 @@ import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Link from "@mui/material/Link";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
+import CoffeeIcon from "@mui/icons-material/CoffeeTwoTone";
+
 import { CHANNELS } from "../../constants.mjs";
 
 const { ipcSend, ipcListen } = window.api;
@@ -10,6 +14,10 @@ const getReleaseUrl = (homepage) => {
   const repo = homepage.split("/").slice(-2).join("/").split("#")[0];
   const releaseUrl = `https://api.github.com/repos/${repo}/releases/latest`;
   return releaseUrl;
+};
+
+const openUrl = (url) => {
+  ipcSend(CHANNELS.OPEN_URL, { url });
 };
 
 const getLatestReleaseUrl = async (homepage, currentVersion) => {
@@ -34,10 +42,6 @@ function Footer() {
   const [pkg, setPkg] = useState();
   const [latestRelease, setLatestRelease] = useState();
 
-  const onNameClick = () => {
-    ipcSend(CHANNELS.OPEN_URL, { url: pkg?.author.url });
-  };
-
   useEffect(() => {
     ipcSend(CHANNELS.INFO_PKG_REQUEST);
     return ipcListen(CHANNELS.INFO_PKG_RESPONSE, async (pkg) => {
@@ -55,37 +59,49 @@ function Footer() {
   return (
     <Box
       sx={{
-        display: "block",
         width: "100%",
         display: "flex",
         alignItems: "center",
-        justifyContent: "space-evenly",
         mt: 1,
       }}
     >
-      <Typography variant="caption">
-        Created By
-        <Typography
-          variant="caption"
-          onClick={onNameClick}
-          sx={{ color: "primary.main", ml: 0.5, cursor: "pointer" }}
-        >
-          {pkg?.author.name}
-        </Typography>
-      </Typography>
-      <Typography variant="caption">
-        Version {pkg?.version}
-        {latestRelease && (
-          <Link
-            pl={1}
+      <Tooltip title="Support the developer by buying him a coffee. ❤️" sx={{}}>
+        <IconButton onClick={() => openUrl(pkg?.buyMeACoffee.url)}>
+          <CoffeeIcon />
+        </IconButton>
+      </Tooltip>
+      <Box
+        sx={{
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-evenly",
+        }}
+      >
+        <Typography variant="caption">
+          Created By
+          <Typography
             variant="caption"
-            sx={{ cursor: "pointer" }}
-            onClick={() => ipcSend(CHANNELS.OPEN_URL, { url: latestRelease })}
+            onClick={() => openUrl(pkg?.author.url)}
+            sx={{ color: "primary.main", ml: 0.5, cursor: "pointer" }}
           >
-            (Newer Version Available)
-          </Link>
-        )}
-      </Typography>
+            {pkg?.author.name}
+          </Typography>
+        </Typography>
+        <Typography variant="caption">
+          Version {pkg?.version}
+          {latestRelease && (
+            <Link
+              pl={1}
+              variant="caption"
+              sx={{ cursor: "pointer" }}
+              onClick={() => ipcSend(CHANNELS.OPEN_URL, { url: latestRelease })}
+            >
+              (Newer Version Available)
+            </Link>
+          )}
+        </Typography>
+      </Box>
     </Box>
   );
 }

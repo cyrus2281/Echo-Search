@@ -17,6 +17,7 @@ module.exports = {
         version: package.version,
         author: package.author,
         homepage: package.homepage,
+        buyMeACoffee: package.buyMeACoffee,
       }),
     }),
   ]
