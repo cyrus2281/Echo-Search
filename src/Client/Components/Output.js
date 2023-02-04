@@ -52,7 +52,6 @@ function Output({ isRunning }) {
 
   useEffect(() => {
     const showProgress = (update) => {
-      const progress = update.progress;
       if (update.message) {
         const message = getMessage(update);
         allMessages.current.push(message);
@@ -60,8 +59,8 @@ function Output({ isRunning }) {
       if (update.mode === MESSAGE_MODES.ERROR && update.error) {
         console.error(update.error);
       }
-      if (progress) {
-        const roundedProgress = Math.round(progress * 10) / 10;
+      if (update.progress) {
+        const roundedProgress = Math.round(+update.progress * 10) / 10;
         const heading = `Updating files. ${roundedProgress.toFixed(
           1
         )}% completed.`;
