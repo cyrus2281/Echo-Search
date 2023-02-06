@@ -44,14 +44,14 @@ Echo Search is a feature-rich and powerful application that allows you to search
 
 1. Open the `latest` release from [Releases](https://github.com/cyrus2281/Echo-Search/releases).
 2. From `Assets` download the `exe` version.
-   `echo-search-X.X.X.WIN.Setup.exe`
+   `Echo Search-X.X.X.WIN.Setup.exe`
 3. Install the app by running (double clicking) the file.
 
 ### MacOS
 
 1. Open the `latest` release from [Releases](https://github.com/cyrus2281/Echo-Search/releases).
 2. From `Assets` download the `zip` version.
-   `echo-search-darwin-x64-X.X.X.zip`
+   `Echo Search-darwin-x64-X.X.X.zip`
 3. After downloading the zip, double click on it to extract the file.
 4. Right click on the file and select open. You might see a warning that the developer is unknown, accept and open the app (this is because the app is not registered under the apple's paid subscription).
 5. Drag and move the app to the application folder.
