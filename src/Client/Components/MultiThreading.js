@@ -23,9 +23,9 @@ const MultiThreadingTooltip = styled(({ className, ...props }) => (
         Higher number of threads does NOT mean faster results. Concurrency
         depends on different factors such as the <em>number of threads</em>,
         <em> power of each core</em>, and the
-        <em> amount of available memory</em>. Note that concurrency uses
-        considerably more amount memory. Please be sure not overload your system
-        memory. With Concurrency you might feel some asynchronously or miss some
+        <em> amount of the available memory</em>. Note that concurrency uses
+        considerably more amount of memory. Please be sure not overload your system
+        memory. With Concurrency you might feel some asynchronous behavior or miss some
         messages. <br></br> You're not allowed to use more than <b>80%</b> of
         your CPU cores.<br></br> We recommend testing with different number of
         threads to find the best performance.

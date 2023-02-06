@@ -54,7 +54,7 @@ function ExcludeSelector({ form }) {
         <Box sx={{ width: "100%", display: "flex", alignItems: "center" }}>
           <Typography variant="body1">Files/Directories To Exclude:</Typography>
           <Tooltip
-            title="Path can complete or partial match. It can also be used to exclude specific file extensions."
+            title="Paths can be complete or partial match. It can also be used to exclude specific file extensions."
             sx={{ ml: 1 }}
           >
             <IconButton>
