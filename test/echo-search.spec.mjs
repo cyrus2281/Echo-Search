@@ -21,7 +21,7 @@ const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
 
 const testDir = path.join(__dirname, "testDir");
 
-describe("Echo-Search.js", function () {
+describe("Echo-Search", function () {
   // make test environment
   beforeEach(function () {
     // create directory testDir

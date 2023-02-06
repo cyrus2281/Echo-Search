@@ -1,8 +1,8 @@
 {
   "name": "echo-search",
-  "productName": "echo-search",
-  "version": "2.4.7",
-  "description": "An application to search and replace strings in files recursively",
+  "productName": "Echo Search",
+  "version": "2.4.8",
+  "description": "Echo Search is a feature-rich application designed to help you search and replace text within the contents of files in a directory and its subdirectories.",
   "main": ".webpack/main",
   "scripts": {
     "start": "cross-env NODE_ENV=development electron-forge start",
@@ -17,7 +17,9 @@
     "update:minor": "npm version minor",
     "update:patch": "npm version patch --no-git-tag-version --no-commit-hooks"
   },
-  "keywords": [],
+  "keywords": [
+    "search", "find", "replace", "findAll", "replaceAll", "findAndReplace", "searchAndReplace"
+  ],
   "author": {
     "name": "Cyrus Mobini",
     "url": "https://github.com/cyrus2281"
