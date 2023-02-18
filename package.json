@@ -1,7 +1,7 @@
 {
   "name": "echo-search",
   "productName": "Echo Search",
-  "version": "2.4.8",
+  "version": "2.5.0",
   "description": "Echo Search is a feature-rich application designed to help you search and replace text within the contents of files in a directory and its subdirectories.",
   "main": ".webpack/main",
   "scripts": {
@@ -18,7 +18,13 @@
     "update:patch": "npm version patch --no-git-tag-version --no-commit-hooks"
   },
   "keywords": [
-    "search", "find", "replace", "findAll", "replaceAll", "findAndReplace", "searchAndReplace"
+    "search",
+    "find",
+    "replace",
+    "findAll",
+    "replaceAll",
+    "findAndReplace",
+    "searchAndReplace"
   ],
   "author": {
     "name": "Cyrus Mobini",
