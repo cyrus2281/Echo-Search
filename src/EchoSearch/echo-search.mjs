@@ -38,7 +38,7 @@ import {
  *  predefined exclusion options
  * @typedef {Object} ExcludeOptions predefined exclusion options
  * @property {boolean} excludeHiddenDirectories whether to exclude hidden directories or not (directories starting with .)
- * @property {boolean} excludeHiddenFile whether to exclude hidden files or not (files starting with .)
+ * @property {boolean} excludeHiddenFiles whether to exclude hidden files or not (files starting with .)
  * @property {boolean} excludeLibraries whether to exclude libraries or not (node_modules, lib, etc.)
  */
 

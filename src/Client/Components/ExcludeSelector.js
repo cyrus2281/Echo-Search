@@ -1,8 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import IconButton from "@mui/material/IconButton";
+import ToggleButton from "@mui/material/ToggleButton";
 import Tooltip from "@mui/material/Tooltip";
 import FolderOffIcon from "@mui/icons-material/FolderOff";
 import Typography from "@mui/material/Typography";
@@ -15,9 +16,17 @@ import ListItemText from "@mui/material/ListItemText";
 import Avatar from "@mui/material/Avatar";
 import DeleteIcon from "@mui/icons-material/Delete";
 
+import FontDownloadIcon from "@mui/icons-material/FontDownload";
+import AbcIcon from "@mui/icons-material/Abc";
+import SpaceBarIcon from "@mui/icons-material/SpaceBar";
+import SearchOffIcon from "@mui/icons-material/SearchOff";
+
 function ExcludeSelector({ form }) {
-  const [excludes, setExcludes] = React.useState([]);
-  const [exclude, setExclude] = React.useState("");
+  const [excludes, setExcludes] = useState([]);
+  const [exclude, setExclude] = useState("");
+  const [excludeHiddenDirectories, setExcludeHiddenDirectories] =
+    useState(false);
+  const [excludeHiddenFiles, setExcludeHiddenFiles] = useState(false);
 
   const addToExcludes = (exclude) => {
     if (exclude.trim()) {
@@ -34,7 +43,15 @@ function ExcludeSelector({ form }) {
 
   useEffect(() => {
     form.current.excludes = excludes;
-  }, [excludes]);
+    if (excludeHiddenFiles || excludeHiddenDirectories) {
+      form.current.excludeOptions = {
+        excludeHiddenDirectories,
+        excludeHiddenFiles
+      }
+    } else {
+      form.current.excludeOptions = {};
+    }
+  }, [excludes, excludeHiddenFiles, excludeHiddenDirectories]);
 
   return (
     <Box
@@ -84,10 +101,10 @@ function ExcludeSelector({ form }) {
         </IconButton>
       </Box>
       <Box sx={{ width: "100%", py: 1 }}>
-      <List
+        <List
           dense={false}
           sx={{
-            pr:2,
+            pr: 2,
             overflow: "auto",
             maxHeight: 150,
           }}
@@ -107,13 +124,43 @@ function ExcludeSelector({ form }) {
             >
               <ListItemAvatar>
                 <Avatar>
-                  <FolderOffIcon/>
+                  <FolderOffIcon />
                 </Avatar>
               </ListItemAvatar>
               <ListItemText primary={value} />
             </ListItem>
           ))}
         </List>
+      </Box>
+      <Box
+        display="flex"
+        justifyContent="flex-start"
+        alignItems="center"
+        gap={2}
+      >
+        <Typography variant="body2">Options: </Typography>
+        <Tooltip title="Exclude hidden files, ie files that start with a dot">
+          <ToggleButton
+            value="hiddenFiles"
+            size="small"
+            selected={excludeHiddenFiles}
+            onChange={(e) => setExcludeHiddenFiles(!excludeHiddenFiles)}
+          >
+            Exclude Hidden Files
+          </ToggleButton>
+        </Tooltip>
+        <Tooltip title="Exclude hidden directories, ie files that start with a directories">
+          <ToggleButton
+            value="hiddenDirectories"
+            size="small"
+            selected={excludeHiddenDirectories}
+            onChange={(e) =>
+              setExcludeHiddenDirectories(!excludeHiddenDirectories)
+            }
+          >
+            Exclude Hidden Directories
+          </ToggleButton>
+        </Tooltip>
       </Box>
     </Box>
   );
