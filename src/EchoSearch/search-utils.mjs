@@ -13,6 +13,7 @@
  */
 import fs from "fs";
 import path from "path";
+import { COMMON_LIBRARY_NAMES } from "../constants.mjs";
 
 /**
  * Search Query parameter
@@ -64,14 +65,19 @@ export const crawlDirectory = async (
   ref = {}
 ) => {
   if (ref.cancel) throw new Error(searchInterruptedErrorMessage);
-  const { excludeHiddenDirectories, excludeHiddenFiles } = excludeOptions;
+  const { excludeHiddenDirectories, excludeHiddenFiles, excludeLibraries } =
+    excludeOptions;
   const files = [];
   const items = await fs.promises.readdir(directory, { withFileTypes: true });
   for (const item of items) {
     if (item.isDirectory()) {
       if (
         !excludes.some((exc) => item.name.includes(exc)) && // exclude directories
-        !(excludeHiddenDirectories && item.name.startsWith(".")) // exclude hidden directories
+        !(excludeHiddenDirectories && item.name.startsWith(".")) && // exclude hidden directories
+        !(
+          excludeLibraries &&
+          COMMON_LIBRARY_NAMES.some((lib) => lib === item.name)
+        ) // exclude common libraries
       ) {
         queue.push(path.join(directory, item.name));
       }
