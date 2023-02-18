@@ -25,12 +25,16 @@ function InclusionSelector({ form }) {
   const clearCustomization = () => {
     if (
       !open &&
-      (form.current.fileTypes?.length || form.current.excludes?.length)
+      (form.current.fileTypes?.length || 
+        form.current.excludes?.length || 
+        form.current.excludeOptions
+        )
     ) {
       const info = "Cleared custom file inclusion.";
       enqueueSnackbar(info, { variant: "info", autoHideDuration: 3000 });
       form.current.fileTypes = [];
       form.current.excludes = [];
+      delete form.current.excludeOptions;
     }
   };
 

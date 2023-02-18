@@ -4,7 +4,6 @@ export const COMMON_LIBRARY_NAMES = [
   'vendor',
   'lib',
   'libs',
-  'libraries',
   'packages',
 ]
 

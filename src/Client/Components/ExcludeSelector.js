@@ -47,7 +47,7 @@ function ExcludeSelector({ form }) {
         excludeLibraries,
       };
     } else {
-      form.current.excludeOptions = {};
+      delete form.current.excludeOptions;
     }
   }, [
     excludes,
