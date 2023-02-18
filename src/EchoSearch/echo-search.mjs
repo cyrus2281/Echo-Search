@@ -35,12 +35,21 @@ import {
  */
 
 /**
+ *  predefined exclusion options
+ * @typedef {Object} ExcludeOptions predefined exclusion options
+ * @property {boolean} excludeHiddenDirectories whether to exclude hidden directories or not (directories starting with .)
+ * @property {boolean} excludeHiddenFile whether to exclude hidden files or not (files starting with .)
+ * @property {boolean} excludeLibraries whether to exclude libraries or not (node_modules, lib, etc.)
+ */
+
+/**
  * EchoSearch search parameter
  * @typedef {Object} EchoSearchParam
  * @property {QueryParam} query the search query
  * @property {string[]} directories the directories to search in
  * @property {string[]} fileTypes the file types to search for. Empty array for all files
  * @property {string[]} excludes the directories/files to exclude. Empty array for no exclusion
+ * @property {ExcludeOptions} excludeOptions predefined exclusion options
  * @property {boolean} isMultiThreaded whether to use multi-threading or not
  * @property {number} numOfThreads  number of threads to use
  */
@@ -208,6 +217,7 @@ export const echoSearch = (echoSearchQuery, onComplete, onError, onUpdate) => {
     directories,
     fileTypes,
     excludes,
+    excludeOptions,
     query,
     isMultiThreaded,
     numOfThreads,
@@ -236,6 +246,7 @@ export const echoSearch = (echoSearchQuery, onComplete, onError, onUpdate) => {
           directory,
           fileTypes,
           excludes,
+          excludeOptions,
           queue,
           ref
         );

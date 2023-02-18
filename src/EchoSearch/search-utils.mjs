@@ -25,6 +25,14 @@ import path from "path";
  */
 
 /**
+ *  predefined exclusion options
+ * @typedef {Object} ExcludeOptions predefined exclusion options
+ * @property {boolean} excludeHiddenDirectories whether to exclude hidden directories or not (directories starting with .)
+ * @property {boolean} excludeHiddenFile whether to exclude hidden files or not (files starting with .)
+ * @property {boolean} excludeLibraries whether to exclude libraries or not (node_modules, lib, etc.)
+ */
+
+/**
  * EchoSearch Instance
  * @typedef {Object} SearchInstance
  * @property {Function} cancel a function to cancel the search request
@@ -42,6 +50,7 @@ export const searchInterruptedErrorMessage =
  * @param {string} directory the directory to search in
  * @param {string[]} fileTypes the file types to search for. Empty array for all files
  * @param {string[]} excludes the directories/files to exclude. Empty array for no exclusion
+ * @param {ExcludeOptions} excludeOptions predefined exclusion options
  * @param {string[]} queue sub-directories to be searched. Each directory will be appended to the queue
  * @param {{cancel: boolean}} ref an object that has a reference to whether the process is cancelled or not
  * @returns {string[]} files sub-files in the directory
@@ -50,19 +59,27 @@ export const crawlDirectory = async (
   directory,
   fileTypes = [],
   excludes = [],
+  excludeOptions = {},
   queue = [],
   ref = {}
 ) => {
   if (ref.cancel) throw new Error(searchInterruptedErrorMessage);
+  const { excludeHiddenDirectories, excludeHiddenFiles } = excludeOptions;
   const files = [];
   const items = await fs.promises.readdir(directory, { withFileTypes: true });
   for (const item of items) {
     if (item.isDirectory()) {
-      if (!excludes.some((exc) => item.name.includes(exc))) {
+      if (
+        !excludes.some((exc) => item.name.includes(exc)) && // exclude directories
+        !(excludeHiddenDirectories && item.name.startsWith(".")) // exclude hidden directories
+      ) {
         queue.push(path.join(directory, item.name));
       }
     } else {
-      if (!excludes.some((exc) => item.name.includes(exc))) {
+      if (
+        !excludes.some((exc) => item.name.includes(exc)) && // exclude files
+        !(excludeHiddenFiles && item.name.startsWith(".")) // exclude hidden files
+      ) {
         if (fileTypes.length > 0) {
           if (fileTypes.includes(item.name.split(".").pop())) {
             files.push(path.join(directory, item.name));
