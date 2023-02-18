@@ -24,7 +24,7 @@ const {
 const os = require("os");
 const { CHANNELS } = require("./constants.mjs");
 const { echoSearch } = require("./EchoSearch/echo-search.mjs");
-const { storeStatusUpdate } = require("./store.js");
+const { storeStatusUpdate, updateVersion } = require("./store.js");
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
@@ -59,6 +59,9 @@ const createWindow = () => {
   if (isDev) {
     mainWindow.webContents.openDevTools({ mode: "detach" });
   }
+
+  // Update Store Version
+  updateVersion();
 };
 
 const menu = new Menu();

@@ -54,6 +54,7 @@ export const SEARCH_TYPES = {
 
 export const STORE_TYPES = {
   STATUS: "status",
+  VERSION: "version",
   TOTAL_CONTENT: "totalContent",
   TOTAL_FILE: "totalFile",
   ...SEARCH_TYPES,

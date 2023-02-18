@@ -15,7 +15,7 @@ import FileTypeSelector from "./FileTypeSelector";
 import ExcludeSelector from "./ExcludeSelector";
 
 function InclusionSelector({ form }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const { enqueueSnackbar } = useSnackbar();
 
   const handleClick = () => {

@@ -23,6 +23,15 @@ const readFromStore = (key) => {
   return store.get(key);
 };
 
+const updateVersion = () => {
+  const { version } = process.env.PACKAGE;
+  const newVersion = version.slice(0, version.lastIndexOf("."));
+  const prevVersion = readFromStore(STORE_TYPES.VERSION);
+  if (prevVersion !== newVersion) {
+    writeToStore(STORE_TYPES.VERSION, newVersion);
+  }
+};
+
 const storeStatusUpdate = ({ totalCount, updatedCount, searchType }) => {
   // previous values
   const prevTotal =
@@ -66,7 +75,7 @@ const storeStatusUpdate = ({ totalCount, updatedCount, searchType }) => {
   }
   // show dialog if threshold is reached
   if (message.length) {
-    return (dialogProps = {
+    return {
       title: STATUS_TYPES_MESSAGES.title,
       message,
       buttons: [
@@ -81,7 +90,7 @@ const storeStatusUpdate = ({ totalCount, updatedCount, searchType }) => {
           autoFocus: true,
         },
       ],
-    });
+    };
   }
   return null;
 };
@@ -90,4 +99,5 @@ module.exports = {
   writeToStore,
   readFromStore,
   storeStatusUpdate,
+  updateVersion,
 };
