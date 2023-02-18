@@ -5,18 +5,21 @@
  *   - A
  *     - C
  *       - file4.js
+ *       - .file5
  *     - file2.md
+ *     - .D
+ *       - file6.js
  *   - B
  *      - file3.txt
  *   - file1.txt
  */
 
 import assert from "assert";
-import fs from "fs";
 import path from "path";
+import * as url from "url";
+import fs from "fs-extra";
 import testUtils from "./test.utils.js";
 import { echoSearch } from "../src/EchoSearch/echo-search.mjs";
-import * as url from "url";
 const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
 
 const testDir = path.join(__dirname, "testDir");
@@ -32,6 +35,8 @@ describe("Echo-Search", function () {
     fs.mkdirSync(path.join(testDir, "B"));
     // create directory C
     fs.mkdirSync(path.join(testDir, "A", "C"));
+    // create directory .D (hidden directory)
+    fs.mkdirSync(path.join(testDir, "A", ".D"));
     // create file1.txt
     fs.writeFileSync(path.join(testDir, "file1.txt"), testUtils.originalText);
     // create file2.js
@@ -49,21 +54,29 @@ describe("Echo-Search", function () {
       path.join(testDir, "A", "C", "file4.js"),
       testUtils.originalText
     );
+    // create .file5 (hidden file)
+    fs.writeFileSync(
+      path.join(testDir, "A", "C", ".file5"),
+      testUtils.originalText
+    );
+    // create file6.js
+    fs.writeFileSync(
+      path.join(testDir, "A", ".D", "file6.js"),
+      testUtils.originalText
+    );
   });
   // cleaning test environment
   afterEach(function (done) {
     const testDir = path.join(__dirname, "testDir");
     // force remove directory testDir
-    if (fs.existsSync(testDir)) {
-      fs.rm(testDir, { recursive: true, force: true }, done);
-    } else {
-      done();
-    }
+    fs.remove(path.join(testDir, "A", ".D", "file6.js"))
+    .then(() => fs.remove(testDir))
+    .then(() => done()).catch((err) => done(err))
   });
 
   describe("# File Count", function () {
     it("Single Directory - No Customization", function (done) {
-      const fileCountText = "Found 4 files.";
+      const fileCountText = "Found 6 files.";
 
       const searchParam = {
         query: {
@@ -94,7 +107,7 @@ describe("Echo-Search", function () {
       ).search();
     });
     it("Single Directory - with inclusion", function (done) {
-      const fileCountText = "Found 3 files.";
+      const fileCountText = "Found 4 files.";
 
       const searchParam = {
         query: {
@@ -125,7 +138,7 @@ describe("Echo-Search", function () {
       ).search();
     });
     it("Single Directory - with exclusion", function (done) {
-      const fileCountText = "Found 3 files.";
+      const fileCountText = "Found 4 files.";
 
       const searchParam = {
         query: {
@@ -155,8 +168,76 @@ describe("Echo-Search", function () {
         }
       ).search();
     });
+    it("Single Directory - with hidden file exclusion", function (done) {
+      const fileCountText = "Found 5 files.";
+
+      const searchParam = {
+        query: {
+          searchQuery: "HelloWorld",
+          replaceQuery: "HelloWorld",
+          regexFlags: [],
+          isRegex: false,
+          matchWhole: false,
+        },
+        directories: [testDir],
+        fileTypes: [],
+        excludes: [],
+        excludeOptions: {
+          excludeHiddenFiles: true,
+        }
+      };
+      echoSearch(
+        searchParam,
+        () => {},
+        () => {},
+        ({ message, progress }) => {
+          if (message && message.includes("Found")) {
+            try {
+              assert.strictEqual(message, fileCountText);
+              done();
+            } catch (err) {
+              done(err);
+            }
+          }
+        }
+      ).search();
+    });
+    it("Single Directory - with directories file exclusion", function (done) {
+      const fileCountText = "Found 5 files.";
+
+      const searchParam = {
+        query: {
+          searchQuery: "HelloWorld",
+          replaceQuery: "HelloWorld",
+          regexFlags: [],
+          isRegex: false,
+          matchWhole: false,
+        },
+        directories: [testDir],
+        fileTypes: [],
+        excludes: [],
+        excludeOptions: {
+          excludeHiddenDirectories: true,
+        }
+      };
+      echoSearch(
+        searchParam,
+        () => {},
+        () => {},
+        ({ message, progress }) => {
+          if (message && message.includes("Found")) {
+            try {
+              assert.strictEqual(message, fileCountText);
+              done();
+            } catch (err) {
+              done(err);
+            }
+          }
+        }
+      ).search();
+    });
     it("Multi Directory - No Customization", function (done) {
-      const fileCountText = "Found 3 files.";
+      const fileCountText = "Found 5 files.";
 
       const searchParam = {
         query: {
@@ -187,7 +268,7 @@ describe("Echo-Search", function () {
       ).search();
     });
     it("Multi Directory - with inclusion", function (done) {
-      const fileCountText = "Found 2 files.";
+      const fileCountText = "Found 3 files.";
 
       const searchParam = {
         query: {
@@ -218,7 +299,7 @@ describe("Echo-Search", function () {
       ).search();
     });
     it("Multi Directory - with exclusion", function (done) {
-      const fileCountText = "Found 2 files.";
+      const fileCountText = "Found 3 files.";
 
       const searchParam = {
         query: {
@@ -248,12 +329,80 @@ describe("Echo-Search", function () {
         }
       ).search();
     });
+    it("Multi Directory - with hidden file exclusion", function (done) {
+      const fileCountText = "Found 4 files.";
+
+      const searchParam = {
+        query: {
+          searchQuery: "HelloWorld",
+          replaceQuery: "HelloWorld",
+          regexFlags: [],
+          isRegex: false,
+          matchWhole: false,
+        },
+        directories: [path.join(testDir, "A"), path.join(testDir, "B")],
+        fileTypes: [],
+        excludes: [],
+        excludeOptions: {
+          excludeHiddenFiles: true,
+        }
+      };
+      echoSearch(
+        searchParam,
+        () => {},
+        () => {},
+        ({ message, progress }) => {
+          if (message && message.includes("Found")) {
+            try {
+              assert.strictEqual(message, fileCountText);
+              done();
+            } catch (err) {
+              done(err);
+            }
+          }
+        }
+      ).search();
+    });
+    it("Multi Directory - with directories file exclusion", function (done) {
+      const fileCountText = "Found 4 files.";
+
+      const searchParam = {
+        query: {
+          searchQuery: "HelloWorld",
+          replaceQuery: "HelloWorld",
+          regexFlags: [],
+          isRegex: false,
+          matchWhole: false,
+        },
+        directories: [path.join(testDir, "A"), path.join(testDir, "B")],
+        fileTypes: [],
+        excludes: [],
+        excludeOptions: {
+          excludeHiddenDirectories: true,
+        }
+      };
+      echoSearch(
+        searchParam,
+        () => {},
+        () => {},
+        ({ message, progress }) => {
+          if (message && message.includes("Found")) {
+            try {
+              assert.strictEqual(message, fileCountText);
+              done();
+            } catch (err) {
+              done(err);
+            }
+          }
+        }
+      ).search();
+    });
   });
 
   describe("# Search And Replace", function () {
     it("Simple - no flags", function (done) {
       const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
-      const completionMessage = /Search Completed: 4 files updated/;
+      const completionMessage = /Search Completed: 6 files updated/;
       const searchParam = {
         query: {
           searchQuery: testUtils.searchQuery,
@@ -278,7 +427,7 @@ describe("Echo-Search", function () {
     });
     it("partial query - matchWhole off", function (done) {
       const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
-      const completionMessage = /Search Completed: 4 files updated/;
+      const completionMessage = /Search Completed: 6 files updated/;
       const searchParam = {
         query: {
           searchQuery: testUtils.partialQuery,
@@ -328,7 +477,7 @@ describe("Echo-Search", function () {
     });
     it("Multi-line Query", function (done) {
       const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
-      const completionMessage = /Search Completed: 4 files updated/;
+      const completionMessage = /Search Completed: 6 files updated/;
       const searchParam = {
         query: {
           searchQuery: testUtils.multiLineSearchQuery,
@@ -386,7 +535,7 @@ describe("Echo-Search", function () {
     });
     it("With Concurrency", function (done) {
       const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
-      const completionMessage = /Search Completed: 4 files updated/;
+      const completionMessage = /Search Completed: 6 files updated/;
       const searchParam = {
         query: {
           searchQuery: testUtils.searchQuery,
@@ -416,7 +565,7 @@ describe("Echo-Search", function () {
   describe("# Search Only", function () {
     it("Simple - no flags", function (done) {
       const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
-      const completionMessage = /Search Completed: 4 files matched/;
+      const completionMessage = /Search Completed: 6 files matched/;
       const searchParam = {
         query: {
           searchQuery: testUtils.searchQuery,
@@ -441,7 +590,7 @@ describe("Echo-Search", function () {
     });
     it("Multi-line Query", function (done) {
       const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
-      const completionMessage = /Search Completed: 4 files matched/;
+      const completionMessage = /Search Completed: 6 files matched/;
       const searchParam = {
         query: {
           searchQuery: testUtils.multiLineSearchQuery,
@@ -466,7 +615,7 @@ describe("Echo-Search", function () {
     });
     it("With Concurrency", function (done) {
       const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
-      const completionMessage = /Search Completed: 4 files matched/;
+      const completionMessage = /Search Completed: 6 files matched/;
       const searchParam = {
         query: {
           searchQuery: testUtils.searchQuery,
@@ -496,7 +645,7 @@ describe("Echo-Search", function () {
   describe("# Regex Query", function () {
     it("Simple Query", function (done) {
       const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
-      const completionMessage = /Search Completed: 4 files updated/;
+      const completionMessage = /Search Completed: 6 files updated/;
       const searchParam = {
         query: {
           searchQuery: testUtils.searchQuery,
@@ -521,7 +670,7 @@ describe("Echo-Search", function () {
     });
     it("Complex Query", function (done) {
       const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
-      const completionMessage = /Search Completed: 4 files updated/;
+      const completionMessage = /Search Completed: 6 files updated/;
       const searchParam = {
         query: {
           searchQuery: testUtils.regexQuery,
@@ -574,7 +723,7 @@ describe("Echo-Search", function () {
   describe("# Regex Modifier Flags", function () {
     it("Non Global - without 'g' flag", function (done) {
       const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
-      const completionMessage = /Search Completed: 4 files updated/;
+      const completionMessage = /Search Completed: 6 files updated/;
       const searchParam = {
         query: {
           searchQuery: testUtils.searchQuery,
@@ -599,7 +748,7 @@ describe("Echo-Search", function () {
     });
     it("Case Sensitive - without 'i' flag", function (done) {
       const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
-      const completionMessage = /Search Completed: 4 files updated/;
+      const completionMessage = /Search Completed: 6 files updated/;
       const searchParam = {
         query: {
           searchQuery: testUtils.caseSensitiveQuery,
@@ -624,7 +773,7 @@ describe("Echo-Search", function () {
     });
     it("Case InSensitive - with 'i' flag", function (done) {
       const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
-      const completionMessage = /Search Completed: 4 files updated/;
+      const completionMessage = /Search Completed: 6 files updated/;
       const searchParam = {
         query: {
           searchQuery: testUtils.caseSensitiveQuery,
