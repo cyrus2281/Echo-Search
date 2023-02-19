@@ -2,10 +2,10 @@ import React, { useState, useEffect, useRef } from "react";
 import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
 import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import ClearIcon from "@mui/icons-material/CancelPresentation";
+import DownArrowIcon from "@mui/icons-material/KeyboardDoubleArrowDown";
 
 import Console from "./Console";
 import { CHANNELS, MESSAGE_MODES } from "../../constants.mjs";
@@ -46,6 +46,7 @@ const getMessage = (msg) => {
 function Output({ isRunning }) {
   // due to async nature of useState, we might miss some messages, using ref
   const allMessages = useRef([]);
+  const listControlRef = useRef({});
   const [hasError, setHasError] = useState(false);
   const [progress, setProgress] = useState(0);
   const [heading, setHeading] = useState("Searching for files...");
@@ -73,7 +74,10 @@ function Output({ isRunning }) {
 
   useEffect(() => {
     const onComplete = (event) => {
-      const message = { message: event.message, mode: MESSAGE_MODES_STYLES.success };
+      const message = {
+        message: event.message,
+        mode: MESSAGE_MODES_STYLES.success,
+      };
       allMessages.current.push(message);
       setHeading("All Done!");
       setProgress(100);
@@ -83,7 +87,10 @@ function Output({ isRunning }) {
 
   useEffect(() => {
     const showError = (error) => {
-      const message = { message: error.message, mode: MESSAGE_MODES_STYLES.error };
+      const message = {
+        message: error.message,
+        mode: MESSAGE_MODES_STYLES.error,
+      };
       allMessages.current.push(message);
       setProgress(100);
       setHasError(true);
@@ -110,24 +117,36 @@ function Output({ isRunning }) {
         }
         value={isRunning ? progress : 100}
       />
-      <Typography variant="h6" sx={{ py: 2, position: "relative" }}>
+      <Typography variant="h6" sx={{ pt: 2, pb: 1, position: "relative" }}>
         {hasError ? FAILED_SEARCH_HEADING : heading}
-        <Tooltip title="Clear output">
-          <IconButton
-            size="small"
-            sx={{
-              position: "absolute",
-              right: 10,
-            }}
-            onClick={() => (allMessages.current = [])}
-          >
-            <ClearIcon />
-          </IconButton>
-        </Tooltip>
+        <Box
+          sx={{
+            position: "absolute",
+            right: 10,
+            top: 10,
+            display: "flex",
+            gap: 1,
+          }}
+        >
+          <Tooltip title="Scroll to bottom">
+            <IconButton
+              size="small"
+              onClick={() => {
+                listControlRef.current.scrollToEnd();
+              }}
+            >
+              <DownArrowIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Clear output">
+            <IconButton size="small" onClick={() => (allMessages.current = [])}>
+              <ClearIcon />
+            </IconButton>
+          </Tooltip>
+        </Box>
       </Typography>
-      <Divider />
       <Box sx={{ width: "100%" }}>
-        <Console messagesRef={allMessages} />
+        <Console messagesRef={allMessages} listControlRef={listControlRef} />
       </Box>
     </Box>
   );
