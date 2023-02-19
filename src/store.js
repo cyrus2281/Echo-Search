@@ -5,7 +5,9 @@ const {
   STATUS_TYPES_MESSAGES,
   DIALOG_ACTIONS_TYPES,
   APPRECIATION_MESSAGES,
+  CHANGE_LOGS_DIALOG,
 } = require("./constants.mjs");
+const changelogs = require("./changelogs.js");
 
 // Store
 const store = new Store({
@@ -25,10 +27,42 @@ const readFromStore = (key) => {
 
 const updateVersion = () => {
   const { version } = process.env.PACKAGE;
-  const newVersion = version.slice(0, version.lastIndexOf("."));
+  const newVersion = "v" + version.slice(0, version.lastIndexOf("."));
   const prevVersion = readFromStore(STORE_TYPES.VERSION);
   if (prevVersion !== newVersion) {
     writeToStore(STORE_TYPES.VERSION, newVersion);
+    const prevTotal = readFromStore(
+      `${STORE_TYPES.STATUS}.${STORE_TYPES.TOTAL_CONTENT}`
+    );
+    const hasUsedApp = !!prevVersion || !!prevTotal;
+    if (hasUsedApp) {
+      const versionIndex = Math.max(
+        changelogs.findIndex((log) => log.version === prevVersion),
+        // version <=v2.4 was not stored
+        changelogs.findIndex((log) => log.version == "v2.4"),
+      );
+      const updateLogs = changelogs
+        .slice(0, versionIndex)
+        .map((log) => {
+          return [
+            `Release ${log.version} - ${log.released}`,
+            ...log.logs.map((log) => `  - ${log}`),
+            "  ", // new line
+          ]
+        })
+        .flat();
+
+      return {
+        title: CHANGE_LOGS_DIALOG.title,
+        message: updateLogs,
+        buttons: [
+          {
+            label: CHANGE_LOGS_DIALOG.dismissBtnLabel,
+            type: DIALOG_ACTIONS_TYPES.DISMISS,
+          }
+        ],
+      };
+    }
   }
 };
 

@@ -92,3 +92,8 @@ export const APPRECIATION_MESSAGES = [
   "Wowza! You seem to be having the time of your life with this app. Let's buy the developer a coffee and make their day. 🎉",
   "Rocking it! You're loving the app, aren't you? Let's buy the developer a coffee and keep the good times rolling. 🚀",
 ];
+
+export const CHANGE_LOGS_DIALOG = {
+  title: "What's new?",
+  dismissBtnLabel: "Ok",
+};
