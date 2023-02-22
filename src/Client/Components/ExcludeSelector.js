@@ -15,11 +15,7 @@ import ListItemAvatar from "@mui/material/ListItemAvatar";
 import ListItemText from "@mui/material/ListItemText";
 import Avatar from "@mui/material/Avatar";
 import DeleteIcon from "@mui/icons-material/Delete";
-
-import FontDownloadIcon from "@mui/icons-material/FontDownload";
-import AbcIcon from "@mui/icons-material/Abc";
-import SpaceBarIcon from "@mui/icons-material/SpaceBar";
-import SearchOffIcon from "@mui/icons-material/SearchOff";
+import { COMMON_LIBRARY_NAMES } from "../../constants.mjs";
 
 function ExcludeSelector({ form }) {
   const [excludes, setExcludes] = useState([]);
@@ -27,6 +23,7 @@ function ExcludeSelector({ form }) {
   const [excludeHiddenDirectories, setExcludeHiddenDirectories] =
     useState(false);
   const [excludeHiddenFiles, setExcludeHiddenFiles] = useState(false);
+  const [excludeLibraries, setExcludeLibraries] = useState(false);
 
   const addToExcludes = (exclude) => {
     if (exclude.trim()) {
@@ -43,15 +40,21 @@ function ExcludeSelector({ form }) {
 
   useEffect(() => {
     form.current.excludes = excludes;
-    if (excludeHiddenFiles || excludeHiddenDirectories) {
+    if (excludeHiddenFiles || excludeHiddenDirectories || excludeLibraries) {
       form.current.excludeOptions = {
         excludeHiddenDirectories,
-        excludeHiddenFiles
-      }
+        excludeHiddenFiles,
+        excludeLibraries,
+      };
     } else {
-      form.current.excludeOptions = {};
+      delete form.current.excludeOptions;
     }
-  }, [excludes, excludeHiddenFiles, excludeHiddenDirectories]);
+  }, [
+    excludes,
+    excludeHiddenFiles,
+    excludeHiddenDirectories,
+    excludeLibraries,
+  ]);
 
   return (
     <Box
@@ -144,7 +147,7 @@ function ExcludeSelector({ form }) {
             value="hiddenFiles"
             size="small"
             selected={excludeHiddenFiles}
-            onChange={(e) => setExcludeHiddenFiles(!excludeHiddenFiles)}
+            onChange={() => setExcludeHiddenFiles(!excludeHiddenFiles)}
           >
             Exclude Hidden Files
           </ToggleButton>
@@ -154,11 +157,25 @@ function ExcludeSelector({ form }) {
             value="hiddenDirectories"
             size="small"
             selected={excludeHiddenDirectories}
-            onChange={(e) =>
+            onChange={() =>
               setExcludeHiddenDirectories(!excludeHiddenDirectories)
             }
           >
             Exclude Hidden Directories
+          </ToggleButton>
+        </Tooltip>
+        <Tooltip
+          title={`Exclude common library directories (${COMMON_LIBRARY_NAMES.join(
+            ", "
+          )}).`}
+        >
+          <ToggleButton
+            value="hiddenDirectories"
+            size="small"
+            selected={excludeLibraries}
+            onChange={() => setExcludeLibraries(!excludeLibraries)}
+          >
+            Exclude Common libraries
           </ToggleButton>
         </Tooltip>
       </Box>
