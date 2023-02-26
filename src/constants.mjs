@@ -1,3 +1,12 @@
+export const COMMON_LIBRARY_NAMES = [
+  'node_modules',
+  'site-packages',
+  'vendor',
+  'lib',
+  'libs',
+  'packages',
+]
+
 export const MESSAGE_PREFIX = {
   UPDATE: "Updated: ",
   MATCH: "Matched: ",

@@ -26,7 +26,7 @@ Echo Search is a feature-rich and powerful application that allows you to search
 
 - File extension options: You can choose to search in all file types, or select specific file extensions to focus on. You can also exclude specific file extensions if desired.
 
-- Pre-defined exclusion options: You can choose to exclude hidden files or directories.
+- Pre-defined exclusion options: You can choose to exclude hidden files or directories, or common library directories such as node_modules, libs, etc.
 
 - Concurrent processing: Echo Search supports concurrent processing, allowing you to run the application in multiple threads for faster results. You can select up to 80% of the available cores.
 
