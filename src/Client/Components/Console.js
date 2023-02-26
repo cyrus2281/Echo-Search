@@ -105,7 +105,7 @@ function Console({ messagesRef, listControlRef }) {
     // due to the flood of messages, updating 4 times a second.
     const interval = setInterval(() => {
       if (messagesRef.current.length !== lastMeasuredLength.current) {
-        setMessages(messagesRef.current);
+        setMessages([...messagesRef.current]);
       }
     }, 250);
     return () => clearInterval(interval);
@@ -131,7 +131,7 @@ function Console({ messagesRef, listControlRef }) {
           const maxCharacters = Math.floor(maxWidth / 10);
           const msgLength = messages[index].message.length;
           const extraLines = Math.ceil(msgLength / maxCharacters) - 1;
-          const totalHeight = 40 + (extraLines * 24);
+          const totalHeight = 40 + extraLines * 24;
           return totalHeight;
         }}
         estimatedItemSize={40}

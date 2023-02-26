@@ -22,11 +22,12 @@ import * as url from "url";
 import fs from "fs-extra";
 import testUtils from "./test.utils.js";
 import { echoSearch } from "../src/EchoSearch/echo-search.mjs";
+import { SEARCH_MODES } from "../src/constants.mjs";
 const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
 
 const testDir = path.join(__dirname, "testDir");
 
-describe("Echo-Search", function () {
+describe("Echo-Search: File Content", function () {
   // make test environment
   beforeEach(function () {
     // create directory testDir
@@ -86,6 +87,38 @@ describe("Echo-Search", function () {
   });
 
   describe("# File Count", function () {
+    it("Search Content Mode", function (done) {
+      const fileCountText = "Found 7 files.";
+
+      const searchParam = {
+        query: {
+          searchQuery: "HelloWorld",
+          replaceQuery: "HelloWorld",
+          regexFlags: [],
+          isRegex: false,
+          matchWhole: false,
+        },
+        directories: [testDir],
+        fileTypes: [],
+        excludes: [],
+        searchMode: SEARCH_MODES.FILE_CONTENT,
+      };
+      echoSearch(
+        searchParam,
+        () => {},
+        () => {},
+        ({ message, progress }) => {
+          if (message && message.includes("Found")) {
+            try {
+              assert.strictEqual(message, fileCountText);
+              done();
+            } catch (err) {
+              done(err);
+            }
+          }
+        }
+      ).search();
+    });
     it("Single Directory - No Customization", function (done) {
       const fileCountText = "Found 7 files.";
 
@@ -213,7 +246,7 @@ describe("Echo-Search", function () {
         }
       ).search();
     });
-    it("Single Directory - with directories file exclusion", function (done) {
+    it("Single Directory - with hidden directories exclusion", function (done) {
       const fileCountText = "Found 6 files.";
 
       const searchParam = {
@@ -408,7 +441,7 @@ describe("Echo-Search", function () {
         }
       ).search();
     });
-    it("Multi Directory - with directories file exclusion", function (done) {
+    it("Multi Directory - with hidden directories exclusion", function (done) {
       const fileCountText = "Found 5 files.";
 
       const searchParam = {
