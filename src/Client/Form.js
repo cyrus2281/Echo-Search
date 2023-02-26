@@ -27,7 +27,7 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 function Form() {
-  const [searchMode, setSearchMode] = useState(SEARCH_MODES.FILE_NAME);
+  const [searchMode, setSearchMode] = useState(SEARCH_MODES.FILE_CONTENT);
   const formData = useRef(getFormDefaults(searchMode));
   const biDirectionalChannel = useRef({ caseInsensitivity: {} });
   const { enqueueSnackbar } = useSnackbar();

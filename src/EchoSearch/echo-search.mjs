@@ -327,59 +327,75 @@ async function searchFileName(
     const queue = [...directories];
     while (queue.length > 0) {
       const directory = queue.shift();
-      const items = await fs.promises.readdir(directory, {
-        withFileTypes: true,
-      });
-      for (const item of items) {
-        if (ref.cancel) throw new Error(searchInterruptedErrorMessage);
-        if (item.isDirectory()) {
-          if (
-            !excludes.some((exc) => item.name.includes(exc)) && // exclude directories
-            !(excludeHiddenDirectories && item.name.startsWith(".")) && // exclude hidden directories
-            !(
-              excludeLibraries &&
-              COMMON_LIBRARY_NAMES.some((lib) => lib === item.name)
-            ) // exclude common libraries
-          ) {
-            queue.push(path.join(directory, item.name));
-          }
-        } else {
-          count++;
-          if (!excludes.some((exc) => item.name.includes(exc))) {
-            if (fileTypes.length > 0) {
-              if (
-                fileTypes.includes(item.name.split(".").pop()) &&
-                item.name.includes(searchQuery)
-              ) {
-                matched++;
-                onUpdate &&
-                  onUpdate({
-                    message:
-                      MESSAGE_PREFIX.MATCH + path.join(directory, item.name),
-                    mode: MESSAGE_MODES.UPDATE,
-                  });
-              }
-            } else {
-              if (item.name.includes(searchQuery)) {
-                matched++;
-                onUpdate &&
-                  onUpdate({
-                    message:
-                      MESSAGE_PREFIX.MATCH + path.join(directory, item.name),
-                    mode: MESSAGE_MODES.UPDATE,
-                  });
+      try {
+        const items = await fs.promises.readdir(directory, {
+          withFileTypes: true,
+        });
+        for (const item of items) {
+          if (ref.cancel) throw new Error(searchInterruptedErrorMessage);
+          if (item.isDirectory()) {
+            if (
+              !excludes.some((exc) => item.name.includes(exc)) && // exclude directories
+              !(excludeHiddenDirectories && item.name.startsWith(".")) && // exclude hidden directories
+              !(
+                excludeLibraries &&
+                COMMON_LIBRARY_NAMES.some((lib) => lib === item.name)
+              ) // exclude common libraries
+            ) {
+              queue.push(path.join(directory, item.name));
+            }
+          } else {
+            count++;
+            if (!excludes.some((exc) => item.name.includes(exc))) {
+              if (fileTypes.length > 0) {
+                if (
+                  fileTypes.includes(item.name.split(".").pop()) &&
+                  item.name.includes(searchQuery)
+                ) {
+                  matched++;
+                  onUpdate &&
+                    onUpdate({
+                      message:
+                        MESSAGE_PREFIX.MATCH + path.join(directory, item.name),
+                      mode: MESSAGE_MODES.UPDATE,
+                    });
+                }
+              } else {
+                if (item.name.includes(searchQuery)) {
+                  matched++;
+                  onUpdate &&
+                    onUpdate({
+                      message:
+                        MESSAGE_PREFIX.MATCH + path.join(directory, item.name),
+                      mode: MESSAGE_MODES.UPDATE,
+                    });
+                }
               }
             }
           }
         }
+      } catch (error) {
+        if (error.message === searchInterruptedErrorMessage) {
+          throw error;
+        }
+        onUpdate &&
+          onUpdate({
+            message: error.message,
+            mode: MESSAGE_MODES.ERROR,
+            error: error,
+          });
       }
     }
 
     const endTime = Date.now();
     const timeTaken = (endTime - startTime) / 1000;
+    ref.updatedFilesCount = matched;
     onComplete &&
       onComplete({
         message: `Search Completed: Found ${count.toLocaleString()} files. matched ${matched.toLocaleString()} file(s). Time taken: ${timeTaken} seconds.`,
+        totalCount: count,
+        updatedCount: ref.updatedFilesCount,
+        searchType: SEARCH_TYPES.FILE_NAME,
       });
   } catch (error) {
     onError &&

@@ -67,7 +67,7 @@ export const SEARCH_MODES = {
 };
 
 export const SEARCH_TYPES = {
-  FILE: "file",
+  FILE_NAME: "filename",
   REPLACE: "replace",
   MATCH: "match",
 };
@@ -86,7 +86,7 @@ export const STATUS_TYPES_THRESHOLD = {
   [STORE_TYPES.TOTAL_FILE]: 1000, // 100,000, 1,000,000, 10,000,000
   [STORE_TYPES.REPLACE]: 10, // 1,000, 10,000, 100,000
   [STORE_TYPES.MATCH]: 10, // 1,000, 10,000, 100,000
-  [STORE_TYPES.SEARCH]: 10, // 1,000, 10,000, 100,000
+  [STORE_TYPES.FILE_NAME]: 10, // 1,000, 10,000, 100,000
 };
 
 export const STATUS_TYPES_MESSAGES = {
