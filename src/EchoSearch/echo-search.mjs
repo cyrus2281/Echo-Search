@@ -11,10 +11,14 @@
  *
  *
  */
+import path from "path";
+import fs from "fs";
 import { Worker, BroadcastChannel } from "worker_threads";
 import {
+  COMMON_LIBRARY_NAMES,
   MESSAGE_MODES,
   MESSAGE_PREFIX,
+  SEARCH_MODES,
   SEARCH_TYPES,
   WORKER_CHANNELS,
 } from "../constants.mjs";
@@ -52,6 +56,7 @@ import {
  * @property {ExcludeOptions} excludeOptions predefined exclusion options
  * @property {boolean} isMultiThreaded whether to use multi-threading or not
  * @property {number} numOfThreads  number of threads to use
+ * @property {"filename"|"content"} searchMode the search operation mode
  */
 
 /**
@@ -210,9 +215,15 @@ const multiThreadedSearch = async (
  * @param {Function} onComplete a function to call when the search is complete
  * @param {Function} onError a function to call when the search fails
  * @param {Function} onUpdate a function to call when there is a progress update (eg. total files, file updated, etc.)
- * @return {SearchInstance} Search Instance
+ * @param {*} ref reference values
  */
-export const echoSearch = (echoSearchQuery, onComplete, onError, onUpdate) => {
+async function searchFileContent(
+  echoSearchQuery,
+  onComplete,
+  onError,
+  onUpdate,
+  ref
+) {
   const {
     directories,
     fileTypes,
@@ -222,70 +233,201 @@ export const echoSearch = (echoSearchQuery, onComplete, onError, onUpdate) => {
     isMultiThreaded,
     numOfThreads,
   } = echoSearchQuery;
+  try {
+    // wait for 100ms to let the UI update
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    if (ref.cancel) throw new Error(searchInterruptedErrorMessage);
+    // Starting the search and replace in the files
+    const startTime = Date.now();
+    // file paths
+    const files = [];
+    // Getting all the files by crawling in the directories
+    const queue = [...directories];
+    while (queue.length > 0) {
+      const directory = queue.shift();
+      const dirFiles = await crawlDirectory(
+        directory,
+        fileTypes,
+        excludes,
+        excludeOptions,
+        queue,
+        ref
+      );
+      files.push(...dirFiles);
+    }
+    onUpdate &&
+      onUpdate({
+        progress: ref.progress,
+        message: `Found ${files.length.toLocaleString()} files.`,
+        mode: MESSAGE_MODES.SUCCESS,
+      });
+    if (isMultiThreaded) {
+      // Using multiple threads
+      await multiThreadedSearch(files, query, numOfThreads, onUpdate, ref);
+    } else {
+      // Using a single thread
+      await singleThreadedSearch(files, query, onUpdate, ref);
+    }
+    const endTime = Date.now();
+    const timeTaken = (endTime - startTime) / 1000;
+    const isSearchOnly = query.replaceQuery === false;
+    onComplete &&
+      onComplete({
+        message:
+          `Search Completed: ${ref.updatedFilesCount.toLocaleString()} files ` +
+          (isSearchOnly ? "matched" : "updated") +
+          `. Time taken: ${timeTaken} seconds.`,
+        totalCount: files.length,
+        updatedCount: ref.updatedFilesCount,
+        searchType: isSearchOnly ? SEARCH_TYPES.MATCH : SEARCH_TYPES.REPLACE,
+      });
+  } catch (error) {
+    onError &&
+      onError({
+        message: error.message,
+        mode: MESSAGE_MODES.ERROR,
+        error: error,
+      });
+  }
+}
+
+/**
+ *
+ * @param {EchoSearchParam} echoSearchQuery the search query
+ * @param {Function} onComplete a function to call when the search is complete
+ * @param {Function} onError a function to call when the search fails
+ * @param {Function} onUpdate a function to call when there is a progress update (eg. total files, file updated, etc.)
+ * @param {*} ref reference values
+ */
+async function searchFileName(
+  echoSearchQuery,
+  onComplete,
+  onError,
+  onUpdate,
+  ref
+) {
+  const {
+    directories,
+    fileTypes = [],
+    excludes = [],
+    excludeOptions = {},
+    query: { searchQuery },
+  } = echoSearchQuery;
+  try {
+    // Starting the file name search
+    // wait for 100ms to let the UI update
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    if (ref.cancel) throw new Error(searchInterruptedErrorMessage);
+    const startTime = Date.now();
+    let count = 0;
+    let matched = 0;
+    // exclude options
+    const { excludeHiddenDirectories, excludeLibraries } = excludeOptions;
+    // Getting all the files by crawling in the directories
+    const queue = [...directories];
+    while (queue.length > 0) {
+      const directory = queue.shift();
+      const items = await fs.promises.readdir(directory, {
+        withFileTypes: true,
+      });
+      for (const item of items) {
+        if (ref.cancel) throw new Error(searchInterruptedErrorMessage);
+        if (item.isDirectory()) {
+          if (
+            !excludes.some((exc) => item.name.includes(exc)) && // exclude directories
+            !(excludeHiddenDirectories && item.name.startsWith(".")) && // exclude hidden directories
+            !(
+              excludeLibraries &&
+              COMMON_LIBRARY_NAMES.some((lib) => lib === item.name)
+            ) // exclude common libraries
+          ) {
+            queue.push(path.join(directory, item.name));
+          }
+        } else {
+          count++;
+          if (!excludes.some((exc) => item.name.includes(exc))) {
+            if (fileTypes.length > 0) {
+              if (
+                fileTypes.includes(item.name.split(".").pop()) &&
+                item.name.includes(searchQuery)
+              ) {
+                matched++;
+                onUpdate &&
+                  onUpdate({
+                    message:
+                      MESSAGE_PREFIX.MATCH + path.join(directory, item.name),
+                    mode: MESSAGE_MODES.UPDATE,
+                  });
+              }
+            } else {
+              if (item.name.includes(searchQuery)) {
+                matched++;
+                onUpdate &&
+                  onUpdate({
+                    message:
+                      MESSAGE_PREFIX.MATCH + path.join(directory, item.name),
+                    mode: MESSAGE_MODES.UPDATE,
+                  });
+              }
+            }
+          }
+        }
+      }
+    }
+
+    const endTime = Date.now();
+    const timeTaken = (endTime - startTime) / 1000;
+    onComplete &&
+      onComplete({
+        message: `Search Completed: Found ${count.toLocaleString()} files. matched ${matched.toLocaleString()} file(s). Time taken: ${timeTaken} seconds.`,
+      });
+  } catch (error) {
+    onError &&
+      onError({
+        message: error.message,
+        mode: MESSAGE_MODES.ERROR,
+        error: error,
+      });
+  }
+}
+
+/**
+ *
+ * @param {EchoSearchParam} echoSearchQuery the search query
+ * @param {Function} onComplete a function to call when the search is complete
+ * @param {Function} onError a function to call when the search fails
+ * @param {Function} onUpdate a function to call when there is a progress update (eg. total files, file updated, etc.)
+ * @return {SearchInstance} Search Instance
+ */
+export const echoSearch = (echoSearchQuery, onComplete, onError, onUpdate) => {
+  const { searchMode = SEARCH_MODES.FILE_CONTENT } = echoSearchQuery;
   // referencing values
   const ref = {
     cancel: false,
     progress: 0,
     updatedFilesCount: 0,
   };
+
   // Search Instance
-  async function search() {
-    try {
-      // wait for 100ms to let the UI update
-      await new Promise((resolve) => setTimeout(resolve, 100));
-      if (ref.cancel) throw new Error(searchInterruptedErrorMessage);
-      // Starting the search and replace in the files
-      const startTime = Date.now();
-      // file paths
-      const files = [];
-      // Getting all the files by crawling in the directories
-      const queue = [...directories];
-      while (queue.length > 0) {
-        const directory = queue.shift();
-        const dirFiles = await crawlDirectory(
-          directory,
-          fileTypes,
-          excludes,
-          excludeOptions,
-          queue,
-          ref
-        );
-        files.push(...dirFiles);
-      }
-      onUpdate &&
-        onUpdate({
-          progress: ref.progress,
-          message: `Found ${files.length.toLocaleString()} files.`,
-          mode: MESSAGE_MODES.SUCCESS,
-        });
-      if (isMultiThreaded) {
-        // Using multiple threads
-        await multiThreadedSearch(files, query, numOfThreads, onUpdate, ref);
-      } else {
-        // Using a single thread
-        await singleThreadedSearch(files, query, onUpdate, ref);
-      }
-      const endTime = Date.now();
-      const timeTaken = (endTime - startTime) / 1000;
-      const isSearchOnly = query.replaceQuery === false;
-      onComplete &&
-        onComplete({
-          message:
-            `Search Completed: ${ref.updatedFilesCount.toLocaleString()} files ` +
-            (isSearchOnly ? "matched" : "updated") +
-            `. Time taken: ${timeTaken} seconds.`,
-          totalCount: files.length,
-          updatedCount: ref.updatedFilesCount,
-          searchType: isSearchOnly ? SEARCH_TYPES.MATCH : SEARCH_TYPES.REPLACE,
-        });
-    } catch (error) {
-      onError &&
-        onError({
-          message: error.message,
-          mode: MESSAGE_MODES.ERROR,
-          error: error,
-        });
-    }
+  let search;
+  if (searchMode === SEARCH_MODES.FILE_CONTENT) {
+    search = searchFileContent.bind(
+      this,
+      echoSearchQuery,
+      onComplete,
+      onError,
+      onUpdate,
+      ref
+    );
+  } else if (searchMode === SEARCH_MODES.FILE_NAME) {
+    search = searchFileName.bind(
+      this,
+      echoSearchQuery,
+      onComplete,
+      onError,
+      onUpdate,
+      ref
+    );
   }
 
   return {
