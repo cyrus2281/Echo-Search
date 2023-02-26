@@ -1,11 +1,11 @@
 export const COMMON_LIBRARY_NAMES = [
-  'node_modules',
-  'site-packages',
-  'vendor',
-  'lib',
-  'libs',
-  'packages',
-]
+  "node_modules",
+  "site-packages",
+  "vendor",
+  "lib",
+  "libs",
+  "packages",
+];
 
 export const MESSAGE_PREFIX = {
   UPDATE: "Updated: ",
@@ -17,6 +17,12 @@ export const MESSAGE_MODES = {
   SUCCESS: "success",
   ERROR: "error",
   UPDATE: "update",
+};
+
+export const MESSAGE_MODES_STYLES = {
+  SUCCESS: "success.main",
+  ERROR: "error.main",
+  INFO: "text.primary",
 };
 
 export const WORKER_CHANNELS = {
@@ -53,6 +59,11 @@ export const DIALOG_ACTIONS_TYPES = {
   OPEN: "open",
   DISMISS: "dismiss",
   OK: "ok",
+};
+
+export const SEARCH_MODES = {
+  FILE_NAME: "filename",
+  FILE_CONTENT: "content",
 };
 
 export const SEARCH_TYPES = {

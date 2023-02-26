@@ -9,6 +9,7 @@ module.exports = [
       "Optimized Console for large outputs",
       "Added scroll to bottom button in Console",
       "Added changelog reviewer",
+      "Added the file name search mode."
     ],
   },
   {

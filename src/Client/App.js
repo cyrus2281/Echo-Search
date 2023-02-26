@@ -3,7 +3,7 @@ import { SnackbarProvider } from 'notistack';
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
-import Form from "./Components/Form";
+import Form from "./Form";
 
 const darkTheme = createTheme({
   palette: {

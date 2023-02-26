@@ -14,7 +14,13 @@ import { useSnackbar } from "notistack";
 import FileTypeSelector from "./FileTypeSelector";
 import ExcludeSelector from "./ExcludeSelector";
 
-function InclusionSelector({ form }) {
+function InclusionSelector({
+  form,
+  showFileTypeSelector = true,
+  showExcludeSelector = true,
+  excludeSelectorProps = {},
+  fileTypeSelectorProps = {},
+}) {
   const [open, setOpen] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
@@ -25,10 +31,9 @@ function InclusionSelector({ form }) {
   const clearCustomization = () => {
     if (
       !open &&
-      (form.current.fileTypes?.length || 
-        form.current.excludes?.length || 
-        form.current.excludeOptions
-        )
+      (form.current.fileTypes?.length ||
+        form.current.excludes?.length ||
+        form.current.excludeOptions)
     ) {
       const info = "Cleared custom file inclusion.";
       enqueueSnackbar(info, { variant: "info", autoHideDuration: 3000 });
@@ -62,15 +67,21 @@ function InclusionSelector({ form }) {
                 flexDirection: "column",
               }}
             >
-              <Box sx={{ width: "100%" }}>
-                <FileTypeSelector form={form} />
-              </Box>
-              <Box sx={{ width: "100%" }}>
-                <Divider />
-              </Box>
-              <Box sx={{ width: "100%" }}>
-                <ExcludeSelector form={form} />
-              </Box>
+              {showFileTypeSelector && (
+                <Box sx={{ width: "100%" }}>
+                  <FileTypeSelector form={form} {...fileTypeSelectorProps} />
+                </Box>
+              )}
+              {showFileTypeSelector && showExcludeSelector && (
+                <Box sx={{ width: "100%" }}>
+                  <Divider />
+                </Box>
+              )}
+              {showExcludeSelector && (
+                <Box sx={{ width: "100%" }}>
+                  <ExcludeSelector form={form} {...excludeSelectorProps} />
+                </Box>
+              )}
             </Box>
           </ListItem>
         </List>
