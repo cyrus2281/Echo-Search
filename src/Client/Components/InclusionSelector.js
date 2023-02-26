@@ -16,8 +16,6 @@ import ExcludeSelector from "./ExcludeSelector";
 
 function InclusionSelector({
   form,
-  showFileTypeSelector = true,
-  showExcludeSelector = true,
   excludeSelectorProps = {},
   fileTypeSelectorProps = {},
 }) {
@@ -67,21 +65,15 @@ function InclusionSelector({
                 flexDirection: "column",
               }}
             >
-              {showFileTypeSelector && (
-                <Box sx={{ width: "100%" }}>
-                  <FileTypeSelector form={form} {...fileTypeSelectorProps} />
-                </Box>
-              )}
-              {showFileTypeSelector && showExcludeSelector && (
-                <Box sx={{ width: "100%" }}>
-                  <Divider />
-                </Box>
-              )}
-              {showExcludeSelector && (
-                <Box sx={{ width: "100%" }}>
-                  <ExcludeSelector form={form} {...excludeSelectorProps} />
-                </Box>
-              )}
+              <Box sx={{ width: "100%" }}>
+                <FileTypeSelector form={form} {...fileTypeSelectorProps} />
+              </Box>
+              <Box sx={{ width: "100%" }}>
+                <Divider />
+              </Box>
+              <Box sx={{ width: "100%" }}>
+                <ExcludeSelector form={form} {...excludeSelectorProps} />
+              </Box>
             </Box>
           </ListItem>
         </List>

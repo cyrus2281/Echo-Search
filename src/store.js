@@ -77,7 +77,6 @@ const storeStatusUpdate = ({
     searchType === SEARCH_TYPES.FILE_NAME
       ? STORE_TYPES.TOTAL_FILE
       : STORE_TYPES.TOTAL_CONTENT;
-  console.log(totalCount, updatedCount, searchType, TOTAL_KEY)
   // previous values
   const prevTotal = readFromStore(`${STORE_TYPES.STATUS}.${TOTAL_KEY}`) || 0;
   const prevUpdate = readFromStore(`${STORE_TYPES.STATUS}.${searchType}`) || 0;

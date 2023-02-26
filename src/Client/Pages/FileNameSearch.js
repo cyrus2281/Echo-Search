@@ -32,7 +32,6 @@ function FileNameSearch({ form }) {
         <Item>
           <InclusionSelector
             form={form}
-            showFileTypeSelector={false}
             excludeSelectorProps={{ showExcludeHiddenFiles: false }}
           />
         </Item>
