@@ -33,7 +33,7 @@ if (require("electron-squirrel-startup")) {
 
 const isDev = process.env.NODE_ENV === "development";
 
-// Window 
+// Window
 let mainWindow;
 const createWindow = () => {
   // Create the browser window.
@@ -59,9 +59,6 @@ const createWindow = () => {
   if (isDev) {
     mainWindow.webContents.openDevTools({ mode: "detach" });
   }
-
-  // Update Store Version
-  updateVersion();
 };
 
 const menu = new Menu();
@@ -104,7 +101,10 @@ ipcMain.on(CHANNELS.DIRECTORY_SELECT, async () => {
     title: "Parent directory for recursive search",
   });
   if (result.filePaths && result.filePaths.length) {
-    mainWindow.webContents.send(CHANNELS.DIRECTORY_SELECTED, result.filePaths[0]);
+    mainWindow.webContents.send(
+      CHANNELS.DIRECTORY_SELECTED,
+      result.filePaths[0]
+    );
   }
 });
 
@@ -122,7 +122,7 @@ ipcMain.on(CHANNELS.SEARCH_START, async (e, query) => {
     const onComplete = (message) => {
       mainWindow.webContents.send(CHANNELS.SEARCH_COMPLETE, message);
       delete processes[processID];
-      const dialogProps = storeStatusUpdate(message)
+      const dialogProps = storeStatusUpdate(message);
       if (dialogProps) {
         mainWindow.webContents.send(CHANNELS.OPEN_DIALOG, dialogProps);
       }
@@ -161,6 +161,14 @@ ipcMain.on(CHANNELS.OPEN_FOLDER, async (e, { filePath }) => {
 
 ipcMain.on(CHANNELS.INFO_PKG_REQUEST, async () => {
   mainWindow.webContents.send(CHANNELS.INFO_PKG_RESPONSE, process.env.PACKAGE);
+  // Update Store Version
+  const updateDialogProps = updateVersion();
+  // New changes since last update
+  if (updateDialogProps) {
+    setTimeout(() => {
+      mainWindow.webContents.send(CHANNELS.OPEN_DIALOG, updateDialogProps);
+    }, 1500);
+  }
 });
 
 ipcMain.on(CHANNELS.INFO_CORES_REQUEST, async () => {

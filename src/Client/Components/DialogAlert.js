@@ -53,7 +53,6 @@ function DialogAlert() {
 
   useEffect(() => {
     const onShowDialog = (props) => {
-      console.log(props);
       setDialogProps(props);
     };
     return ipcListen(CHANNELS.OPEN_DIALOG, onShowDialog);
@@ -64,25 +63,30 @@ function DialogAlert() {
     : [dialogProps?.message];
 
   return (
-      <Dialog
-        TransitionComponent={Transition}
-        open={!!dialogProps}
-        onClose={() => actions[DIALOG_ACTIONS_TYPES.DISMISS]()}
-      >
-        {dialogProps && (
-          <>
-            <DialogTitle>{dialogProps.title}</DialogTitle>
-            <DialogContent>
-              {messages.map((message, index) => (
-                <DialogContentText key={index}>{message}</DialogContentText>
-              ))}
-            </DialogContent>
-            <DialogActions>
-              {getActionButtons(dialogProps.buttons, actions)}
-            </DialogActions>
-          </>
-        )}
-      </Dialog>
+    <Dialog
+      TransitionComponent={Transition}
+      open={!!dialogProps}
+      onClose={() => actions[DIALOG_ACTIONS_TYPES.DISMISS]()}
+    >
+      {dialogProps && (
+        <>
+          <DialogTitle>{dialogProps.title}</DialogTitle>
+          <DialogContent>
+            {messages.map((message, index) => (
+              <DialogContentText
+                key={index}
+                sx={{ whiteSpace: "break-spaces" }}
+              >
+                {message}
+              </DialogContentText>
+            ))}
+          </DialogContent>
+          <DialogActions>
+            {getActionButtons(dialogProps.buttons, actions)}
+          </DialogActions>
+        </>
+      )}
+    </Dialog>
   );
 }
 
