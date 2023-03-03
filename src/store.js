@@ -6,6 +6,7 @@ const {
   DIALOG_ACTIONS_TYPES,
   APPRECIATION_MESSAGES,
   CHANGE_LOGS_DIALOG,
+  SEARCH_TYPES,
 } = require("./constants.mjs");
 const changelogs = require("./changelogs.js");
 
@@ -39,7 +40,7 @@ const updateVersion = () => {
       const versionIndex = Math.max(
         changelogs.findIndex((log) => log.version === prevVersion),
         // version <=v2.4 was not stored
-        changelogs.findIndex((log) => log.version == "v2.4"),
+        changelogs.findIndex((log) => log.version == "v2.4")
       );
       const updateLogs = changelogs
         .slice(0, versionIndex)
@@ -48,7 +49,7 @@ const updateVersion = () => {
             `Release ${log.version} - ${log.released}`,
             ...log.logs.map((log) => `  - ${log}`),
             "  ", // new line
-          ]
+          ];
         })
         .flat();
 
@@ -59,23 +60,31 @@ const updateVersion = () => {
           {
             label: CHANGE_LOGS_DIALOG.dismissBtnLabel,
             type: DIALOG_ACTIONS_TYPES.DISMISS,
-          }
+          },
         ],
       };
     }
   }
 };
 
-const storeStatusUpdate = ({ totalCount, updatedCount, searchType }) => {
+const storeStatusUpdate = ({
+  totalCount = 0,
+  updatedCount = 0,
+  searchType,
+}) => {
+  // total key name
+  const TOTAL_KEY =
+    searchType === SEARCH_TYPES.FILE_NAME
+      ? STORE_TYPES.TOTAL_FILE
+      : STORE_TYPES.TOTAL_CONTENT;
   // previous values
-  const prevTotal =
-    readFromStore(`${STORE_TYPES.STATUS}.${STORE_TYPES.TOTAL_CONTENT}`) || 0;
+  const prevTotal = readFromStore(`${STORE_TYPES.STATUS}.${TOTAL_KEY}`) || 0;
   const prevUpdate = readFromStore(`${STORE_TYPES.STATUS}.${searchType}`) || 0;
   // new values
   const newTotal = totalCount + prevTotal;
   const newUpdate = updatedCount + prevUpdate;
   // update values
-  writeToStore(`${STORE_TYPES.STATUS}.${STORE_TYPES.TOTAL_CONTENT}`, newTotal);
+  writeToStore(`${STORE_TYPES.STATUS}.${TOTAL_KEY}`, newTotal);
   writeToStore(`${STORE_TYPES.STATUS}.${searchType}`, newUpdate);
   // Calculate thresholds
   const base = STATUS_TYPES_THRESHOLD.BASE;
@@ -83,9 +92,9 @@ const storeStatusUpdate = ({ totalCount, updatedCount, searchType }) => {
     base * 1 * STATUS_TYPES_THRESHOLD[searchType],
     base * 10 * STATUS_TYPES_THRESHOLD[searchType],
     base * 100 * STATUS_TYPES_THRESHOLD[searchType],
-    base * 1 * STATUS_TYPES_THRESHOLD[STORE_TYPES.TOTAL_CONTENT],
-    base * 10 * STATUS_TYPES_THRESHOLD[STORE_TYPES.TOTAL_CONTENT],
-    base * 100 * STATUS_TYPES_THRESHOLD[STORE_TYPES.TOTAL_CONTENT],
+    base * 1 * STATUS_TYPES_THRESHOLD[TOTAL_KEY],
+    base * 10 * STATUS_TYPES_THRESHOLD[TOTAL_KEY],
+    base * 100 * STATUS_TYPES_THRESHOLD[TOTAL_KEY],
   ];
   // check thresholds and update message
   const message = [];

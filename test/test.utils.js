@@ -107,6 +107,9 @@ const partialQuery = "soft";
 const multiLineSearchQuery = "\nAs a programmer ";
 const caseSensitiveQuery = "With";
 const regexQuery = "t.?st[a-z]*";
+const fileNameComplete = "file1.txt";
+const fileNamePartial = "file";
+
 
 const replacementText = "🧪";
 
@@ -128,4 +131,7 @@ module.exports = {
   regexQuery,
   // replacement
   replacementText,
+  // file name
+  fileNameComplete,
+  fileNamePartial,
 };

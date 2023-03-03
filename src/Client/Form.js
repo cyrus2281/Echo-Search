@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { useSnackbar } from "notistack";
 import Paper from "@mui/material/Paper";
@@ -7,16 +7,14 @@ import { styled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 
-import Banner from "./Banner";
-import DirectorySelector from "./DirectorySelector";
-import InclusionSelector from "./InclusionSelector";
-import Output from "./Output";
-import QuerySelector from "./QuerySelector";
-import AdvancedSettings from "./AdvancedSettings";
-import { defaultRegexFlagsValues } from "./RegexFlags";
-import Footer from "./Footer";
-import { CHANNELS } from "../../constants.mjs";
-import DialogAlert from "./DialogAlert";
+import Banner from "./Components/Banner";
+import Output from "./Components/Output";
+import Footer from "./Components/Footer";
+import { CHANNELS, SEARCH_MODES } from "../constants.mjs";
+import DialogAlert from "./Components/DialogAlert";
+import FileContentSearch from "./Pages/FileContentSearch";
+import { getFormDefaults, validateForm } from "./Utils";
+import FileNameSearch from "./Pages/FileNameSearch";
 
 const { ipcSend, ipcListen } = window.api;
 
@@ -28,41 +26,29 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-const validateForm = (form) => {
-  const errors = [];
-  if (!form.current.directories?.length) {
-    errors.push("You at least need a directory to search in.");
-  }
-  if (!form.current.query?.searchQuery?.trim()) {
-    errors.push("You need a search query.");
-  }
-  if (
-    form.current.query?.replaceQuery !== false && // search only
-    !form.current.query?.replaceQuery?.trim()
-  ) {
-    errors.push("You need a replace query.");
-  }
-  return errors;
-};
-
 function Form() {
-  const formData = useRef({
-    query: { regexFlags: [...defaultRegexFlagsValues] },
-  });
+  const [searchMode, setSearchMode] = useState(SEARCH_MODES.FILE_CONTENT);
+  const formData = useRef(getFormDefaults(searchMode));
   const biDirectionalChannel = useRef({ caseInsensitivity: {} });
   const { enqueueSnackbar } = useSnackbar();
-  const [processID, setProcessID] = React.useState("");
-  const [isRunning, setIsRunning] = React.useState(false);
-  const [disableBtn, setDisableBtn] = React.useState(false);
-  const [showOutput, setShowOutput] = React.useState(false);
+  const [processID, setProcessID] = useState("");
+  const [isRunning, setIsRunning] = useState(false);
+  const [disableBtn, setDisableBtn] = useState(false);
+  const [showOutput, setShowOutput] = useState(false);
 
-  const onButtonClick = (e) => {
+  const updateSearchMode = (mode) => {
+    if (mode === searchMode) return;
+    formData.current = getFormDefaults(mode);
+    setSearchMode(mode);
+  };
+
+  const onButtonClick = () => {
     if (disableBtn) return;
     if (isRunning && processID) {
       setDisableBtn(true);
       ipcSend(CHANNELS.SEARCH_CANCEL, { processID });
     } else {
-      const hasError = validateForm(formData);
+      const hasError = validateForm(formData, searchMode);
       console.log(formData.current, hasError);
       if (hasError.length) {
         hasError.forEach((error) =>
@@ -147,31 +133,23 @@ function Form() {
       >
         <Grid container spacing={2}>
           <Grid item xs={12}>
-            <Banner />
+            <Banner
+              searchMode={searchMode}
+              setSearchMode={updateSearchMode}
+              disabled={isRunning}
+            />
           </Grid>
-          <Grid item xs={12}>
-            <Item>
-              <DirectorySelector form={formData} />
-            </Item>
-          </Grid>
-          <Grid item xs={12}>
-            <Item>
-              <QuerySelector form={formData} channel={biDirectionalChannel} />
-            </Item>
-          </Grid>
-          <Grid item xs={12}>
-            <Item>
-              <InclusionSelector form={formData} />
-            </Item>
-          </Grid>
-          <Grid item xs={12}>
-            <Item>
-              <AdvancedSettings
-                form={formData}
-                channel={biDirectionalChannel}
-              />
-            </Item>
-          </Grid>
+          {searchMode === SEARCH_MODES.FILE_CONTENT ? (
+            <FileContentSearch
+              form={formData}
+              biDirectionalChannel={biDirectionalChannel}
+            />
+          ) : (
+            <FileNameSearch
+              form={formData}
+              biDirectionalChannel={biDirectionalChannel}
+            />
+          )}
           <Grid item xs={8} margin="auto">
             <Button
               {...buttonProps}
@@ -189,7 +167,7 @@ function Form() {
           <Grid item xs={12}>
             {showOutput && (
               <Item>
-                <Output isRunning={isRunning} />
+                <Output isRunning={isRunning} searchMode={searchMode} />
               </Item>
             )}
           </Grid>

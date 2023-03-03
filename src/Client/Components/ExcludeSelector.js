@@ -17,7 +17,7 @@ import Avatar from "@mui/material/Avatar";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { COMMON_LIBRARY_NAMES } from "../../constants.mjs";
 
-function ExcludeSelector({ form }) {
+function ExcludeSelector({ form, showExcludeHiddenFiles = true }) {
   const [excludes, setExcludes] = useState([]);
   const [exclude, setExclude] = useState("");
   const [excludeHiddenDirectories, setExcludeHiddenDirectories] =
@@ -142,16 +142,18 @@ function ExcludeSelector({ form }) {
         gap={2}
       >
         <Typography variant="body2">Options: </Typography>
-        <Tooltip title="Exclude hidden files, ie files that start with a dot">
-          <ToggleButton
-            value="hiddenFiles"
-            size="small"
-            selected={excludeHiddenFiles}
-            onChange={() => setExcludeHiddenFiles(!excludeHiddenFiles)}
-          >
-            Exclude Hidden Files
-          </ToggleButton>
-        </Tooltip>
+        {showExcludeHiddenFiles && (
+          <Tooltip title="Exclude hidden files, ie files that start with a dot">
+            <ToggleButton
+              value="hiddenFiles"
+              size="small"
+              selected={excludeHiddenFiles}
+              onChange={() => setExcludeHiddenFiles(!excludeHiddenFiles)}
+            >
+              Exclude Hidden Files
+            </ToggleButton>
+          </Tooltip>
+        )}
         <Tooltip title="Exclude hidden directories, ie files that start with a directories">
           <ToggleButton
             value="hiddenDirectories"

@@ -8,42 +8,19 @@ import ClearIcon from "@mui/icons-material/CancelPresentation";
 import DownArrowIcon from "@mui/icons-material/KeyboardDoubleArrowDown";
 
 import Console from "./Console";
-import { CHANNELS, MESSAGE_MODES } from "../../constants.mjs";
+import {
+  CHANNELS,
+  MESSAGE_MODES,
+  MESSAGE_MODES_STYLES,
+  SEARCH_MODES,
+} from "../../constants.mjs";
+import { getMessage, getProgressBarColor, getProgressBarMode } from "../Utils";
 
 const { ipcListen } = window.api;
 
 const FAILED_SEARCH_HEADING = "Operation was not completely successful.";
-const MESSAGE_MODES_STYLES = {
-  success: "success.main",
-  error: "error.main",
-  info: "text.primary",
-};
 
-const getMessage = (msg) => {
-  let message = msg.message;
-  let mode, isFile;
-  switch (msg.mode) {
-    case MESSAGE_MODES.SUCCESS:
-      mode = MESSAGE_MODES_STYLES.success;
-      break;
-    case MESSAGE_MODES.ERROR:
-      mode = MESSAGE_MODES_STYLES.error;
-      break;
-    case MESSAGE_MODES.UPDATE:
-      mode = MESSAGE_MODES_STYLES.info;
-      isFile = true;
-      break;
-    default:
-      mode = MESSAGE_MODES_STYLES.info;
-  }
-  return {
-    message,
-    mode,
-    isFile,
-  };
-};
-
-function Output({ isRunning }) {
+function Output({ isRunning, searchMode }) {
   // due to async nature of useState, we might miss some messages, using ref
   const allMessages = useRef([]);
   const listControlRef = useRef({});
@@ -60,7 +37,7 @@ function Output({ isRunning }) {
       if (update.mode === MESSAGE_MODES.ERROR && update.error) {
         console.error(update.error);
       }
-      if (update.progress) {
+      if (searchMode === SEARCH_MODES.FILE_CONTENT && update.progress) {
         const roundedProgress = Math.round(+update.progress * 10) / 10;
         const heading = `Updating files. ${roundedProgress.toFixed(
           1
@@ -76,7 +53,7 @@ function Output({ isRunning }) {
     const onComplete = (event) => {
       const message = {
         message: event.message,
-        mode: MESSAGE_MODES_STYLES.success,
+        mode: MESSAGE_MODES_STYLES.SUCCESS,
       };
       allMessages.current.push(message);
       setHeading("All Done!");
@@ -89,7 +66,7 @@ function Output({ isRunning }) {
     const showError = (error) => {
       const message = {
         message: error.message,
-        mode: MESSAGE_MODES_STYLES.error,
+        mode: MESSAGE_MODES_STYLES.ERROR,
       };
       allMessages.current.push(message);
       setProgress(100);
@@ -98,23 +75,11 @@ function Output({ isRunning }) {
     return ipcListen(CHANNELS.SEARCH_FAIL, showError);
   }, []);
 
-  const barColor = hasError
-    ? "error"
-    : progress === 100
-    ? "success"
-    : "primary";
-
   return (
     <Box sx={{ width: "100%" }}>
       <LinearProgress
-        color={barColor}
-        variant={
-          isRunning
-            ? progress
-              ? "determinate"
-              : "indeterminate"
-            : "determinate"
-        }
+        color={getProgressBarColor(hasError, progress)}
+        variant={getProgressBarMode(isRunning, searchMode, progress)}
         value={isRunning ? progress : 100}
       />
       <Typography variant="h6" sx={{ pt: 2, pb: 1, position: "relative" }}>
