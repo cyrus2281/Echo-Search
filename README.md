@@ -43,7 +43,8 @@ Echo Search is a feature-rich and powerful application that allows you to search
 
 - Direct file and directory access: You can open the updated files or their directories with the file pre-selected directly from the console.
 
-***Note:** This app is only for text based files and can NOT be used with files such as pdf, doc, excel, etc.*
+***Note:** The search content mode is only for text based files and can NOT be used with files such as pdf, doc, excel, etc.*
+
 
 <hr>
 

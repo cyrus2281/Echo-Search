@@ -1,5 +1,11 @@
 module.exports = [
   {
+    version: "v2.6",
+    released: "00/04/2023",
+    logs: [
+    ],
+  },
+  {
     version: "v2.5",
     released: "05/03/2023",
     logs: [
