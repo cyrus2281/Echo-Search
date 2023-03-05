@@ -2,10 +2,12 @@ import React, { useState, useEffect, useRef } from "react";
 import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
 import Typography from "@mui/material/Typography";
+import TextField from "@mui/material/TextField";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
-import ClearIcon from "@mui/icons-material/CancelPresentation";
+import CancelIcon from "@mui/icons-material/CancelPresentation";
 import DownArrowIcon from "@mui/icons-material/KeyboardDoubleArrowDown";
+import ClearIcon from "@mui/icons-material/Clear";
 
 import Console from "./Console";
 import {
@@ -19,6 +21,40 @@ import { getMessage, getProgressBarColor, getProgressBarMode } from "../Utils";
 const { ipcListen } = window.api;
 
 const FAILED_SEARCH_HEADING = "Operation was not completely successful.";
+
+function ConsoleSearch({ onSearchRef }) {
+  const searchBounceRef = useRef();
+  const [searchText, setSearchText] = useState("");
+
+  return (
+    <>
+      <TextField
+        label="Search"
+        size="small"
+        value={searchText}
+        onChange={(e) => {
+          clearTimeout(searchBounceRef.current);
+          setSearchText(e.target.value);
+          searchBounceRef.current = setTimeout(() => {
+            if (e.target.value.trim())
+              onSearchRef.current.search(e.target.value);
+          }, 500);
+        }}
+      />
+      {searchText && (
+        <IconButton
+          size="small"
+          onClick={() => {
+            setSearchText("");
+            onSearchRef.current.search("");
+          }}
+        >
+          <ClearIcon fontSize="small" />
+        </IconButton>
+      )}
+    </>
+  );
+}
 
 function Output({ isRunning, searchMode }) {
   // due to async nature of useState, we might miss some messages, using ref
@@ -87,6 +123,18 @@ function Output({ isRunning, searchMode }) {
         <Box
           sx={{
             position: "absolute",
+            left: 0,
+            top: 10,
+            display: "flex",
+            alignItems: "center",
+            gap: 0.5,
+          }}
+        >
+          <ConsoleSearch onSearchRef={listControlRef} />
+        </Box>
+        <Box
+          sx={{
+            position: "absolute",
             right: 10,
             top: 10,
             display: "flex",
@@ -105,7 +153,7 @@ function Output({ isRunning, searchMode }) {
           </Tooltip>
           <Tooltip title="Clear output">
             <IconButton size="small" onClick={() => (allMessages.current = [])}>
-              <ClearIcon />
+              <CancelIcon />
             </IconButton>
           </Tooltip>
         </Box>

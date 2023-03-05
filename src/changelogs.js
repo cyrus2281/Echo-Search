@@ -5,6 +5,7 @@ module.exports = [
     logs: [
       "Added file metadata fetcher on result item hover.",
       "Opening the app in the search mode that was last used",
+      "Added filter search to console results",
     ],
   },
   {
