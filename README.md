@@ -9,6 +9,7 @@
 ![GitHub all releases](https://img.shields.io/github/downloads/cyrus2281/echo-search/total?color=orange&label=Downloads)
 <br>
 
+https://user-images.githubusercontent.com/68962752/222940733-ea264bf8-c71a-4c9a-92f9-5bcac4992c93.mp4
 
 Echo Search is a feature-rich and powerful application that allows you to search for a specific text or regular expression query in the content of files within a directory and its subdirectories. It also offers the ability to replace the found text with another string of your choice. With its wide range of options and capabilities, it is an ideal solution for software developers, data analysts, and anyone looking for an efficient way to search and replace text in files. In addition, you can search for file names with customized inclusion to search through your file system.
 
