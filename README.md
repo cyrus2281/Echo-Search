@@ -3,13 +3,15 @@
 [![release](https://img.shields.io/github/v/release/cyrus2281/Echo-Search?color=00ff00)](https://github.com/cyrus2281/Echo-Search/releases)
 [![version](https://img.shields.io/github/package-json/v/cyrus2281/Echo-Search)](https://github.com/cyrus2281/Echo-Search)
 [![License](https://img.shields.io/github/license/cyrus2281/echo-search)](https://github.com/cyrus2281/Echo-Search/blob/main/LICENSE)
-[![react](https://img.shields.io/github/package-json/dependency-version/cyrus2281/Echo-Search/react?logo=react&color=lightblue)](https://reactjs.org/)
-[![electron](https://img.shields.io/github/package-json/dependency-version/cyrus2281/Echo-Search/dev/electron?logo=electron&color=lightblue&logoColor=lightblue)](https://www.electronjs.org/)
 [![buyMeACoffee](https://img.shields.io/badge/BuyMeACoffee-cyrus2281-yellow?logo=buymeacoffee)](https://www.buymeacoffee.com/cyrus2281)
-![GitHub all releases](https://img.shields.io/github/downloads/cyrus2281/echo-search/total?color=orange&label=Downloads)
+![downloads](https://img.shields.io/github/downloads/cyrus2281/echo-search/total?color=orange&label=Downloads)
 <br>
 
 https://user-images.githubusercontent.com/68962752/222941014-7b0533fe-8149-4804-882d-5ebe6541febf.mp4
+
+[![react](https://img.shields.io/github/package-json/dependency-version/cyrus2281/Echo-Search/react?logo=react&color=lightblue)](https://reactjs.org/)
+[![electron](https://img.shields.io/github/package-json/dependency-version/cyrus2281/Echo-Search/dev/electron?logo=electron&color=lightblue&logoColor=lightblue)](https://www.electronjs.org/)
+[![mui](https://img.shields.io/github/package-json/dependency-version/cyrus2281/echo-search/@mui/material?color=darkblue)](https://mui.com/material-ui/getting-started/overview/)
 
 <br>
 

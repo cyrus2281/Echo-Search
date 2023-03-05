@@ -3,6 +3,7 @@ module.exports = [
     version: "v2.6",
     released: "00/04/2023",
     logs: [
+      "Added file metadata fetcher on result item hover.",
     ],
   },
   {

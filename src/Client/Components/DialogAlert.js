@@ -37,6 +37,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 function DialogAlert() {
+  const [dialogQueue, setDialogQueue] = useState([]);
   const [dialogProps, setDialogProps] = useState(null);
   const actions = {
     [DIALOG_ACTIONS_TYPES.OPEN]: ({ url }) => {
@@ -53,10 +54,19 @@ function DialogAlert() {
 
   useEffect(() => {
     const onShowDialog = (props) => {
-      setDialogProps(props);
+      setDialogQueue((prev) => [...prev, props]);
     };
     return ipcListen(CHANNELS.OPEN_DIALOG, onShowDialog);
   }, []);
+
+  useEffect(() => {
+    if (dialogQueue.length > 0 && !dialogProps) {
+      const newDialogQueue = [...dialogQueue];
+      const nextDialog = newDialogQueue.shift();
+      setDialogProps(nextDialog);
+      setDialogQueue(newDialogQueue);
+    }
+  }, [dialogQueue, dialogProps]);
 
   const messages = Array.isArray(dialogProps?.message)
     ? dialogProps.message
