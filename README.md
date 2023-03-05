@@ -6,13 +6,17 @@
 [![react](https://img.shields.io/github/package-json/dependency-version/cyrus2281/Echo-Search/react?logo=react&color=lightblue)](https://reactjs.org/)
 [![electron](https://img.shields.io/github/package-json/dependency-version/cyrus2281/Echo-Search/dev/electron?logo=electron&color=lightblue&logoColor=lightblue)](https://www.electronjs.org/)
 [![buyMeACoffee](https://img.shields.io/badge/BuyMeACoffee-cyrus2281-yellow?logo=buymeacoffee)](https://www.buymeacoffee.com/cyrus2281)
+![GitHub all releases](https://img.shields.io/github/downloads/cyrus2281/echo-search/total?color=orange&label=Downloads)
 <br>
 
-Echo Search is a feature-rich and powerful application that allows you to search for a specific text or regular expression query in the content of files within a directory and its subdirectories. It also offers the ability to replace the found text with another string of your choice. With its wide range of options and capabilities, it is an ideal solution for software developers, data analysts, and anyone looking for an efficient way to search and replace text in files.
+
+Echo Search is a feature-rich and powerful application that allows you to search for a specific text or regular expression query in the content of files within a directory and its subdirectories. It also offers the ability to replace the found text with another string of your choice. With its wide range of options and capabilities, it is an ideal solution for software developers, data analysts, and anyone looking for an efficient way to search and replace text in files. In addition, you can search for file names with customized inclusion to search through your file system.
 
 ## Key Features
 
 - Search for text or regular expressions: Echo Search supports both simple text queries and complex regular expression queries.
+
+- Search for file name: You can search for file name that match a specific query within directories.
 
 - Multi-line queries: You can search for text across multiple lines in a single file.
 
@@ -70,13 +74,13 @@ That's it. Enjoy the app.
 
 <hr>
 
-Echo Search is a versatile and efficient tool for searching and replacing text in files. With its extensive range of options and capabilities, it is suitable for a wide range of use cases, whether you are a software developer looking for a quick way to update code, or a data analyst searching for specific information in large datasets. Try Echo Search today and see how it can make your life easier.
+Echo Search is a versatile and efficient tool for searching and replacing text in files or searching filename within directories. With its extensive range of options and capabilities, it is suitable for a wide range of use cases, whether you are a software developer looking for a quick way to update code, or a data analyst searching for specific information in large datasets, or just trying to find a file. Try Echo Search today and see how it can make your life easier.
 
 ## Application Screenshots
 
 <div style="display:flex; gap:2%;">
   <img src="./images/baseapp.png" width="49%" />
-  <img src="./images/options.png" width="49%" />
+  <img src="./images/filename.png" width="49%" />
 </div>
 <br>
 <div style="display:flex; gap:2%;">
