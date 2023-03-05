@@ -1,7 +1,7 @@
 module.exports = [
   {
     version: "v2.5",
-    released: "20/02/2023",
+    released: "05/03/2023",
     logs: [
       "Added pre-defined exclude option for hidden files",
       "Added pre-defined exclude option for hidden directories",
@@ -9,7 +9,7 @@ module.exports = [
       "Optimized Console for large outputs",
       "Added scroll to bottom button in Console",
       "Added changelog reviewer",
-      "Added the file name search mode."
+      "Added file name search mode."
     ],
   },
   {
