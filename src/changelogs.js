@@ -4,6 +4,7 @@ module.exports = [
     released: "00/04/2023",
     logs: [
       "Added file metadata fetcher on result item hover.",
+      "Opening the app in the search mode that was last used",
     ],
   },
   {

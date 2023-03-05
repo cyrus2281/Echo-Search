@@ -54,6 +54,9 @@ export const CHANNELS = {
   INFO_CORES_REQUEST: "info:cores:request",
   INFO_CORES_RESPONSE: "info:cores:response",
   INFO_METADATA_REQUEST: "info:metadata:request",
+  INFO_MODE_REQUEST: "info:mode:request",
+  INFO_MODE_RESPONSE: "info:mode:response",
+  INFO_MODE_SET: "info:mode:set",
 };
 
 export const DIALOG_ACTIONS_TYPES = {
@@ -76,6 +79,7 @@ export const SEARCH_TYPES = {
 export const STORE_TYPES = {
   STATUS: "status",
   VERSION: "version",
+  SEARCH_MODE: "searchMode",
   TOTAL_CONTENT: "totalContent",
   TOTAL_FILE: "totalFile",
   ...SEARCH_TYPES,
