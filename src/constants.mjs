@@ -53,6 +53,7 @@ export const CHANNELS = {
   INFO_PKG_RESPONSE: "info:pkg:response",
   INFO_CORES_REQUEST: "info:cores:request",
   INFO_CORES_RESPONSE: "info:cores:response",
+  INFO_METADATA_REQUEST: "info:metadata:request",
 };
 
 export const DIALOG_ACTIONS_TYPES = {
@@ -117,3 +118,17 @@ export const CHANGE_LOGS_DIALOG = {
   title: "What's new?",
   dismissBtnLabel: "Ok",
 };
+
+export const METADATA_DIALOG = {
+  title: "File Metadata",
+  titleFailed: "Fetch Metadata Failed",
+  file: " - File: {file}",
+  error: " - Error: {error}",
+  size: " - Size: {size} KB",
+  accessed: " - Last accessed: {accessed}",
+  modified : " - Last modified: {modified}",
+  creation  : " - Created at: {creation}",
+  link: " - Number of hard-links: {link}",
+  inode: " - File system inode number: {inode}",
+  okBtnLabel: "Ok",
+}
