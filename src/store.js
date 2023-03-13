@@ -7,6 +7,7 @@ const {
   APPRECIATION_MESSAGES,
   CHANGE_LOGS_DIALOG,
   SEARCH_TYPES,
+  SEARCH_MODES,
 } = require("./constants.mjs");
 const changelogs = require("./changelogs.js");
 
@@ -138,9 +139,19 @@ const storeStatusUpdate = ({
   return null;
 };
 
+const setSearchMode = (mode = SEARCH_MODES.FILE_CONTENT) => {
+  writeToStore(STORE_TYPES.SEARCH_MODE, mode);
+};
+
+const getSearchMode = () => {
+  return readFromStore(STORE_TYPES.SEARCH_MODE) || SEARCH_MODES.FILE_CONTENT;
+};
+
 module.exports = {
   writeToStore,
   readFromStore,
   storeStatusUpdate,
   updateVersion,
+  setSearchMode,
+  getSearchMode,
 };

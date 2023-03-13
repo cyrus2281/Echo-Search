@@ -24,8 +24,13 @@ const {
 const os = require("os");
 const { CHANNELS } = require("./constants.mjs");
 const { echoSearch } = require("./EchoSearch/echo-search.mjs");
-const { storeStatusUpdate, updateVersion } = require("./store.js");
 const { getFileMetadata } = require("./utils.js");
+const {
+  storeStatusUpdate,
+  updateVersion,
+  getSearchMode,
+  setSearchMode,
+} = require("./store.js");
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
@@ -182,4 +187,15 @@ ipcMain.on(CHANNELS.INFO_METADATA_REQUEST, async (e, { filePath }) => {
   if (metadataDialogProps) {
     mainWindow.webContents.send(CHANNELS.OPEN_DIALOG, metadataDialogProps);
   }
+});
+
+ipcMain.on(CHANNELS.INFO_MODE_SET, async (e, { searchMode }) => {
+  if (searchMode) {
+    setSearchMode(searchMode);
+  }
+});
+
+ipcMain.on(CHANNELS.INFO_MODE_REQUEST, async () => {
+  const searchMode = getSearchMode();
+  mainWindow.webContents.send(CHANNELS.INFO_MODE_RESPONSE, { searchMode });
 });

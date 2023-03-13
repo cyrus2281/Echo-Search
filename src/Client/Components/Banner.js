@@ -7,7 +7,9 @@ import Select from "@mui/material/Select";
 
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
-import { SEARCH_MODES } from "../../constants.mjs";
+import { CHANNELS, SEARCH_MODES } from "../../constants.mjs";
+
+const { ipcSend } = window.api;
 
 function Banner({ searchMode, setSearchMode, disabled }) {
   return (
@@ -29,7 +31,10 @@ function Banner({ searchMode, setSearchMode, disabled }) {
             labelId="search-mode-label"
             value={searchMode}
             label="Search Mode"
-            onChange={(e) => setSearchMode(e.target.value)}
+            onChange={(e) => {
+              setSearchMode(e.target.value);
+              ipcSend(CHANNELS.INFO_MODE_SET, { searchMode: e.target.value });
+            }}
             disabled={disabled}
           >
             <MenuItem value={SEARCH_MODES.FILE_CONTENT}>File Content</MenuItem>

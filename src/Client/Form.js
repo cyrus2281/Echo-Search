@@ -69,6 +69,7 @@ function Form() {
     }
   }, [isRunning]);
 
+  // on error listener
   useEffect(() => {
     const showError = (error) => {
       enqueueSnackbar(error.message, {
@@ -83,6 +84,7 @@ function Form() {
     return ipcListen(CHANNELS.SEARCH_FAIL, showError);
   }, [enqueueSnackbar]);
 
+  // on complete listener
   useEffect(() => {
     const onComplete = (event) => {
       enqueueSnackbar(event.message, {
@@ -96,12 +98,22 @@ function Form() {
     return ipcListen(CHANNELS.SEARCH_COMPLETE, onComplete);
   }, [enqueueSnackbar]);
 
+  // on process id listener
   useEffect(() => {
     const onReceiveID = (event) => {
       setProcessID(event.processID);
       setDisableBtn(false);
     };
     return ipcListen(CHANNELS.SEARCH_PROCESS_ID, onReceiveID);
+  }, []);
+
+  // on mount search mode listener
+  useEffect(() => {
+    ipcSend(CHANNELS.INFO_MODE_REQUEST);
+    const onMountMode = ({ searchMode }) => {
+      updateSearchMode(searchMode);
+    };
+    return ipcListen(CHANNELS.INFO_MODE_RESPONSE, onMountMode);
   }, []);
 
   const buttonProps =
