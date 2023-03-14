@@ -24,6 +24,8 @@ import {
 } from "../constants.mjs";
 import {
   crawlDirectory,
+  getDirnameValidationFunction,
+  getFilenameValidationFunction,
   replaceStringInFile,
   searchInterruptedErrorMessage,
 } from "./search-utils.mjs";
@@ -311,7 +313,7 @@ async function searchFileName(
     fileTypes = [],
     excludes = [],
     excludeOptions = {},
-    query: { searchQuery },
+    query: { searchQuery, isRegex, caseInsensitive },
   } = echoSearchQuery;
   try {
     // Starting the file name search
@@ -323,6 +325,18 @@ async function searchFileName(
     let matched = 0;
     // exclude options
     const { excludeHiddenDirectories, excludeLibraries } = excludeOptions;
+    const filenameValidationFn = getFilenameValidationFunction(
+      searchQuery,
+      isRegex,
+      caseInsensitive,
+      fileTypes,
+      excludes
+    );
+    const dirnameValidationFn = getDirnameValidationFunction(
+      excludes,
+      excludeHiddenDirectories,
+      excludeLibraries
+    );
     // Getting all the files by crawling in the directories
     const queue = [...directories];
     while (queue.length > 0) {
@@ -334,43 +348,19 @@ async function searchFileName(
         for (const item of items) {
           if (ref.cancel) throw new Error(searchInterruptedErrorMessage);
           if (item.isDirectory()) {
-            if (
-              !excludes.some((exc) => item.name.includes(exc)) && // exclude directories
-              !(excludeHiddenDirectories && item.name.startsWith(".")) && // exclude hidden directories
-              !(
-                excludeLibraries &&
-                COMMON_LIBRARY_NAMES.some((lib) => lib === item.name)
-              ) // exclude common libraries
-            ) {
+            if (dirnameValidationFn(item.name)) {
               queue.push(path.join(directory, item.name));
             }
           } else {
             count++;
-            if (!excludes.some((exc) => item.name.includes(exc))) {
-              if (fileTypes.length > 0) {
-                if (
-                  fileTypes.includes(item.name.split(".").pop()) &&
-                  item.name.includes(searchQuery)
-                ) {
-                  matched++;
-                  onUpdate &&
-                    onUpdate({
-                      message:
-                        MESSAGE_PREFIX.MATCH + path.join(directory, item.name),
-                      mode: MESSAGE_MODES.UPDATE,
-                    });
-                }
-              } else {
-                if (item.name.includes(searchQuery)) {
-                  matched++;
-                  onUpdate &&
-                    onUpdate({
-                      message:
-                        MESSAGE_PREFIX.MATCH + path.join(directory, item.name),
-                      mode: MESSAGE_MODES.UPDATE,
-                    });
-                }
-              }
+            if (filenameValidationFn(item.name)) {
+              matched++;
+              onUpdate &&
+                onUpdate({
+                  message:
+                    MESSAGE_PREFIX.MATCH + path.join(directory, item.name),
+                  mode: MESSAGE_MODES.UPDATE,
+                });
             }
           }
         }

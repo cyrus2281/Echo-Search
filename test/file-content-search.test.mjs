@@ -81,9 +81,9 @@ describe("Echo-Search: File Content", function () {
     const testDir = path.join(__dirname, "testDir");
     // force remove directory testDir
     fs.remove(testDir)
-    .catch(() => fs.remove(testDir)) // try again on first fail
-    .then(() => done())
-    .catch((err) => done(err))
+      .catch(() => fs.remove(testDir)) // try again on first fail
+      .then(() => done())
+      .catch((err) => done(err));
   });
 
   describe("# File Count", function () {
@@ -212,6 +212,37 @@ describe("Echo-Search: File Content", function () {
         }
       ).search();
     });
+    it("Single Directory - with filename exclusion", function (done) {
+      const fileCountText = "Found 3 files.";
+
+      const searchParam = {
+        query: {
+          searchQuery: "HelloWorld",
+          replaceQuery: "HelloWorld",
+          regexFlags: [],
+          isRegex: false,
+          matchWhole: false,
+        },
+        directories: [testDir],
+        fileTypes: [],
+        excludes: ["txt", "js"],
+      };
+      echoSearch(
+        searchParam,
+        () => {},
+        () => {},
+        ({ message, progress }) => {
+          if (message && message.includes("Found")) {
+            try {
+              assert.strictEqual(message, fileCountText);
+              done();
+            } catch (err) {
+              done(err);
+            }
+          }
+        }
+      ).search();
+    });
     it("Single Directory - with hidden file exclusion", function (done) {
       const fileCountText = "Found 6 files.";
 
@@ -228,7 +259,7 @@ describe("Echo-Search: File Content", function () {
         excludes: [],
         excludeOptions: {
           excludeHiddenFiles: true,
-        }
+        },
       };
       echoSearch(
         searchParam,
@@ -262,7 +293,7 @@ describe("Echo-Search: File Content", function () {
         excludes: [],
         excludeOptions: {
           excludeHiddenDirectories: true,
-        }
+        },
       };
       echoSearch(
         searchParam,
@@ -296,7 +327,7 @@ describe("Echo-Search: File Content", function () {
         excludes: [],
         excludeOptions: {
           excludeLibraries: true,
-        }
+        },
       };
       echoSearch(
         searchParam,
@@ -407,6 +438,37 @@ describe("Echo-Search: File Content", function () {
         }
       ).search();
     });
+    it("Multi Directory - with filename exclusion", function (done) {
+      const fileCountText = "Found 3 files.";
+
+      const searchParam = {
+        query: {
+          searchQuery: "HelloWorld",
+          replaceQuery: "HelloWorld",
+          regexFlags: [],
+          isRegex: false,
+          matchWhole: false,
+        },
+        directories: [path.join(testDir, "A"), path.join(testDir, "B")],
+        fileTypes: [],
+        excludes: ["txt", "js"],
+      };
+      echoSearch(
+        searchParam,
+        () => {},
+        () => {},
+        ({ message, progress }) => {
+          if (message && message.includes("Found")) {
+            try {
+              assert.strictEqual(message, fileCountText);
+              done();
+            } catch (err) {
+              done(err);
+            }
+          }
+        }
+      ).search();
+    });
     it("Multi Directory - with hidden file exclusion", function (done) {
       const fileCountText = "Found 5 files.";
 
@@ -423,7 +485,7 @@ describe("Echo-Search: File Content", function () {
         excludes: [],
         excludeOptions: {
           excludeHiddenFiles: true,
-        }
+        },
       };
       echoSearch(
         searchParam,
@@ -457,7 +519,7 @@ describe("Echo-Search: File Content", function () {
         excludes: [],
         excludeOptions: {
           excludeHiddenDirectories: true,
-        }
+        },
       };
       echoSearch(
         searchParam,
@@ -491,7 +553,7 @@ describe("Echo-Search: File Content", function () {
         excludes: [],
         excludeOptions: {
           excludeLibraries: true,
-        }
+        },
       };
       echoSearch(
         searchParam,

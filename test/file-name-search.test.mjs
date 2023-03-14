@@ -174,6 +174,99 @@ describe("Echo-Search: File Name", function () {
         }
       }).search();
     });
+    it("Match case insensitive", function (done) {
+      const completionMessage = /Found 6 files. matched 1 file/;
+      const searchParam = {
+        query: {
+          searchQuery: testUtils.fileNameCompleteCIS,
+          caseInsensitive: true,
+        },
+        directories: [testDir],
+        fileTypes: [],
+        excludes: [],
+        searchMode: SEARCH_MODES.FILE_NAME,
+      };
+      echoSearch(searchParam, ({ message }) => {
+        if (message && message.includes("Found")) {
+          try {
+            assert.match(message, completionMessage);
+            done();
+          } catch (err) {
+            done(err);
+          }
+        }
+      }).search();
+    });
+    it("Match RegEx", function (done) {
+      const completionMessage = /Found 6 files. matched 4 file/;
+      const searchParam = {
+        query: {
+          searchQuery: testUtils.filenameRegex,
+          isRegex: true,
+        },
+        directories: [testDir],
+        fileTypes: [],
+        excludes: [],
+        searchMode: SEARCH_MODES.FILE_NAME,
+      };
+      echoSearch(searchParam, ({ message }) => {
+        if (message && message.includes("Found")) {
+          try {
+            assert.match(message, completionMessage);
+            done();
+          } catch (err) {
+            done(err);
+          }
+        }
+      }).search();
+    });
+    it("Match RegEx Case Sensitive", function (done) {
+      const completionMessage = /Found 6 files. matched 0 file/;
+      const searchParam = {
+        query: {
+          searchQuery: testUtils.filenameRegexCS,
+          isRegex: true,
+        },
+        directories: [testDir],
+        fileTypes: [],
+        excludes: [],
+        searchMode: SEARCH_MODES.FILE_NAME,
+      };
+      echoSearch(searchParam, ({ message }) => {
+        if (message && message.includes("Found")) {
+          try {
+            assert.match(message, completionMessage);
+            done();
+          } catch (err) {
+            done(err);
+          }
+        }
+      }).search();
+    });
+    it("Match RegEx Case Insensitive", function (done) {
+      const completionMessage = /Found 6 files. matched 4 file/;
+      const searchParam = {
+        query: {
+          searchQuery: testUtils.filenameRegexCIS,
+          isRegex: true,
+          caseInsensitive: true,
+        },
+        directories: [testDir],
+        fileTypes: [],
+        excludes: [],
+        searchMode: SEARCH_MODES.FILE_NAME,
+      };
+      echoSearch(searchParam, ({ message }) => {
+        if (message && message.includes("Found")) {
+          try {
+            assert.match(message, completionMessage);
+            done();
+          } catch (err) {
+            done(err);
+          }
+        }
+      }).search();
+    });
     it("Canceling Request", function (done) {
       const testDirFile1 = path.join(__dirname, "testDir", "file1.txt");
       const expectedErrorMessage = "Search Interrupted: User Cancelled";
@@ -236,6 +329,29 @@ describe("Echo-Search: File Name", function () {
         directories: [testDir],
         fileTypes: [],
         excludes: ["C", "B"],
+        searchMode: SEARCH_MODES.FILE_NAME,
+      };
+      echoSearch(searchParam, ({ message }) => {
+        if (message && message.includes("Found")) {
+          try {
+            assert.match(message, completionMessage);
+            done();
+          } catch (err) {
+            done(err);
+          }
+        }
+      }).search();
+    });
+    it("Single Directory - with filename exclusion", function (done) {
+      const completionMessage = /Found 6 files. matched 2 file/;
+
+      const searchParam = {
+        query: {
+          searchQuery: testUtils.fileNamePartial,
+        },
+        directories: [testDir],
+        fileTypes: [],
+        excludes: ["txt", "js"],
         searchMode: SEARCH_MODES.FILE_NAME,
       };
       echoSearch(searchParam, ({ message }) => {
@@ -334,6 +450,29 @@ describe("Echo-Search: File Name", function () {
         directories: [path.join(testDir, "A"), path.join(testDir, "B")],
         fileTypes: [],
         excludes: ["C"],
+        searchMode: SEARCH_MODES.FILE_NAME,
+      };
+      echoSearch(searchParam, ({ message }) => {
+        if (message && message.includes("Found")) {
+          try {
+            assert.match(message, completionMessage);
+            done();
+          } catch (err) {
+            done(err);
+          }
+        }
+      }).search();
+    });
+    it("Multi Directory - with filename exclusion", function (done) {
+      const completionMessage = /Found 5 files. matched 2 file/;
+
+      const searchParam = {
+        query: {
+          searchQuery: testUtils.fileNamePartial,
+        },
+        directories: [path.join(testDir, "A"), path.join(testDir, "B")],
+        fileTypes: [],
+        excludes: ["txt", "js"],
         searchMode: SEARCH_MODES.FILE_NAME,
       };
       echoSearch(searchParam, ({ message }) => {
