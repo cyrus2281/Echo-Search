@@ -1,4 +1,7 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
+import { FixedSizeList } from "react-window";
 import { VariableSizeList as List } from "react-window";
 import Box from "@mui/material/Box";
 import ConsoleRowItem from "./ConsoleRowItem.js";
@@ -8,12 +11,17 @@ function Console({ messagesRef, listControlRef }) {
   const lastMeasuredLength = useRef(0);
   const boxRef = useRef();
   const listRef = useRef();
-  const [messages, setMessages] = React.useState([]);
+  const [messages, setMessages] = useState([]);
+  const [filter, setFilter] = useState("");
   lastMeasuredLength.current = messages.length;
 
   listControlRef.current.scrollToEnd = () => {
     listRef.current.scrollToItem(messages.length - 1, "smart");
-  }
+  };
+
+  listControlRef.current.search = (filter) => {
+    setFilter(filter);
+  };
 
   useEffect(() => {
     // To prevent the renderer from freezing/slowing down,
@@ -25,6 +33,13 @@ function Console({ messagesRef, listControlRef }) {
     }, 250);
     return () => clearInterval(interval);
   }, []);
+
+  let messageList = messages;
+  if (filter) {
+    messageList = messages.filter((msg) => {
+      return msg.message.toLowerCase().includes(filter.toLowerCase());
+    });
+  }
 
   return (
     <Box
@@ -44,14 +59,14 @@ function Console({ messagesRef, listControlRef }) {
         itemSize={(index) => {
           const maxWidth = boxRef.current.offsetWidth - 12;
           const maxCharacters = Math.floor(maxWidth / 10);
-          const msgLength = messages[index].message.length;
+          const msgLength = messageList[index].message.length;
           const extraLines = Math.ceil(msgLength / maxCharacters) - 1;
           const totalHeight = 40 + extraLines * 24;
           return totalHeight;
         }}
         estimatedItemSize={40}
-        itemCount={messages.length}
-        itemData={messages}
+        itemCount={messageList.length}
+        itemData={messageList}
         overscanCount={5}
       >
         {ConsoleRowItem}
