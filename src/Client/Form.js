@@ -6,6 +6,7 @@ import Grid from "@mui/material/Grid";
 import { styled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
+import Tooltip from "@mui/material/Tooltip";
 
 import Banner from "./Components/Banner";
 import Output from "./Components/Output";
@@ -31,10 +32,16 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 function Form() {
-  const [searchMode, setSearchMode, getSearchQuery] = useSearchQuery(
-    (state) => [state.searchMode, state.setSearchMode, state.getSearchQuery],
-    shallow
-  );
+  const [searchMode, setSearchMode, getSearchQuery, resetSearchQuery] =
+    useSearchQuery(
+      (state) => [
+        state.searchMode,
+        state.setSearchMode,
+        state.getSearchQuery,
+        state.resetSearchQuery,
+      ],
+      shallow
+    );
 
   const { enqueueSnackbar } = useSnackbar();
   const [processID, setProcessID] = useState("");
@@ -153,10 +160,35 @@ function Form() {
           ) : (
             <FileNameSearch />
           )}
-          <Grid item xs={8} margin="auto">
+          <Grid
+            item
+            xs={12}
+            margin="auto"
+            sx={{
+              position: "relative",
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            <Box
+              sx={{
+                position: "absolute",
+                left: "24px",
+              }}
+            >
+              <Tooltip title="Reset search query">
+                <Button
+                  variant="outlined"
+                  onClick={() => resetSearchQuery(searchMode)}
+                >
+                  RESET
+                </Button>
+              </Tooltip>
+            </Box>
             <Button
               {...buttonProps}
               fullWidth
+              sx={{ maxWidth: "60%", margin: "0 auto" }}
               disabled={disableBtn}
               onClick={onButtonClick}
             >

@@ -8,21 +8,18 @@ import Select from "@mui/material/Select";
 import Box from "@mui/material/Box";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
-import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
 
-import { shallow } from 'zustand/shallow'
+import { shallow } from "zustand/shallow";
 import { CHANNELS, SEARCH_MODES } from "../../constants.mjs";
 import useSearchQuery from "../store/useSearchQuery.js";
 
 const { ipcSend } = window.api;
 
 function Banner({ disabled }) {
-  const [searchMode, setSearchMode] = useSearchQuery((state) => [
-    state.searchMode,
-    state.setSearchMode,
-  ], shallow);
-  const resetSearchQuery = useSearchQuery((state) => state.resetSearchQuery);
+  const [searchMode, setSearchMode] = useSearchQuery(
+    (state) => [state.searchMode, state.setSearchMode],
+    shallow
+  );
 
   return (
     <>
@@ -70,20 +67,7 @@ function Banner({ disabled }) {
         >
           Echo Search
         </Typography>
-        <Box
-          sx={{
-            m: 1,
-          }}
-        >
-          <Tooltip title="Reset search query">
-            <Button
-              variant="outlined"
-              onClick={() => resetSearchQuery(searchMode)}
-            >
-              RESET
-            </Button>
-          </Tooltip>
-        </Box>
+        <Box sx={{ m: 1 }}></Box>
       </Toolbar>
       <Divider />
     </>
