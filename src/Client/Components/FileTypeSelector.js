@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
@@ -10,9 +10,14 @@ import Stack from "@mui/material/Stack";
 import Autocomplete from "@mui/material/Autocomplete";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
-function FileTypeSelector({ form }) {
-  const [allTypes, setAllTypes] = useState(true);
-  const [fileTypes, setFileTypes] = useState([]);
+import useSearchQuery from "../store/useSearchQuery";
+
+function FileTypeSelector() {
+  const [fileTypes, setFileTypes] = useSearchQuery((state) => [
+    state.fileTypes,
+    state.setFileTypes,
+  ]);
+  const [allTypes, setAllTypes] = useState(fileTypes?.length === 0);
   const [fileType, setFileType] = useState("");
 
   const addFileType = (type) => {
@@ -29,10 +34,6 @@ function FileTypeSelector({ form }) {
   const removeFileType = (type) => {
     setFileTypes(fileTypes.filter((t) => t !== type));
   };
-
-  useEffect(() => {
-    form.current.fileTypes = fileTypes;
-  }, [fileTypes]);
 
   return (
     <Box
@@ -102,13 +103,7 @@ function FileTypeSelector({ form }) {
       </Box>
       <Box sx={{ width: "100%" }}>
         {fileTypes.length > 0 && (
-          <Stack
-            direction="row"
-            spacing={1}
-            overflow={"auto"}
-            py={1}
-            mt={1}
-          >
+          <Stack direction="row" spacing={1} overflow={"auto"} py={1} mt={1}>
             {fileTypes.map((type) => (
               <Chip
                 key={type}

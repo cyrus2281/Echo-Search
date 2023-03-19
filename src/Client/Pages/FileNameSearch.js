@@ -15,23 +15,22 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-function FileNameSearch({ form }) {
+function FileNameSearch() {
   return (
     <>
       <Grid item xs={12}>
         <Item>
-          <DirectorySelector form={form} />
+          <DirectorySelector />
         </Item>
       </Grid>
       <Grid item xs={12}>
         <Item>
-          <NameSelector form={form} />
+          <NameSelector />
         </Item>
       </Grid>
       <Grid item xs={12}>
         <Item>
           <InclusionSelector
-            form={form}
             excludeSelectorProps={{ showExcludeHiddenFiles: false }}
           />
         </Item>

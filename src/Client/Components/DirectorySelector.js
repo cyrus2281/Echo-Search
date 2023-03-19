@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
@@ -15,13 +15,18 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useSnackbar } from "notistack";
+
 import { CHANNELS } from "../../constants.mjs";
+import useSearchQuery from "../store/useSearchQuery.js";
 
 const { ipcSend, ipcListen } = window.api;
 
-function DirectorySelector({ form }) {
+function DirectorySelector() {
   const { enqueueSnackbar } = useSnackbar();
-  const [directories, setDirectories] = useState([]);
+  const [directories, setDirectories] = useSearchQuery((state) => [
+    state.directories,
+    state.setDirectories,
+  ]);
 
   const onSelectDirectory = () => {
     ipcSend(CHANNELS.DIRECTORY_SELECT);
@@ -64,10 +69,6 @@ function DirectorySelector({ form }) {
       setDirectories([...directories, directory]);
     });
   }, [directories, enqueueSnackbar]);
-
-  useEffect(() => {
-    form.current.directories = directories;
-  }, [directories]);
 
   return (
     <Grid container spacing={2} display="flex" alignItems={"center"}>

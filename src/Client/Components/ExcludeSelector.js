@@ -16,14 +16,26 @@ import ListItemText from "@mui/material/ListItemText";
 import Avatar from "@mui/material/Avatar";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { COMMON_LIBRARY_NAMES } from "../../constants.mjs";
+import useSearchQuery from "../store/useSearchQuery.js";
 
-function ExcludeSelector({ form, showExcludeHiddenFiles = true }) {
-  const [excludes, setExcludes] = useState([]);
-  const [exclude, setExclude] = useState("");
+function ExcludeSelector({ showExcludeHiddenFiles = true }) {
+  const [excludes, setExcludes] = useSearchQuery((state) => [
+    state.excludes,
+    state.setExcludes,
+  ]);
   const [excludeHiddenDirectories, setExcludeHiddenDirectories] =
-    useState(false);
-  const [excludeHiddenFiles, setExcludeHiddenFiles] = useState(false);
-  const [excludeLibraries, setExcludeLibraries] = useState(false);
+    useSearchQuery((state) => [
+      state.excludeHiddenDirectories,
+      state.setExcludeHiddenDirectories,
+    ]);
+  const [excludeHiddenFiles, setExcludeHiddenFiles] = useSearchQuery(
+    (state) => [state.excludeHiddenFiles, state.setExcludeHiddenFiles]
+  );
+  const [excludeLibraries, setExcludeLibraries] = useSearchQuery((state) => [
+    state.excludeLibraries,
+    state.setExcludeLibraries,
+  ]);
+  const [exclude, setExclude] = useState("");
 
   const addToExcludes = (exclude) => {
     if (exclude.trim()) {
@@ -37,24 +49,6 @@ function ExcludeSelector({ form, showExcludeHiddenFiles = true }) {
     const newList = excludes.filter((_, i) => i !== index);
     setExcludes(newList);
   };
-
-  useEffect(() => {
-    form.current.excludes = excludes;
-    if (excludeHiddenFiles || excludeHiddenDirectories || excludeLibraries) {
-      form.current.excludeOptions = {
-        excludeHiddenDirectories,
-        excludeHiddenFiles,
-        excludeLibraries,
-      };
-    } else {
-      delete form.current.excludeOptions;
-    }
-  }, [
-    excludes,
-    excludeHiddenFiles,
-    excludeHiddenDirectories,
-    excludeLibraries,
-  ]);
 
   return (
     <Box

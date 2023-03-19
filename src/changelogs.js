@@ -7,6 +7,7 @@ module.exports = [
       "Opening the app in the search mode that was last used",
       "Added filter search to console results",
       "Added Regex and case insensitivity options to filename search mode",
+      "Added State manager and reset button",
     ],
   },
   {

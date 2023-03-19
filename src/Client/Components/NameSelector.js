@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -12,19 +12,24 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import FontDownloadIcon from "@mui/icons-material/FontDownload";
 import AbcIcon from "@mui/icons-material/Abc";
 
-function NameSelector({ form }) {
-  const [search, setSearch] = useState("");
-  const [caseInsensitive, setCaseInsensitive] = useState(false);
-  const [regex, setRegex] = useState(false);
+import useSearchQuery from "../store/useSearchQuery";
 
-  useEffect(() => {
-    form.current.query.searchQuery = search;
-    form.current.query.isRegex = regex;
-    form.current.query.caseInsensitive = caseInsensitive;
-  }, [search, caseInsensitive, regex]);
+function NameSelector() {
+  const [searchQuery, setSearchQuery] = useSearchQuery((state) => [
+    state.searchQuery,
+    state.setSearchQuery,
+  ]);
+  const [caseInsensitive, setCaseInsensitive] = useSearchQuery((state) => [
+    state.caseInsensitive,
+    state.setCaseInsensitive,
+  ]);
+  const [isRegex, setIsRegex] = useSearchQuery((state) => [
+    state.isRegex,
+    state.setIsRegex,
+  ]);
 
   const searchLabel =
-    (regex ? "Regular Expression" : "Search Query") +
+    (isRegex ? "Regular Expression" : "Search Query") +
     (caseInsensitive ? " (case insensitive)" : "");
 
   return (
@@ -46,7 +51,8 @@ function NameSelector({ form }) {
               label={searchLabel}
               variant="standard"
               fullWidth
-              onChange={(e) => setSearch(e.target.value)}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
           </Box>
           <Tooltip
@@ -84,8 +90,8 @@ function NameSelector({ form }) {
           <ToggleButton
             value="regex"
             size="small"
-            selected={regex}
-            onChange={(e) => setRegex(!regex)}
+            selected={isRegex}
+            onChange={(e) => setIsRegex(!isRegex)}
           >
             <AbcIcon sx={{ mr: 1 }} /> Use RegEx
           </ToggleButton>

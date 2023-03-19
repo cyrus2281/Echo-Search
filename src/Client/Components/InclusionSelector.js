@@ -14,11 +14,19 @@ import { useSnackbar } from "notistack";
 import FileTypeSelector from "./FileTypeSelector";
 import ExcludeSelector from "./ExcludeSelector";
 
+import useSearchQuery from "../store/useSearchQuery";
+
 function InclusionSelector({
-  form,
   excludeSelectorProps = {},
   fileTypeSelectorProps = {},
 }) {
+  const isCustomInclusionDirty = useSearchQuery(
+    (state) => state.isCustomInclusionDirty
+  );
+  const resetCustomInclusion = useSearchQuery(
+    (state) => state.resetCustomInclusion
+  );
+
   const [open, setOpen] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
@@ -27,17 +35,10 @@ function InclusionSelector({
   };
 
   const clearCustomization = () => {
-    if (
-      !open &&
-      (form.current.fileTypes?.length ||
-        form.current.excludes?.length ||
-        form.current.excludeOptions)
-    ) {
+    if (!open && isCustomInclusionDirty()) {
       const info = "Cleared custom file inclusion.";
       enqueueSnackbar(info, { variant: "info", autoHideDuration: 3000 });
-      form.current.fileTypes = [];
-      form.current.excludes = [];
-      delete form.current.excludeOptions;
+      resetCustomInclusion();
     }
   };
 
@@ -66,13 +67,13 @@ function InclusionSelector({
               }}
             >
               <Box sx={{ width: "100%" }}>
-                <FileTypeSelector form={form} {...fileTypeSelectorProps} />
+                <FileTypeSelector {...fileTypeSelectorProps} />
               </Box>
               <Box sx={{ width: "100%" }}>
                 <Divider />
               </Box>
               <Box sx={{ width: "100%" }}>
-                <ExcludeSelector form={form} {...excludeSelectorProps} />
+                <ExcludeSelector {...excludeSelectorProps} />
               </Box>
             </Box>
           </ListItem>

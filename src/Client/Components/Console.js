@@ -1,7 +1,4 @@
 import React, { useEffect, useState, useRef } from "react";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
-import { FixedSizeList } from "react-window";
 import { VariableSizeList as List } from "react-window";
 import Box from "@mui/material/Box";
 import ConsoleRowItem from "./ConsoleRowItem.js";

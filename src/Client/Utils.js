@@ -1,12 +1,15 @@
-import { MESSAGE_MODES, MESSAGE_MODES_STYLES, SEARCH_MODES } from "../constants.mjs";
-import { defaultRegexFlagsValues } from "./Components/RegexFlags";
+import {
+  MESSAGE_MODES,
+  MESSAGE_MODES_STYLES,
+  SEARCH_MODES,
+} from "../constants.mjs";
 
 export const validateFileNameForm = (form) => {
   const errors = [];
-  if (!form.current.directories?.length) {
+  if (!form.directories?.length) {
     errors.push("You at least need a directory to search in.");
   }
-  if (!form.current.query?.searchQuery?.trim()) {
+  if (!form.query?.searchQuery?.trim()) {
     errors.push("You need a file name.");
   }
   return errors;
@@ -14,15 +17,15 @@ export const validateFileNameForm = (form) => {
 
 export const validateFileContentForm = (form) => {
   const errors = [];
-  if (!form.current.directories?.length) {
+  if (!form.directories?.length) {
     errors.push("You at least need a directory to search in.");
   }
-  if (!form.current.query?.searchQuery?.trim()) {
+  if (!form.query?.searchQuery?.trim()) {
     errors.push("You need a search query.");
   }
   if (
-    form.current.query?.replaceQuery !== false && // search only
-    !form.current.query?.replaceQuery?.trim()
+    form.query?.replaceQuery !== false && // search only
+    !form.query?.replaceQuery?.trim()
   ) {
     errors.push("You need a replace query.");
   }
@@ -36,19 +39,6 @@ export const validateForm = (form, mode) => {
     case SEARCH_MODES.FILE_CONTENT:
     default:
       return validateFileContentForm(form);
-  }
-};
-
-export const getFormDefaults = (mode) => {
-  switch (mode) {
-    case SEARCH_MODES.FILE_NAME:
-      return { query: {}, searchMode: SEARCH_MODES.FILE_NAME };
-    case SEARCH_MODES.FILE_CONTENT:
-    default:
-      return {
-        query: { regexFlags: [...defaultRegexFlagsValues] },
-        searchMode: SEARCH_MODES.FILE_CONTENT,
-      };
   }
 };
 
@@ -87,4 +77,15 @@ export const getMessage = (msg) => {
     mode,
     isFile,
   };
+};
+
+export const getRegexFlagsArray = (flags) => {
+  const regexFlags = [];
+  flags.global && regexFlags.push("g");
+  flags.multiline && regexFlags.push("m");
+  flags.insensitive && regexFlags.push("i");
+  flags.unicode && regexFlags.push("u");
+  flags.sticky && regexFlags.push("y");
+  flags.single && regexFlags.push("s");
+  return regexFlags;
 };

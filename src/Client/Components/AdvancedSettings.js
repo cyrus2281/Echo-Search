@@ -11,30 +11,30 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import Divider from "@mui/material/Divider";
 import { useSnackbar } from "notistack";
 
-import RegexFlags, { defaultRegexFlagsValues } from "./RegexFlags";
 import MultiThreading from "./MultiThreading";
+import RegexFlags from "./RegexFlags";
 
-function AdvancedSettings({ form, channel }) {
-  const [open, setOpen] = useState(false);
+import useSearchQuery from "../store/useSearchQuery";
+
+function AdvancedSettings() {
   const { enqueueSnackbar } = useSnackbar();
+  const isAdvancedSettingsDirty = useSearchQuery(
+    (state) => state.isAdvancedSettingsDirty
+  );
+  const resetAdvancedSettings = useSearchQuery(
+    (state) => state.resetAdvancedSettings
+  );
+  const [open, setOpen] = useState(false);
 
   const handleClick = () => {
     setOpen(!open);
   };
 
   const clearCustomization = () => {
-    if (!open) {
-      // Clearing multi-threading settings
-      form.current.isMultiThreaded = false;
-      form.current.numOfThreads = undefined;
-      // clearing regex flag modifiers settings
-      channel.current.caseInsensitivity.setFlag = null;
+    if (!open && isAdvancedSettingsDirty()) {
+      resetAdvancedSettings();
       const info = "Cleared advanced settings.";
       enqueueSnackbar(info, { variant: "info", autoHideDuration: 3000 });
-      form.current.query.regexFlags = [...defaultRegexFlagsValues];
-      if (channel.current.isCaseInsensitive) {
-        form.current.query.regexFlags.push("i");
-      }
     }
   };
 
@@ -63,13 +63,13 @@ function AdvancedSettings({ form, channel }) {
               }}
             >
               <Box sx={{ width: "100%" }}>
-                <MultiThreading form={form} />
+                <MultiThreading />
               </Box>
               <Box sx={{ width: "100%" }}>
                 <Divider />
               </Box>
               <Box sx={{ width: "100%" }}>
-                <RegexFlags form={form} channel={channel} />
+                <RegexFlags />
               </Box>
             </Box>
           </ListItem>
