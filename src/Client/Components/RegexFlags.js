@@ -6,6 +6,7 @@ import Tooltip from "@mui/material/Tooltip";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 
+import { shallow } from 'zustand/shallow'
 import useSearchQuery from "../store/useSearchQuery";
 
 export const defaultRegexFlagsValues = ["g"];
@@ -14,7 +15,7 @@ function RegexFlags() {
   const [regexFlags, setRegexFlags] = useSearchQuery((state) => [
     state.regexFlags,
     state.setRegexFlags,
-  ]);
+  ], shallow);
 
   return (
     <Box

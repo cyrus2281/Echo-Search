@@ -10,13 +10,14 @@ import Stack from "@mui/material/Stack";
 import Autocomplete from "@mui/material/Autocomplete";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
+import { shallow } from "zustand/shallow";
 import useSearchQuery from "../store/useSearchQuery";
 
 function FileTypeSelector() {
-  const [fileTypes, setFileTypes] = useSearchQuery((state) => [
-    state.fileTypes,
-    state.setFileTypes,
-  ]);
+  const [fileTypes, setFileTypes] = useSearchQuery(
+    (state) => [state.fileTypes, state.setFileTypes],
+    shallow
+  );
   const [allTypes, setAllTypes] = useState(fileTypes?.length === 0);
   const [fileType, setFileType] = useState("");
 

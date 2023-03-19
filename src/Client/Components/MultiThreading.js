@@ -9,6 +9,7 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import Switch from "@mui/material/Switch";
 import Slider from "@mui/material/Slider";
 
+import { shallow } from 'zustand/shallow'
 import { CHANNELS } from "../../constants.mjs";
 import useSearchQuery from "../store/useSearchQuery";
 
@@ -45,11 +46,11 @@ function MultiThreading() {
   const [isMultiThreaded, setIsMultiThreaded] = useSearchQuery((state) => [
     state.isMultiThreaded,
     state.setIsMultiThreaded,
-  ]);
+  ], shallow);
   const [numOfThreads, setNumOfThreads] = useSearchQuery((state) => [
     state.numOfThreads,
     state.setNumOfThreads,
-  ]);
+  ], shallow);
   const [maxNumOfThreads, setMaxNumOfThreads] = useState(8);
 
   useEffect(() => {

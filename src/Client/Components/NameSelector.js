@@ -12,21 +12,22 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import FontDownloadIcon from "@mui/icons-material/FontDownload";
 import AbcIcon from "@mui/icons-material/Abc";
 
+import { shallow } from 'zustand/shallow'
 import useSearchQuery from "../store/useSearchQuery";
 
 function NameSelector() {
   const [searchQuery, setSearchQuery] = useSearchQuery((state) => [
     state.searchQuery,
     state.setSearchQuery,
-  ]);
+  ], shallow);
   const [caseInsensitive, setCaseInsensitive] = useSearchQuery((state) => [
     state.caseInsensitive,
     state.setCaseInsensitive,
-  ]);
+  ], shallow);
   const [isRegex, setIsRegex] = useSearchQuery((state) => [
     state.isRegex,
     state.setIsRegex,
-  ]);
+  ], shallow);
 
   const searchLabel =
     (isRegex ? "Regular Expression" : "Search Query") +

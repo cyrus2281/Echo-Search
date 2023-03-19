@@ -11,6 +11,7 @@ import InputLabel from "@mui/material/InputLabel";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 
+import { shallow } from 'zustand/shallow'
 import { CHANNELS, SEARCH_MODES } from "../../constants.mjs";
 import useSearchQuery from "../store/useSearchQuery.js";
 
@@ -20,7 +21,7 @@ function Banner({ disabled }) {
   const [searchMode, setSearchMode] = useSearchQuery((state) => [
     state.searchMode,
     state.setSearchMode,
-  ]);
+  ], shallow);
   const resetSearchQuery = useSearchQuery((state) => state.resetSearchQuery);
 
   return (

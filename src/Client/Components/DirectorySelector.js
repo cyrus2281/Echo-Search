@@ -16,6 +16,7 @@ import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useSnackbar } from "notistack";
 
+import { shallow } from 'zustand/shallow'
 import { CHANNELS } from "../../constants.mjs";
 import useSearchQuery from "../store/useSearchQuery.js";
 
@@ -26,7 +27,7 @@ function DirectorySelector() {
   const [directories, setDirectories] = useSearchQuery((state) => [
     state.directories,
     state.setDirectories,
-  ]);
+  ], shallow);
 
   const onSelectDirectory = () => {
     ipcSend(CHANNELS.DIRECTORY_SELECT);

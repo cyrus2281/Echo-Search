@@ -15,6 +15,7 @@ import DialogAlert from "./Components/DialogAlert";
 import FileContentSearch from "./Pages/FileContentSearch";
 import FileNameSearch from "./Pages/FileNameSearch";
 
+import { shallow } from "zustand/shallow";
 import { validateForm } from "./Utils";
 import { CHANNELS, SEARCH_MODES } from "../constants.mjs";
 import useSearchQuery from "./store/useSearchQuery";
@@ -30,9 +31,10 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 function Form() {
-  const searchMode = useSearchQuery((state) => state.searchMode);
-  const setSearchMode = useSearchQuery((state) => state.setSearchMode);
-  const getSearchQuery = useSearchQuery((state) => state.getSearchQuery);
+  const [searchMode, setSearchMode, getSearchQuery] = useSearchQuery(
+    (state) => [state.searchMode, state.setSearchMode, state.getSearchQuery],
+    shallow
+  );
 
   const { enqueueSnackbar } = useSnackbar();
   const [processID, setProcessID] = useState("");

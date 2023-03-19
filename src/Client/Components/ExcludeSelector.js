@@ -15,26 +15,31 @@ import ListItemAvatar from "@mui/material/ListItemAvatar";
 import ListItemText from "@mui/material/ListItemText";
 import Avatar from "@mui/material/Avatar";
 import DeleteIcon from "@mui/icons-material/Delete";
+
+import { shallow } from "zustand/shallow";
 import { COMMON_LIBRARY_NAMES } from "../../constants.mjs";
 import useSearchQuery from "../store/useSearchQuery.js";
 
 function ExcludeSelector({ showExcludeHiddenFiles = true }) {
-  const [excludes, setExcludes] = useSearchQuery((state) => [
-    state.excludes,
-    state.setExcludes,
-  ]);
-  const [excludeHiddenDirectories, setExcludeHiddenDirectories] =
-    useSearchQuery((state) => [
-      state.excludeHiddenDirectories,
-      state.setExcludeHiddenDirectories,
-    ]);
-  const [excludeHiddenFiles, setExcludeHiddenFiles] = useSearchQuery(
-    (state) => [state.excludeHiddenFiles, state.setExcludeHiddenFiles]
+  const [excludes, setExcludes] = useSearchQuery(
+    (state) => [state.excludes, state.setExcludes],
+    shallow
   );
-  const [excludeLibraries, setExcludeLibraries] = useSearchQuery((state) => [
-    state.excludeLibraries,
-    state.setExcludeLibraries,
-  ]);
+  const [excludeHiddenDirectories, setExcludeHiddenDirectories] =
+    useSearchQuery(
+      (state) => [
+        state.excludeHiddenDirectories,
+        state.setExcludeHiddenDirectories,
+      ],
+      shallow
+    );
+  const [excludeHiddenFiles, setExcludeHiddenFiles] = useSearchQuery(
+    (state) => [state.excludeHiddenFiles, state.setExcludeHiddenFiles, shallow]
+  );
+  const [excludeLibraries, setExcludeLibraries] = useSearchQuery(
+    (state) => [state.excludeLibraries, state.setExcludeLibraries],
+    shallow
+  );
   const [exclude, setExclude] = useState("");
 
   const addToExcludes = (exclude) => {

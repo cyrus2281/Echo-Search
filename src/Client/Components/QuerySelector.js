@@ -16,33 +16,34 @@ import AbcIcon from "@mui/icons-material/Abc";
 import SpaceBarIcon from "@mui/icons-material/SpaceBar";
 import SearchOffIcon from "@mui/icons-material/SearchOff";
 
+import { shallow } from 'zustand/shallow'
 import useSearchQuery from "../store/useSearchQuery";
 
 function QuerySelector() {
   const [searchQuery, setSearchQuery] = useSearchQuery((state) => [
     state.searchQuery,
     state.setSearchQuery,
-  ]);
+  ], shallow);
   const [replaceQuery, setReplaceQuery] = useSearchQuery((state) => [
     state.replaceQuery,
     state.setReplaceQuery,
-  ]);
+  ], shallow);
   const [caseInsensitive, setCaseInsensitive] = useSearchQuery((state) => [
     state.caseInsensitive,
     state.setCaseInsensitive,
-  ]);
+  ], shallow);
   const [matchWhole, setMatchWhole] = useSearchQuery((state) => [
     state.matchWhole,
     state.setMatchWhole,
-  ]);
+  ], shallow);
   const [isRegex, setIsRegex] = useSearchQuery((state) => [
     state.isRegex,
     state.setIsRegex,
-  ]);
+  ], shallow);
   const [isSearchOnly, setIsSearchOnly] = useSearchQuery((state) => [
     state.isSearchOnly,
     state.setIsSearchOnly,
-  ]);
+  ], shallow);
 
   const searchLabel = isRegex ? "Regular Expression" : "Search Query";
   const searchLabelOptions =
