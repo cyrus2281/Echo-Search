@@ -14,6 +14,7 @@ import { useSnackbar } from "notistack";
 import FileTypeSelector from "./FileTypeSelector";
 import ExcludeSelector from "./ExcludeSelector";
 
+import { shallow } from "zustand/shallow";
 import useSearchQuery from "../store/useSearchQuery";
 
 function InclusionSelector({
@@ -26,8 +27,10 @@ function InclusionSelector({
   const resetCustomInclusion = useSearchQuery(
     (state) => state.resetCustomInclusion
   );
-
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useSearchQuery((state) => [
+    state.openCustomInclusion,
+    state.setOpenCustomInclusion,
+  ]);
   const { enqueueSnackbar } = useSnackbar();
 
   const handleClick = () => {

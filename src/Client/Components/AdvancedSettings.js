@@ -24,7 +24,9 @@ function AdvancedSettings() {
   const resetAdvancedSettings = useSearchQuery(
     (state) => state.resetAdvancedSettings
   );
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useSearchQuery(
+    (state) => [state.openAdvancedSettings, state.setOpenAdvancedSettings],
+  );
 
   const handleClick = () => {
     setOpen(!open);

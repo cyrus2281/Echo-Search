@@ -32,28 +32,13 @@ export const defaultContentSearchQuery = {
   regexFlags: defaultRegexFlags,
 
   searchMode: SEARCH_MODES.FILE_CONTENT,
+
+  openAdvancedSettings: false,
+  openCustomInclusion: false,
 };
 
 export const defaultNameSearchQuery = {
-  searchQuery: "",
-  replaceQuery: "",
-
-  isRegex: false,
-  matchWhole: false,
-  caseInsensitive: false,
-  isSearchOnly: false,
-
-  directories: [],
-  fileTypes: [],
-  excludes: [],
-  excludeHiddenDirectories: false,
-  excludeHiddenFiles: false,
-  excludeLibraries: false,
-
-  isMultiThreaded: false,
-  numOfThreads: 1,
-  regexFlags: defaultRegexFlags,
-
+  ...defaultContentSearchQuery,
   searchMode: SEARCH_MODES.FILE_NAME,
 };
 
@@ -100,6 +85,10 @@ const useSearchQuery = create((set, get) => {
         return { searchMode };
       });
     },
+    setOpenAdvancedSettings: (openAdvancedSettings) =>
+      set({ openAdvancedSettings }),
+    setOpenCustomInclusion: (openCustomInclusion) =>
+      set({ openCustomInclusion }),
 
     // Resetters
     resetCustomInclusion: () => {
