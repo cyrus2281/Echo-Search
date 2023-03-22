@@ -23,6 +23,7 @@ import { COMMON_LIBRARY_NAMES } from "../constants.mjs";
  * @property {string[]} regexFlags regular expression modifier flags
  * @property {boolean} isRegex whether the search query is a regex or not
  * @property {boolean} matchWhole whether the search query should match the whole word or not
+ * @property {boolean?} caseInsensitive whether the search query should be case sensitive or not (only for filename search)
  */
 
 /**
@@ -67,18 +68,16 @@ export const crawlDirectory = async (
   if (ref.cancel) throw new Error(searchInterruptedErrorMessage);
   const { excludeHiddenDirectories, excludeHiddenFiles, excludeLibraries } =
     excludeOptions;
+  const dirnameValidationFn = getDirnameValidationFunction(
+    excludes,
+    excludeHiddenDirectories,
+    excludeLibraries
+  );
   const files = [];
   const items = await fs.promises.readdir(directory, { withFileTypes: true });
   for (const item of items) {
     if (item.isDirectory()) {
-      if (
-        !excludes.some((exc) => item.name.includes(exc)) && // exclude directories
-        !(excludeHiddenDirectories && item.name.startsWith(".")) && // exclude hidden directories
-        !(
-          excludeLibraries &&
-          COMMON_LIBRARY_NAMES.some((lib) => lib === item.name)
-        ) // exclude common libraries
-      ) {
+      if (dirnameValidationFn(item.name)) {
         queue.push(path.join(directory, item.name));
       }
     } else {
@@ -165,4 +164,105 @@ export const replaceStringInFile = async (filePath, query) => {
     return result;
   }
   await fs.promises.writeFile(filePath, result, { encoding: "utf-8" });
+};
+
+/**
+ * returns a function that validates a filename based on the search query and the search mode
+ * @param {string|RegExp} searchQuery search query
+ * @param {boolean} isRegex whether the search query is a regex or not
+ * @param {string[]} fileTypes the file types to search for. Empty array for all files
+ * @param {string[]} excludes the directories/files to exclude. Empty array for no exclusion
+ * @returns {(name: string) => boolean} a function that validates a filename based on the search query and the search mode
+ */
+export const getFilenameValidationFunction = (
+  searchQuery,
+  isRegex = false,
+  caseInsensitive = false,
+  fileTypes = [],
+  excludes = []
+) => {
+  // Why is this function is ugly and hard to read?
+  // Because it's a performance optimization. This function is expected to
+  // run on scale of millions, so it's important keep it as close to O(1) as possible.
+  // So instead of checking for all conditions, we create a function that only checks the
+  // conditions that are relevant to the search query
+  let validator;
+  if (isRegex) {
+    const regex = new RegExp(searchQuery, caseInsensitive ? "i" : "");
+    validator = (filename) => regex.test(filename);
+  } else {
+    if (caseInsensitive) {
+      searchQuery = searchQuery.toLowerCase();
+      validator = (filename) => filename.toLowerCase().includes(searchQuery)
+    } else {
+      validator = (filename) => filename.includes(searchQuery);
+    }
+  }
+  if (fileTypes.length > 0 && excludes.length == 0) {
+    return (filename) =>
+      validator(filename) && fileTypes.includes(filename.split(".").pop());
+  }
+  if (excludes.length > 0 && fileTypes.length == 0) {
+    return (filename) =>
+      validator(filename) && !excludes.some((exc) => filename.includes(exc));
+  }
+  if (excludes.length > 0 && fileTypes.length > 0) {
+    return (filename) =>
+      validator(filename) &&
+      !excludes.some((exc) => filename.includes(exc)) &&
+      fileTypes.includes(filename.split(".").pop());
+  }
+  return validator;
+};
+
+/**
+ * returns a function that validates a dirname based on the search query and the search mode
+ * @param {string[]} excludes the directories/files to exclude. Empty array for no exclusion
+ * @param {boolean} excludeHiddenDirectories whether to exclude hidden directories or not
+ * @param {boolean} excludeLibraries whether to exclude libraries or not
+ * @returns {(name: string) => boolean} a function that validates a dirname based on the search query
+ */
+export const getDirnameValidationFunction = (
+  excludes = [],
+  excludeHiddenDirectories = false,
+  excludeLibraries = false
+) => {
+  // Why is this function is ugly and hard to read?
+  // Because it's a performance optimization. This function is expected to
+  // run on scale of millions, so it's important keep it as close to O(1) as possible.
+  // So instead of checking for all conditions, we create a function that only checks the
+  // conditions that are relevant to the search query and the search mode.
+
+  if (excludes.length > 0) {
+    if (excludeHiddenDirectories) {
+      if (excludeLibraries) {
+        return (dirname) =>
+          !excludes.some((exc) => dirname.includes(exc)) &&
+          !dirname.startsWith(".") &&
+          !COMMON_LIBRARY_NAMES.some((lib) => lib === dirname);
+      }
+      return (dirname) =>
+        !excludes.some((exc) => dirname.includes(exc)) &&
+        !dirname.startsWith(".");
+    } else if (excludeLibraries) {
+      return (dirname) =>
+        !excludes.some((exc) => dirname.includes(exc)) &&
+        !COMMON_LIBRARY_NAMES.some((lib) => lib === dirname);
+    } else {
+      return (dirname) => !excludes.some((exc) => dirname.includes(exc));
+    }
+  } else {
+    if (excludeHiddenDirectories) {
+      if (excludeLibraries) {
+        return (dirname) =>
+          !dirname.startsWith(".") &&
+          !COMMON_LIBRARY_NAMES.some((lib) => lib === dirname);
+      }
+      return (dirname) => !dirname.startsWith(".");
+    } else if (excludeLibraries) {
+      return (dirname) => !COMMON_LIBRARY_NAMES.some((lib) => lib === dirname);
+    } else {
+      return () => true;
+    }
+  }
 };

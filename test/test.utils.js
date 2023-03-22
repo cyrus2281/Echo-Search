@@ -109,7 +109,10 @@ const caseSensitiveQuery = "With";
 const regexQuery = "t.?st[a-z]*";
 const fileNameComplete = "file1.txt";
 const fileNamePartial = "file";
-
+const fileNameCompleteCIS = "FILE1.txt";
+const filenameRegex = "file[0-4].*";
+const filenameRegexCS = "File[0-4].*";
+const filenameRegexCIS = "FILE[0-4].*";
 
 const replacementText = "🧪";
 
@@ -134,4 +137,8 @@ module.exports = {
   // file name
   fileNameComplete,
   fileNamePartial,
+  fileNameCompleteCIS,
+  filenameRegex,
+  filenameRegexCS,
+  filenameRegexCIS,
 };

@@ -6,16 +6,26 @@ import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import TextField from "@mui/material/TextField";
 import SearchIcon from "@mui/icons-material/Search";
+import ToggleButton from "@mui/material/ToggleButton";
+import Typography from "@mui/material/Typography";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import FontDownloadIcon from "@mui/icons-material/FontDownload";
+import AbcIcon from "@mui/icons-material/Abc";
 
 function NameSelector({ form }) {
   const [search, setSearch] = useState("");
+  const [caseInsensitive, setCaseInsensitive] = useState(false);
+  const [regex, setRegex] = useState(false);
 
   useEffect(() => {
     form.current.query.searchQuery = search;
-  }, [search]);
+    form.current.query.isRegex = regex;
+    form.current.query.caseInsensitive = caseInsensitive;
+  }, [search, caseInsensitive, regex]);
 
-  const searchLabel = "File name";
+  const searchLabel =
+    (regex ? "Regular Expression" : "Search Query") +
+    (caseInsensitive ? " (case insensitive)" : "");
 
   return (
     <Grid container spacing={2} display="flex" alignItems={"center"}>
@@ -48,6 +58,38 @@ function NameSelector({ form }) {
             </IconButton>
           </Tooltip>
         </Box>
+      </Grid>
+      <Grid
+        item
+        xs={12}
+        mx={2}
+        mb={1}
+        display="flex"
+        justifyContent="flex-start"
+        alignItems="center"
+        gap={2}
+      >
+        <Typography variant="body2">Options: </Typography>
+        <Tooltip title="Ignore matching case">
+          <ToggleButton
+            value="caseInsensitive"
+            size="small"
+            selected={caseInsensitive}
+            onChange={(e) => setCaseInsensitive(!caseInsensitive)}
+          >
+            <FontDownloadIcon sx={{ mr: 1 }} /> Case Insensitive
+          </ToggleButton>
+        </Tooltip>
+        <Tooltip title="Use regular expression instead of simple text query">
+          <ToggleButton
+            value="regex"
+            size="small"
+            selected={regex}
+            onChange={(e) => setRegex(!regex)}
+          >
+            <AbcIcon sx={{ mr: 1 }} /> Use RegEx
+          </ToggleButton>
+        </Tooltip>
       </Grid>
     </Grid>
   );
