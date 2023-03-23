@@ -57,12 +57,19 @@ export const CHANNELS = {
   INFO_MODE_REQUEST: "info:mode:request",
   INFO_MODE_RESPONSE: "info:mode:response",
   INFO_MODE_SET: "info:mode:set",
+  // File
+  FILE_READ_REQUEST: "file:read:request",
+  FILE_READ_RESPONSE: "file:read:response",
+  FILE_WRITE_REQUEST: "file:write:request",
+  FILE_WRITE_RESPONSE: "file:write:response",
 };
 
 export const DIALOG_ACTIONS_TYPES = {
   OPEN: "open",
   DISMISS: "dismiss",
   OK: "ok",
+  EDITOR_SAVE_EXIT: "editor:save:exit",
+  EDITOR_NO_SAVE_EXIT: "editor:noSave:exit",
 };
 
 export const SEARCH_MODES = {
@@ -130,9 +137,15 @@ export const METADATA_DIALOG = {
   error: " - Error: {error}",
   size: " - Size: {size} KB",
   accessed: " - Last accessed: {accessed}",
-  modified : " - Last modified: {modified}",
-  creation  : " - Created at: {creation}",
+  modified: " - Last modified: {modified}",
+  creation: " - Created at: {creation}",
   link: " - Number of hard-links: {link}",
   inode: " - File system inode number: {inode}",
   okBtnLabel: "Ok",
-}
+};
+
+export const ERROR_DIALOG = {
+  title: "Operation Failed!",
+  error: " - Error: {error}",
+  dismissBtnLabel: "Ok",
+};

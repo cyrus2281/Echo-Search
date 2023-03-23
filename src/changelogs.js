@@ -8,6 +8,7 @@ module.exports = [
       "Added filter search to console results",
       "Added Regex and case insensitivity options to filename search mode",
       "Added State manager and reset button",
+      "Added built-in code editor for instant file preview/editing",
     ],
   },
   {
