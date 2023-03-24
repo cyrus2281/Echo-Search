@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { CHANNELS } from "../../constants.mjs";
+import { CHANNELS, DIALOG_ACTIONS_TYPES } from "../../constants.mjs";
 
 const { ipcSend } = window.api;
 
@@ -15,8 +15,14 @@ const initialState = {
   closeOnSave: false,
 };
 
+const editorOptions = {
+  fontSize: 18,
+  wordWrap: false,
+};
+
 const useEditor = create((set, get) => {
   return {
+    ...editorOptions,
     ...initialState,
     // setters
     setIsOpen: (isOpen) => set({ isOpen }),
@@ -38,6 +44,21 @@ const useEditor = create((set, get) => {
       } else {
         set({ language });
       }
+    },
+    // editor options setters
+    setFontSize: (fontSize) => set({ fontSize }),
+    changeFontSize: (increase = true) => {
+      const { fontSize } = get();
+      if (increase && fontSize < 36) {
+        set({ fontSize: fontSize + 2 });
+      } else if (!increase && fontSize > 8) {
+        set({ fontSize: fontSize - 2 });
+      }
+    },
+    setWordWrap: (wordWrap) => set({ wordWrap }),
+    toggleWordWrap: () => {
+      const { wordWrap } = get();
+      set({ wordWrap: !wordWrap });
     },
 
     // functions
@@ -69,6 +90,35 @@ const useEditor = create((set, get) => {
     },
     closeFile: () => {
       set({ ...initialState });
+    },
+    requestCloseFile: () => {
+      const { isDirty, filePath, closeFile } = get();
+      if (isDirty) {
+        ipcSend(CHANNELS.OPEN_DIALOG, {
+          title: "There are unsaved changes!",
+          message: [
+            "Do you want to save the changes before closing?",
+            `Modifying: ${filePath}`,
+          ],
+          buttons: [
+            {
+              label: "Cancel",
+              type: DIALOG_ACTIONS_TYPES.DISMISS,
+            },
+            {
+              label: "Close without saving",
+              type: DIALOG_ACTIONS_TYPES.EDITOR_NO_SAVE_EXIT,
+              autoFocus: true,
+            },
+            {
+              label: "Save and close",
+              type: DIALOG_ACTIONS_TYPES.EDITOR_SAVE_EXIT,
+            },
+          ],
+        });
+      } else {
+        closeFile();
+      }
     },
     saveCloseFile: () => {
       const { isDirty, saveFile, closeFile } = get();

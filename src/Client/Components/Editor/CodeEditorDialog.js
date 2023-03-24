@@ -29,6 +29,7 @@ function CodeEditorDialog() {
   const filePath = useEditor((state) => state.filePath);
   const setFile = useEditor((state) => state.setFile);
   const closeFile = useEditor((state) => state.closeFile);
+  const requestCloseFile = useEditor((state) => state.requestCloseFile);
   const saveFile = useEditor((state) => state.saveFile);
   const fileSaved = useEditor((state) => state.fileSaved);
 
@@ -61,40 +62,10 @@ function CodeEditorDialog() {
     );
   }, [open]);
 
-  const handleClose = () => {
-    if (isDirty) {
-      ipcSend(CHANNELS.OPEN_DIALOG, {
-        title: "There are unsaved changes!",
-        message: [
-          "Do you want to save the changes before closing?",
-          `Modifying: ${filePath}`,
-        ],
-        buttons: [
-          {
-            label: "Cancel",
-            type: DIALOG_ACTIONS_TYPES.DISMISS,
-          },
-          {
-            label: "Close without saving",
-            type: DIALOG_ACTIONS_TYPES.EDITOR_NO_SAVE_EXIT,
-            autoFocus: true,
-          },
-          {
-            label: "Save and close",
-            type: DIALOG_ACTIONS_TYPES.EDITOR_SAVE_EXIT,
-          },
-        ],
-      });
-    } else {
-      closeFile();
-    }
-  };
-
   return (
     <Dialog
       fullScreen
       open={open}
-      onClose={handleClose}
       TransitionComponent={Transition}
     >
       <AppBar sx={{ position: "relative" }}>
@@ -102,7 +73,7 @@ function CodeEditorDialog() {
           <IconButton
             edge="start"
             color="inherit"
-            onClick={handleClose}
+            onClick={requestCloseFile}
             aria-label="close"
           >
             <CloseIcon />
@@ -130,7 +101,7 @@ function CodeEditorDialog() {
           )}
         </Toolbar>
       </AppBar>
-      <Box sx={{ height: "100%" }}>
+      <Box sx={{ height: "calc(100% - 26px)" }}>
         {!isLoading && open && <CodeEditor />}
         {isLoading && (
           <Box
