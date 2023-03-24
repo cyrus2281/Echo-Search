@@ -58,7 +58,7 @@ function EditorBottomBar() {
               setLanguage(newLanguage.id);
             }}
           >
-            {availableLanguages.map((lang, index) => {
+            {availableLanguages.sort((a,b) => a.id > b.id ? 1 : -1 ).map((lang, index) => {
               const label = lang.aliases ? lang.aliases[0] : lang.id;
               return (
                 <MenuItem key={index} value={lang.id}>

@@ -54,11 +54,11 @@ const requestFileMetadata = (msg) => {
 function ConsoleRowItem(props) {
   const { data, index, style } = props;
   const msg = data[index];
-  const openFile = useEditor((state) => state.openFile);
+  const openFileInEditor = useEditor((state) => state.openFile);
 
   const openInEditor = (msg) => {
     const filePath = getFilePathFromMessage(msg);
-    openFile(filePath);
+    openFileInEditor(filePath);
   };
 
   return (
