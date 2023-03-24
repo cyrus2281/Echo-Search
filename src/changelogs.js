@@ -9,7 +9,7 @@ module.exports = [
       "Added Regex and case insensitivity options to filename search mode",
       "Added State manager and reset button",
       "Added built-in code editor for instant file preview/editing",
-      "Added copy file path button to search result item",
+      "Added copy file path button to search result item, and open file on double click",
     ],
   },
   {

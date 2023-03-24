@@ -123,7 +123,15 @@ function ConsoleRowItem(props) {
           )
         }
       >
-        <Typography variant="body1" sx={getItemTextStyle(msg)}>
+        <Typography 
+        variant="body1" 
+        sx={getItemTextStyle(msg)}
+        onDoubleClick={() => {
+          if (msg.isFile) {
+            openInEditor(msg.message, openFileInEditor);f
+          }
+        }}
+        >
           {msg.message}
         </Typography>
       </Tooltip>
