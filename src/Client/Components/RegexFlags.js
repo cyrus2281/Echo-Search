@@ -6,46 +6,16 @@ import Tooltip from "@mui/material/Tooltip";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 
-export const defaultRegexFlags = {
-  global: true,
-  multiline: false,
-  insensitive: false,
-  sticky: false,
-  unicode: false,
-  single: false,
-};
+import { shallow } from 'zustand/shallow'
+import useSearchQuery from "../store/useSearchQuery";
 
 export const defaultRegexFlagsValues = ["g"];
 
-function RegexFlags({ form, channel }) {
-  const [flags, setFlags] = useState(defaultRegexFlags);
-
-  useEffect(() => {
-    if (channel.current.isCaseInsensitive) {
-      setFlags({ ...flags, insensitive: true });
-    }
-  }, []);
-
-  const updateCaseInsensitivity = (checked) => {
-    setFlags({ ...flags, insensitive: checked });
-    channel.current.isCaseInsensitive = checked;
-    channel.current.caseInsensitivity?.setToggle &&
-      channel.current.caseInsensitivity?.setToggle(checked);
-  };
-
-  channel.current.caseInsensitivity.setFlag = (checked) =>
-    setFlags({ ...flags, insensitive: checked });
-
-  useEffect(() => {
-    const regexFlags = [];
-    flags.global && regexFlags.push("g");
-    flags.multiline && regexFlags.push("m");
-    flags.insensitive && regexFlags.push("i");
-    flags.unicode && regexFlags.push("u");
-    flags.sticky && regexFlags.push("y");
-    flags.single && regexFlags.push("s");
-    form.current.query.regexFlags = regexFlags;
-  }, [flags]);
+function RegexFlags() {
+  const [regexFlags, setRegexFlags] = useSearchQuery((state) => [
+    state.regexFlags,
+    state.setRegexFlags,
+  ], shallow);
 
   return (
     <Box
@@ -72,9 +42,9 @@ function RegexFlags({ form, channel }) {
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={flags.global}
+                  checked={regexFlags.global}
                   onChange={(e) => {
-                    setFlags({ ...flags, global: e.target.checked });
+                    setRegexFlags({ ...regexFlags, global: e.target.checked });
                   }}
                 />
               }
@@ -90,9 +60,12 @@ function RegexFlags({ form, channel }) {
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={flags.multiline}
+                  checked={regexFlags.multiline}
                   onChange={(e) => {
-                    setFlags({ ...flags, multiline: e.target.checked });
+                    setRegexFlags({
+                      ...regexFlags,
+                      multiline: e.target.checked,
+                    });
                   }}
                 />
               }
@@ -108,9 +81,12 @@ function RegexFlags({ form, channel }) {
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={flags.insensitive}
+                  checked={regexFlags.insensitive}
                   onChange={(e) => {
-                    updateCaseInsensitivity(e.target.checked);
+                    setRegexFlags({
+                      ...regexFlags,
+                      insensitive: e.target.checked,
+                    });
                   }}
                 />
               }
@@ -126,9 +102,9 @@ function RegexFlags({ form, channel }) {
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={flags.unicode}
+                  checked={regexFlags.unicode}
                   onChange={(e) => {
-                    setFlags({ ...flags, unicode: e.target.checked });
+                    setRegexFlags({ ...regexFlags, unicode: e.target.checked });
                   }}
                 />
               }
@@ -144,9 +120,9 @@ function RegexFlags({ form, channel }) {
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={flags.sticky}
+                  checked={regexFlags.sticky}
                   onChange={(e) => {
-                    setFlags({ ...flags, sticky: e.target.checked });
+                    setRegexFlags({ ...regexFlags, sticky: e.target.checked });
                   }}
                 />
               }
@@ -162,9 +138,9 @@ function RegexFlags({ form, channel }) {
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={flags.single}
+                  checked={regexFlags.single}
                   onChange={(e) => {
-                    setFlags({ ...flags, single: e.target.checked });
+                    setRegexFlags({ ...regexFlags, single: e.target.checked });
                   }}
                 />
               }

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { useSnackbar } from "notistack";
 import Paper from "@mui/material/Paper";
@@ -6,15 +6,20 @@ import Grid from "@mui/material/Grid";
 import { styled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
+import Tooltip from "@mui/material/Tooltip";
 
 import Banner from "./Components/Banner";
 import Output from "./Components/Output";
 import Footer from "./Components/Footer";
-import { CHANNELS, SEARCH_MODES } from "../constants.mjs";
 import DialogAlert from "./Components/DialogAlert";
+
 import FileContentSearch from "./Pages/FileContentSearch";
-import { getFormDefaults, validateForm } from "./Utils";
 import FileNameSearch from "./Pages/FileNameSearch";
+
+import { shallow } from "zustand/shallow";
+import { validateForm } from "./Utils";
+import { CHANNELS, SEARCH_MODES } from "../constants.mjs";
+import useSearchQuery from "./store/useSearchQuery";
 
 const { ipcSend, ipcListen } = window.api;
 
@@ -27,20 +32,22 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 function Form() {
-  const [searchMode, setSearchMode] = useState(SEARCH_MODES.FILE_CONTENT);
-  const formData = useRef(getFormDefaults(searchMode));
-  const biDirectionalChannel = useRef({ caseInsensitivity: {} });
+  const [searchMode, setSearchMode, getSearchQuery, resetSearchQuery] =
+    useSearchQuery(
+      (state) => [
+        state.searchMode,
+        state.setSearchMode,
+        state.getSearchQuery,
+        state.resetSearchQuery,
+      ],
+      shallow
+    );
+
   const { enqueueSnackbar } = useSnackbar();
   const [processID, setProcessID] = useState("");
   const [isRunning, setIsRunning] = useState(false);
   const [disableBtn, setDisableBtn] = useState(false);
   const [showOutput, setShowOutput] = useState(false);
-
-  const updateSearchMode = (mode) => {
-    if (mode === searchMode) return;
-    formData.current = getFormDefaults(mode);
-    setSearchMode(mode);
-  };
 
   const onButtonClick = () => {
     if (disableBtn) return;
@@ -48,8 +55,9 @@ function Form() {
       setDisableBtn(true);
       ipcSend(CHANNELS.SEARCH_CANCEL, { processID });
     } else {
-      const hasError = validateForm(formData, searchMode);
-      console.log(formData.current, hasError);
+      const searchQuery = getSearchQuery();
+      const hasError = validateForm(searchQuery, searchMode);
+      console.log(searchQuery, hasError);
       if (hasError.length) {
         hasError.forEach((error) =>
           enqueueSnackbar(error, { variant: "error", autoHideDuration: 3000 })
@@ -59,7 +67,7 @@ function Form() {
       showOutput && setShowOutput(false);
       setDisableBtn(true);
       setIsRunning(true);
-      ipcSend(CHANNELS.SEARCH_START, formData.current);
+      ipcSend(CHANNELS.SEARCH_START, searchQuery);
     }
   };
 
@@ -111,7 +119,7 @@ function Form() {
   useEffect(() => {
     ipcSend(CHANNELS.INFO_MODE_REQUEST);
     const onMountMode = ({ searchMode }) => {
-      updateSearchMode(searchMode);
+      setSearchMode(searchMode);
     };
     return ipcListen(CHANNELS.INFO_MODE_RESPONSE, onMountMode);
   }, []);
@@ -145,27 +153,42 @@ function Form() {
       >
         <Grid container spacing={2}>
           <Grid item xs={12}>
-            <Banner
-              searchMode={searchMode}
-              setSearchMode={updateSearchMode}
-              disabled={isRunning}
-            />
+            <Banner disabled={isRunning} />
           </Grid>
           {searchMode === SEARCH_MODES.FILE_CONTENT ? (
-            <FileContentSearch
-              form={formData}
-              biDirectionalChannel={biDirectionalChannel}
-            />
+            <FileContentSearch />
           ) : (
-            <FileNameSearch
-              form={formData}
-              biDirectionalChannel={biDirectionalChannel}
-            />
+            <FileNameSearch />
           )}
-          <Grid item xs={8} margin="auto">
+          <Grid
+            item
+            xs={12}
+            margin="auto"
+            sx={{
+              position: "relative",
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            <Box
+              sx={{
+                position: "absolute",
+                left: "24px",
+              }}
+            >
+              <Tooltip title="Reset search query">
+                <Button
+                  variant="outlined"
+                  onClick={() => resetSearchQuery(searchMode)}
+                >
+                  RESET
+                </Button>
+              </Tooltip>
+            </Box>
             <Button
               {...buttonProps}
               fullWidth
+              sx={{ maxWidth: "60%", margin: "0 auto" }}
               disabled={disableBtn}
               onClick={onButtonClick}
             >

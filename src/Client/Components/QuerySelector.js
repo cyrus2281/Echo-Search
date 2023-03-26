@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -16,43 +16,36 @@ import AbcIcon from "@mui/icons-material/Abc";
 import SpaceBarIcon from "@mui/icons-material/SpaceBar";
 import SearchOffIcon from "@mui/icons-material/SearchOff";
 
-function QuerySelector({ form, channel }) {
-  const [search, setSearch] = useState("");
-  const [replace, setReplace] = useState("");
-  const [isSearchOnly, setIsSearchOnly] = useState(false);
-  const [caseInsensitive, setCaseInsensitive] = useState(false);
-  const [regex, setRegex] = useState(false);
-  const [matchWhole, setMatchWhole] = useState(false);
+import { shallow } from 'zustand/shallow'
+import useSearchQuery from "../store/useSearchQuery";
 
-  const updateCaseInsensitivity = (checked) => {
-    setCaseInsensitive(checked);
-    channel.current.isCaseInsensitive = checked;
-    if (channel.current.caseInsensitivity?.setFlag) {
-      channel.current.caseInsensitivity.setFlag(checked);
-    } else {
-      if (checked) {
-        if (!form.current.query.regexFlags.includes("i")) {
-          form.current.query.regexFlags.push("i");
-        }
-      } else {
-        form.current.query.regexFlags = form.current.query.regexFlags.filter(
-          (flag) => flag !== "i"
-        );
-      }
-    }
-  };
+function QuerySelector() {
+  const [searchQuery, setSearchQuery] = useSearchQuery((state) => [
+    state.searchQuery,
+    state.setSearchQuery,
+  ], shallow);
+  const [replaceQuery, setReplaceQuery] = useSearchQuery((state) => [
+    state.replaceQuery,
+    state.setReplaceQuery,
+  ], shallow);
+  const [caseInsensitive, setCaseInsensitive] = useSearchQuery((state) => [
+    state.caseInsensitive,
+    state.setCaseInsensitive,
+  ], shallow);
+  const [matchWhole, setMatchWhole] = useSearchQuery((state) => [
+    state.matchWhole,
+    state.setMatchWhole,
+  ], shallow);
+  const [isRegex, setIsRegex] = useSearchQuery((state) => [
+    state.isRegex,
+    state.setIsRegex,
+  ], shallow);
+  const [isSearchOnly, setIsSearchOnly] = useSearchQuery((state) => [
+    state.isSearchOnly,
+    state.setIsSearchOnly,
+  ], shallow);
 
-  channel.current.caseInsensitivity.setToggle = (checked) =>
-    setCaseInsensitive(checked);
-
-  useEffect(() => {
-    form.current.query.searchQuery = search;
-    form.current.query.replaceQuery = isSearchOnly ? false : replace;
-    form.current.query.isRegex = regex;
-    form.current.query.matchWhole = matchWhole;
-  }, [search, replace, regex, matchWhole, isSearchOnly]);
-
-  const searchLabel = regex ? "Regular Expression" : "Search Query";
+  const searchLabel = isRegex ? "Regular Expression" : "Search Query";
   const searchLabelOptions =
     caseInsensitive || matchWhole
       ? " (" +
@@ -83,7 +76,8 @@ function QuerySelector({ form, channel }) {
               variant="standard"
               multiline
               fullWidth
-              onChange={(e) => setSearch(e.target.value)}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
           </Box>
           <Tooltip
@@ -97,11 +91,7 @@ function QuerySelector({ form, channel }) {
         </Box>
       </Grid>
       <Grid item xs={12} mx={2}>
-        <Collapse
-          in={!isSearchOnly}
-          timeout="auto"
-          // onExited={clearCustomization}
-        >
+        <Collapse in={!isSearchOnly} timeout="auto">
           <Box
             sx={{
               display: "flex",
@@ -120,7 +110,8 @@ function QuerySelector({ form, channel }) {
                 maxRows={5}
                 multiline
                 fullWidth
-                onChange={(e) => setReplace(e.target.value)}
+                value={replaceQuery || ""}
+                onChange={(e) => setReplaceQuery(e.target.value)}
               />
             </Box>
             <Tooltip
@@ -160,7 +151,7 @@ function QuerySelector({ form, channel }) {
             value="caseInsensitive"
             size="small"
             selected={caseInsensitive}
-            onChange={(e) => updateCaseInsensitivity(!caseInsensitive)}
+            onChange={(e) => setCaseInsensitive(!caseInsensitive)}
           >
             <FontDownloadIcon sx={{ mr: 1 }} /> Case Insensitive
           </ToggleButton>
@@ -169,18 +160,18 @@ function QuerySelector({ form, channel }) {
           <ToggleButton
             value="regex"
             size="small"
-            selected={regex}
+            selected={isRegex}
             onChange={(e) => {
-              if (!regex) {
+              if (!isRegex) {
                 setMatchWhole(false);
               }
-              setRegex(!regex);
+              setIsRegex(!isRegex);
             }}
           >
             <AbcIcon sx={{ mr: 1 }} /> Use RegEx
           </ToggleButton>
         </Tooltip>
-        {!regex && (
+        {!isRegex && (
           <Tooltip title="Should completely match the whole word (no partial match)">
             <ToggleButton
               value="matchWhole"

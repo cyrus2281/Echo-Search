@@ -16,29 +16,27 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-
-function FileContentSearch({ form, biDirectionalChannel }) {
-
+function FileContentSearch() {
   return (
     <>
       <Grid item xs={12}>
         <Item>
-          <DirectorySelector form={form} />
+          <DirectorySelector />
         </Item>
       </Grid>
       <Grid item xs={12}>
         <Item>
-          <QuerySelector form={form} channel={biDirectionalChannel} />
+          <QuerySelector />
         </Item>
       </Grid>
       <Grid item xs={12}>
         <Item>
-          <InclusionSelector form={form} />
+          <InclusionSelector />
         </Item>
       </Grid>
       <Grid item xs={12}>
         <Item>
-          <AdvancedSettings form={form} channel={biDirectionalChannel} />
+          <AdvancedSettings />
         </Item>
       </Grid>
     </>

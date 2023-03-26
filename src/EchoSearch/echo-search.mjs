@@ -38,6 +38,7 @@ import {
  * @property {string[]} regexFlags regular expression modifier flags
  * @property {boolean} isRegex whether the search query is a regex or not
  * @property {boolean} matchWhole whether the search query should match the whole word or not
+ * @property {boolean?} caseInsensitive whether the search query should be case sensitive or not (only for filename search)
  */
 
 /**
