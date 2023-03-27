@@ -20,6 +20,7 @@ import { shallow } from "zustand/shallow";
 import { validateForm } from "./Utils";
 import { CHANNELS, SEARCH_MODES } from "../constants.mjs";
 import useSearchQuery from "./store/useSearchQuery";
+import CodeEditorDialog from "./Components/Editor/CodeEditorDialog";
 
 const { ipcSend, ipcListen } = window.api;
 
@@ -139,7 +140,7 @@ function Form() {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "space-between",
-        maxWidth: "1000px",
+        maxWidth: "1100px",
       }}
     >
       <Paper
@@ -210,6 +211,7 @@ function Form() {
       </Paper>
       <Footer />
       <DialogAlert />
+      <CodeEditorDialog />
     </Box>
   );
 }

@@ -1,6 +1,10 @@
 const fs = require("fs-extra");
 const path = require("path");
-const { METADATA_DIALOG, DIALOG_ACTIONS_TYPES } = require("./constants.mjs");
+const {
+  METADATA_DIALOG,
+  DIALOG_ACTIONS_TYPES,
+  ERROR_DIALOG,
+} = require("./constants.mjs");
 
 const getFileMetadata = async (file) => {
   const basename = path.basename(file);
@@ -46,6 +50,54 @@ const getFileMetadata = async (file) => {
   }
 };
 
+const readFileContent = async (filePath) => {
+  try {
+    const content = await fs.readFile(filePath, "utf8");
+    if (/\ufffd/.test(content)) {
+      throw new Error("Cannot read a non-text file");
+    }
+    return { content };
+  } catch (err) {
+    return {
+      error: err,
+      message: "Failed to read file: " + err.message,
+    };
+  }
+};
+
+const writeFileContent = async (filePath, content) => {
+  let result;
+  try {
+    await fs.writeFile(filePath, content);
+    result = {
+      message: "File saved successfully",
+    };
+  } catch (err) {
+    result = {
+      error: err,
+      message: "Failed to write file: " + err.message,
+    };
+  } finally {
+    return result;
+  }
+};
+
+const getDialogErrorProps = (message) => {
+  return {
+    title: ERROR_DIALOG.title,
+    message: [ERROR_DIALOG.error.replace("{error}", message)],
+    buttons: [
+      {
+        label: ERROR_DIALOG.dismissBtnLabel,
+        type: DIALOG_ACTIONS_TYPES.DISMISS,
+      },
+    ],
+  };
+};
+
 module.exports = {
   getFileMetadata,
+  readFileContent,
+  writeFileContent,
+  getDialogErrorProps,
 };

@@ -8,6 +8,8 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Slide from "@mui/material/Slide";
 
+import { shallow } from "zustand/shallow";
+import useEditor from "../store/useEditor.js";
 import { CHANNELS, DIALOG_ACTIONS_TYPES } from "../../constants.mjs";
 
 const { ipcListen, ipcSend } = window.api;
@@ -37,6 +39,10 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 function DialogAlert() {
+  const [saveCloseFile, closeFile] = useEditor(
+    (state) => [state.saveCloseFile, state.closeFile],
+    shallow
+  );
   const [dialogQueue, setDialogQueue] = useState([]);
   const [dialogProps, setDialogProps] = useState(null);
   const actions = {
@@ -50,6 +56,14 @@ function DialogAlert() {
     [DIALOG_ACTIONS_TYPES.DISMISS]: () => {
       setDialogProps(null);
     },
+    [DIALOG_ACTIONS_TYPES.EDITOR_SAVE_EXIT]: () => {
+      saveCloseFile();
+      setDialogProps(null);
+    },
+    [DIALOG_ACTIONS_TYPES.EDITOR_NO_SAVE_EXIT]: () => {
+      closeFile();
+      setDialogProps(null);
+    }
   };
 
   useEffect(() => {

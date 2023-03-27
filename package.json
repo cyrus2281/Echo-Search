@@ -1,7 +1,7 @@
 {
   "name": "echo-search",
   "productName": "Echo Search",
-  "version": "2.6.5",
+  "version": "2.6.6",
   "description": "Echo Search is a feature-rich application designed to help you search and replace text within the contents of files in a directory and its subdirectories.",
   "main": ".webpack/main",
   "scripts": {
@@ -65,6 +65,7 @@
   "dependencies": {
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
+    "@monaco-editor/react": "^4.4.6",
     "@mui/icons-material": "^5.11.0",
     "@mui/material": "^5.11.0",
     "electron-squirrel-startup": "^1.0.0",

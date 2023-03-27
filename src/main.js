@@ -24,7 +24,12 @@ const {
 const os = require("os");
 const { CHANNELS } = require("./constants.mjs");
 const { echoSearch } = require("./EchoSearch/echo-search.mjs");
-const { getFileMetadata } = require("./utils.js");
+const {
+  getFileMetadata,
+  readFileContent,
+  writeFileContent,
+  getDialogErrorProps,
+} = require("./utils.js");
 const {
   storeStatusUpdate,
   updateVersion,
@@ -46,7 +51,7 @@ const createWindow = () => {
   mainWindow = new BrowserWindow({
     width: 850,
     height: 1000,
-    minWidth: 650,
+    minWidth: 700,
     minHeight: 550,
     icon: "icons/icon.png",
     webPreferences: {
@@ -165,6 +170,10 @@ ipcMain.on(CHANNELS.OPEN_FOLDER, async (e, { filePath }) => {
   filePath && shell.showItemInFolder(filePath);
 });
 
+ipcMain.on(CHANNELS.OPEN_DIALOG, async (e, forwardProp) => {
+  mainWindow.webContents.send(CHANNELS.OPEN_DIALOG, forwardProp);
+});
+
 ipcMain.on(CHANNELS.INFO_PKG_REQUEST, async () => {
   mainWindow.webContents.send(CHANNELS.INFO_PKG_RESPONSE, process.env.PACKAGE);
   // Update Store Version
@@ -199,3 +208,24 @@ ipcMain.on(CHANNELS.INFO_MODE_REQUEST, async () => {
   const searchMode = getSearchMode();
   mainWindow.webContents.send(CHANNELS.INFO_MODE_RESPONSE, { searchMode });
 });
+
+ipcMain.on(CHANNELS.FILE_READ_REQUEST, async (e, { filePath }) => {
+  const result = await readFileContent(filePath);
+  mainWindow.webContents.send(CHANNELS.FILE_READ_RESPONSE, result);
+  if (result.error) {
+    const dialogProps = getDialogErrorProps(result.message || result.error);
+    mainWindow.webContents.send(CHANNELS.OPEN_DIALOG, dialogProps);
+  }
+});
+
+ipcMain.on(
+  CHANNELS.FILE_WRITE_REQUEST,
+  async (e, { filePath, fileContent }) => {
+    const result = await writeFileContent(filePath, fileContent);
+    mainWindow.webContents.send(CHANNELS.FILE_WRITE_RESPONSE, result);
+    if (result.error) {
+      const dialogProps = getDialogErrorProps(result.message || result.error);
+      mainWindow.webContents.send(CHANNELS.OPEN_DIALOG, dialogProps);
+    }
+  }
+);

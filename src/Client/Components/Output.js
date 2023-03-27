@@ -20,7 +20,7 @@ import { getMessage, getProgressBarColor, getProgressBarMode } from "../Utils";
 
 const { ipcListen } = window.api;
 
-const FAILED_SEARCH_HEADING = "Operation was not completely successful.";
+const FAILED_SEARCH_HEADING = "Search exited with error!";
 
 function ConsoleSearch({ onSearchRef }) {
   const searchBounceRef = useRef();
@@ -32,6 +32,11 @@ function ConsoleSearch({ onSearchRef }) {
         label="Search"
         size="small"
         value={searchText}
+        sx={{
+          "@media (max-width: 820px)": {
+            width: "150px",
+          },
+        }}
         onChange={(e) => {
           clearTimeout(searchBounceRef.current);
           setSearchText(e.target.value);

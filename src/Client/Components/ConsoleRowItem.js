@@ -2,12 +2,14 @@ import React from "react";
 import ListItem from "@mui/material/ListItem";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
 import FileIcon from "@mui/icons-material/InsertDriveFile";
 import FolderIcon from "@mui/icons-material/Folder";
-import Typography from "@mui/material/Typography";
 import InfoIcon from "@mui/icons-material/Info";
+import EditIcon from "@mui/icons-material/Edit";
 
 import { CHANNELS, MESSAGE_PREFIX } from "../../constants.mjs";
+import useEditor from "../store/useEditor.js";
 
 const { ipcSend } = window.api;
 
@@ -52,6 +54,12 @@ const requestFileMetadata = (msg) => {
 function ConsoleRowItem(props) {
   const { data, index, style } = props;
   const msg = data[index];
+  const openFileInEditor = useEditor((state) => state.openFile);
+
+  const openInEditor = (msg) => {
+    const filePath = getFilePathFromMessage(msg);
+    openFileInEditor(filePath);
+  };
 
   return (
     <ListItem
@@ -66,27 +74,27 @@ function ConsoleRowItem(props) {
       <Tooltip
         placement="bottom-start"
         arrow
+        leaveDelay={100}
         title={
           msg.isFile && (
             <>
+              <Tooltip title="Open file in built-in code editor. (For text-base files ONLY)">
+                <IconButton onClick={() => openInEditor(msg.message)}>
+                  <EditIcon fontSize="8" />
+                </IconButton>
+              </Tooltip>
               <Tooltip title="Open file in the desktop's default manner. Similar to double clicking on the file.">
-                <IconButton size="small" onClick={() => openFile(msg.message)}>
+                <IconButton onClick={() => openFile(msg.message)}>
                   <FileIcon fontSize="8" />
                 </IconButton>
               </Tooltip>
               <Tooltip title="Open folder in the file manager.">
-                <IconButton
-                  size="small"
-                  onClick={() => openFile(msg.message, true)}
-                >
+                <IconButton onClick={() => openFile(msg.message, true)}>
                   <FolderIcon fontSize="8" />
                 </IconButton>
               </Tooltip>
               <Tooltip title="Get file metadata.">
-                <IconButton
-                  size="small"
-                  onClick={() => requestFileMetadata(msg.message)}
-                >
+                <IconButton onClick={() => requestFileMetadata(msg.message)}>
                   <InfoIcon fontSize="8" />
                 </IconButton>
               </Tooltip>
