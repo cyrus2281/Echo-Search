@@ -7,7 +7,9 @@ import FileIcon from "@mui/icons-material/InsertDriveFile";
 import FolderIcon from "@mui/icons-material/Folder";
 import InfoIcon from "@mui/icons-material/Info";
 import EditIcon from "@mui/icons-material/Edit";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 
+import { useSnackbar } from "notistack";
 import { CHANNELS, MESSAGE_PREFIX } from "../../constants.mjs";
 import useEditor from "../store/useEditor.js";
 
@@ -51,15 +53,25 @@ const requestFileMetadata = (msg) => {
   ipcSend(CHANNELS.INFO_METADATA_REQUEST, { filePath });
 };
 
+const copyFilePath = (msg, snackbarFn) => {
+  const filePath = getFilePathFromMessage(msg);
+  navigator.clipboard.writeText(filePath);
+  snackbarFn("Copied path to clipboard", {
+    variant: "default",
+    autoHideDuration: 1000,
+  });
+};
+
+const openInEditor = (msg, openFileInEditor) => {
+  const filePath = getFilePathFromMessage(msg);
+  openFileInEditor(filePath);
+};
+
 function ConsoleRowItem(props) {
   const { data, index, style } = props;
   const msg = data[index];
   const openFileInEditor = useEditor((state) => state.openFile);
-
-  const openInEditor = (msg) => {
-    const filePath = getFilePathFromMessage(msg);
-    openFileInEditor(filePath);
-  };
+  const { enqueueSnackbar } = useSnackbar();
 
   return (
     <ListItem
@@ -79,7 +91,9 @@ function ConsoleRowItem(props) {
           msg.isFile && (
             <>
               <Tooltip title="Open file in built-in code editor. (For text-base files ONLY)">
-                <IconButton onClick={() => openInEditor(msg.message)}>
+                <IconButton
+                  onClick={() => openInEditor(msg.message, openFileInEditor)}
+                >
                   <EditIcon fontSize="8" />
                 </IconButton>
               </Tooltip>
@@ -98,11 +112,26 @@ function ConsoleRowItem(props) {
                   <InfoIcon fontSize="8" />
                 </IconButton>
               </Tooltip>
+              <Tooltip title="Copy file path.">
+                <IconButton
+                  onClick={() => copyFilePath(msg.message, enqueueSnackbar)}
+                >
+                  <ContentCopyIcon fontSize="8" />
+                </IconButton>
+              </Tooltip>
             </>
           )
         }
       >
-        <Typography variant="body1" sx={getItemTextStyle(msg)}>
+        <Typography 
+        variant="body1" 
+        sx={getItemTextStyle(msg)}
+        onDoubleClick={() => {
+          if (msg.isFile) {
+            openInEditor(msg.message, openFileInEditor);f
+          }
+        }}
+        >
           {msg.message}
         </Typography>
       </Tooltip>

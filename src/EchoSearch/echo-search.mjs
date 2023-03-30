@@ -15,7 +15,6 @@ import path from "path";
 import fs from "fs";
 import { Worker, BroadcastChannel } from "worker_threads";
 import {
-  COMMON_LIBRARY_NAMES,
   MESSAGE_MODES,
   MESSAGE_PREFIX,
   SEARCH_MODES,

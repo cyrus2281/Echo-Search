@@ -3,12 +3,13 @@ module.exports = [
     version: "v2.6",
     released: "00/04/2023",
     logs: [
-      "Added file metadata fetcher on result item hover.",
+      "Added view file metadata button to search result item.",
       "Opening the app in the search mode that was last used",
       "Added filter search to console results",
       "Added Regex and case insensitivity options to filename search mode",
       "Added State manager and reset button",
       "Added built-in code editor for instant file preview/editing",
+      "Added copy file path button to search result item, and open file on double click",
     ],
   },
   {
