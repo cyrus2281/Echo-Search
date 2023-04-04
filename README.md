@@ -7,15 +7,16 @@
 ![downloads](https://img.shields.io/github/downloads/cyrus2281/echo-search/total?color=orange&label=Downloads)
 <br>
 
-https://user-images.githubusercontent.com/68962752/222941014-7b0533fe-8149-4804-882d-5ebe6541febf.mp4
+https://user-images.githubusercontent.com/68962752/229653420-9d6c9ff1-904a-4d87-bd13-356b4b21df75.mp4
 
 [![react](https://img.shields.io/github/package-json/dependency-version/cyrus2281/Echo-Search/react?logo=react&color=lightblue)](https://reactjs.org/)
 [![electron](https://img.shields.io/github/package-json/dependency-version/cyrus2281/Echo-Search/dev/electron?logo=electron&color=lightblue&logoColor=lightblue)](https://www.electronjs.org/)
-[![mui](https://img.shields.io/github/package-json/dependency-version/cyrus2281/echo-search/@mui/material?color=darkblue)](https://mui.com/material-ui/getting-started/overview/)
+[![mui](https://img.shields.io/github/package-json/dependency-version/cyrus2281/echo-search/@mui/material?color=lightblue)](https://mui.com/material-ui/getting-started/overview/)
+[![monaco-editor-react](https://img.shields.io/github/package-json/dependency-version/cyrus2281/echo-search/@monaco-editor/react?color=lightblue)](https://www.npmjs.com/package/@monaco-editor/react/)
 
 <br>
 
-Echo Search is a feature-rich and powerful application that allows you to search for a specific text or regular expression query in the content of files within a directory and its subdirectories. It also offers the ability to replace the found text with another string of your choice. With its wide range of options and capabilities, it is an ideal solution for software developers, data analysts, and anyone looking for an efficient way to search and replace text in files. In addition, you can search for file names with customized inclusion to search through your file system.
+Echo Search is a feature-rich and powerful application that allows you to search for a specific text or regular expression query in the content of files or for the file names within a directory and its subdirectories. it also offers the ability to replace the found text with another string of your choice or even open the file in the built-in code editor, so you can perform quick tweaks and updates. With its wide range of options and capabilities, it is an ideal solution for software developers, data analysts, and anyone looking for an efficient way to search and replace text in files. It is also a great tool for searching for files with specific names within a directory and its subdirectories.
 
 ## Key Features
 
@@ -41,9 +42,12 @@ Echo Search is a feature-rich and powerful application that allows you to search
 
 - Regular expression flags: Echo Search supports a range of regular expression flags, allowing you to customize the search even further.
 
-- Live feedback console: Echo Search provides a console with live feedback on the progress of the search, making it easy to monitor its progress. You can also clear the console at any time.
+- Live feedback console: Echo Search provides a console with live feedback on the progress of the search, making it easy to monitor its progress. You can also clear or the filter the console at any time.
 
-- Direct file and directory access: You can open the updated files or their directories with the file pre-selected directly from the console.
+- Direct file and directory access: You can open the updated files or their directories with the file pre-selected directly from the console or quickly check the file metadata or copy its path.
+
+- Built-in code editor: Echo Search comes with a built-in code editor that allows you to open the files directly from the console and make quick edits and updates.
+
 
 ***Note:** The search content mode is only for text based files and can NOT be used with files such as pdf, doc, excel, etc.*
 
@@ -65,7 +69,7 @@ Echo Search is a feature-rich and powerful application that allows you to search
 2. From `Assets` download the `zip` version.
    `Echo Search-darwin-x64-X.X.X.zip`
 3. After downloading the zip, double click on it to extract the file.
-4. Right click on the file and select open. You might see a warning that the developer is unknown, accept and open the app (this is because the app is not registered under the apple's paid subscription).
+4. Right click on the file and select open. You might see a warning that the developer is unknown, accept and open the app (this is because the app is not registered under the apple's paid subscription)(You might have to repeat this twice).
 5. Drag and move the app to the application folder.
 
 ### Linux
@@ -80,7 +84,7 @@ That's it. Enjoy the app.
 
 <hr>
 
-Echo Search is a versatile and efficient tool for searching and replacing text in files or searching filename within directories. With its extensive range of options and capabilities, it is suitable for a wide range of use cases, whether you are a software developer looking for a quick way to update code, or a data analyst searching for specific information in large datasets, or just trying to find a file. Try Echo Search today and see how it can make your life easier.
+Echo Search is a versatile and efficient tool for searching and replacing text in files or searching filename within directories. With its extensive range of options, capabilities and the built-in code editor, it is suitable for a wide range of use cases, whether you are a software developer looking for a quick way to update code, or a data analyst searching for specific information in large datasets, or just trying to find a file. Try Echo Search today and see how it can make your life easier.
 
 ## Application Screenshots
 
@@ -93,6 +97,13 @@ Echo Search is a versatile and efficient tool for searching and replacing text i
   <img src="./images/filled.png" width="49%" />
   <img src="./images/running.png"  width="49%" />
 </div>
+<br>
+<div style="display:flex; gap:2%;">
+  <img src="./images/editor.png" width="49%" />
+  <img src="./images/extra.png"  width="49%" />
+</div>
+<br>
+
 
 ## License
 
