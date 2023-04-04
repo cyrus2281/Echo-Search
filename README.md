@@ -7,7 +7,7 @@
 ![downloads](https://img.shields.io/github/downloads/cyrus2281/echo-search/total?color=orange&label=Downloads)
 <br>
 
-https://user-images.githubusercontent.com/68962752/222941014-7b0533fe-8149-4804-882d-5ebe6541febf.mp4
+https://user-images.githubusercontent.com/68962752/229653420-9d6c9ff1-904a-4d87-bd13-356b4b21df75.mp4
 
 [![react](https://img.shields.io/github/package-json/dependency-version/cyrus2281/Echo-Search/react?logo=react&color=lightblue)](https://reactjs.org/)
 [![electron](https://img.shields.io/github/package-json/dependency-version/cyrus2281/Echo-Search/dev/electron?logo=electron&color=lightblue&logoColor=lightblue)](https://www.electronjs.org/)
