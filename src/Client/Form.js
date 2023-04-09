@@ -33,16 +33,22 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 function Form() {
-  const [searchMode, setSearchMode, getSearchQuery, resetSearchQuery] =
-    useSearchQuery(
-      (state) => [
-        state.searchMode,
-        state.setSearchMode,
-        state.getSearchQuery,
-        state.resetSearchQuery,
-      ],
-      shallow
-    );
+  const [
+    searchMode,
+    setSearchMode,
+    getSearchQuery,
+    resetSearchQuery,
+    addToHistory,
+  ] = useSearchQuery(
+    (state) => [
+      state.searchMode,
+      state.setSearchMode,
+      state.getSearchQuery,
+      state.resetSearchQuery,
+      state.addToHistory,
+    ],
+    shallow
+  );
 
   const { enqueueSnackbar } = useSnackbar();
   const [processID, setProcessID] = useState("");
@@ -65,6 +71,7 @@ function Form() {
         );
         return;
       }
+      addToHistory();
       showOutput && setShowOutput(false);
       setDisableBtn(true);
       setIsRunning(true);

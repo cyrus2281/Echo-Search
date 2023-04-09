@@ -1,6 +1,10 @@
 import { create } from "zustand";
 import { SEARCH_MODES } from "../../constants.mjs";
-import { getRegexFlagsArray } from "../Utils.js";
+import {
+  getRegexFlagsArray,
+  loadFromLocalStorage,
+  saveToLocalStorage,
+} from "../Utils.js";
 
 export const defaultRegexFlags = {
   global: true,
@@ -43,8 +47,10 @@ export const defaultNameSearchQuery = {
 };
 
 const useSearchQuery = create((set, get) => {
+  const history = loadFromLocalStorage("searchHistory", []);
   return {
     // Fields
+    history,
     ...defaultContentSearchQuery,
 
     // Setters
@@ -191,6 +197,52 @@ const useSearchQuery = create((set, get) => {
       searchQuery.numOfThreads = state.numOfThreads;
 
       return searchQuery;
+    },
+    // History
+    addToHistory: (histState) => {
+      set((state) => {
+        const { history: _, ...newState } = histState
+          ? histState
+          : { ...state };
+        // load from local storage
+        const history = loadFromLocalStorage("searchHistory", []);
+        // check for duplicate
+        const index = history.findIndex(
+          ({ timestamp: _, ...hState }) =>
+            JSON.stringify(hState) === JSON.stringify(newState)
+        );
+        // Add timestamp
+        newState.timestamp = Date.now();
+        // move duplicate and add to first
+        if (index > -1) {
+          history.splice(index, 1);
+          history.unshift(newState);
+        } else {
+          history.unshift(newState);
+        }
+        // remove last element if history is greater than 7
+        if (history.length > 7) {
+          history.pop();
+        }
+        // Save to local storage
+        saveToLocalStorage("searchHistory", history);
+        return { history };
+      });
+    },
+    clearHistory: () => {
+      set({ history: [] });
+      saveToLocalStorage("searchHistory", []);
+    },
+    applyHistory: ({ timestamp: _, ...histState }) => {
+      // load from local storage
+      const history = loadFromLocalStorage("searchHistory", []);
+      set({
+        ...(histState.searchMode === SEARCH_MODES.FILE_NAME
+          ? defaultNameSearchQuery
+          : defaultContentSearchQuery),
+        ...histState,
+        history,
+      });
     },
   };
 });
