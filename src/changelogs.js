@@ -1,6 +1,13 @@
 module.exports = [
   {
     version: "v2.6",
+    released: "00/05/2023",
+    logs: [
+      "Added search query history and restore.",
+    ],
+  },
+  {
+    version: "v2.6",
     released: "03/04/2023",
     logs: [
       "Added view file metadata button to search result item.",

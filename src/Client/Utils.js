@@ -79,6 +79,20 @@ export const getMessage = (msg) => {
   };
 };
 
+export const saveToLocalStorage = (key, value) => {
+  const jsonValue = JSON.stringify(value);
+  localStorage.setItem(key, jsonValue);
+};
+
+export const loadFromLocalStorage = (key, defaultValue = null) => {
+  const jsonValue = localStorage.getItem(key);
+  return jsonValue != null ? JSON.parse(jsonValue) : defaultValue;
+};
+
+export const removeFromLocalStorage = (key) => {
+  localStorage.removeItem(key);
+};
+
 export const getRegexFlagsArray = (flags) => {
   const regexFlags = [];
   flags.global && regexFlags.push("g");
