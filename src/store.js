@@ -147,6 +147,14 @@ const getSearchMode = () => {
   return readFromStore(STORE_TYPES.SEARCH_MODE) || SEARCH_MODES.FILE_CONTENT;
 };
 
+const storeProfiles = (profiles) => {
+  writeToStore(STORE_TYPES.PROFILES, profiles);
+};
+
+const getProfiles = () => {
+  return readFromStore(STORE_TYPES.PROFILES) || [];
+};
+
 module.exports = {
   writeToStore,
   readFromStore,
@@ -154,4 +162,6 @@ module.exports = {
   updateVersion,
   setSearchMode,
   getSearchMode,
+  storeProfiles,
+  getProfiles,
 };

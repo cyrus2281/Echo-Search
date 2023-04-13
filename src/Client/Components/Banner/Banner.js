@@ -9,8 +9,8 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 
 import { shallow } from "zustand/shallow";
-import { CHANNELS, SEARCH_MODES } from "../../constants.mjs";
-import useSearchQuery from "../store/useSearchQuery.js";
+import { CHANNELS, SEARCH_MODES } from "../../../constants.mjs";
+import useSearchQuery from "../../store/useSearchQuery.js";
 import BannerButtons from "./BannerButtons.js";
 
 const { ipcSend } = window.api;

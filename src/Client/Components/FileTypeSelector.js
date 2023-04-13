@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
@@ -35,6 +35,13 @@ function FileTypeSelector() {
   const removeFileType = (type) => {
     setFileTypes(fileTypes.filter((t) => t !== type));
   };
+
+  useEffect(() => {
+    if (allTypes && fileTypes.length > 0) {
+      setAllTypes(!allTypes);
+    }
+  }, [allTypes, fileTypes]);
+
 
   return (
     <Box

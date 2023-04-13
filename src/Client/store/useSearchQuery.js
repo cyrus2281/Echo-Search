@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { SEARCH_MODES } from "../../constants.mjs";
 import {
+  getExistingElements,
   getRegexFlagsArray,
   loadFromLocalStorage,
   saveToLocalStorage,
@@ -51,6 +52,7 @@ const useSearchQuery = create((set, get) => {
   return {
     // Fields
     history,
+    profiles: [],
     ...defaultContentSearchQuery,
 
     // Setters
@@ -201,9 +203,10 @@ const useSearchQuery = create((set, get) => {
     // History
     addToHistory: (histState) => {
       set((state) => {
-        const { history: _, ...newState } = histState
-          ? histState
-          : { ...state };
+        const newState = getExistingElements(
+          histState || state,
+          defaultContentSearchQuery
+        );
         // load from local storage
         const history = loadFromLocalStorage("searchHistory", []);
         // check for duplicate
@@ -236,12 +239,41 @@ const useSearchQuery = create((set, get) => {
     applyHistory: ({ timestamp: _, ...histState }) => {
       // load from local storage
       const history = loadFromLocalStorage("searchHistory", []);
-      set({
-        ...(histState.searchMode === SEARCH_MODES.FILE_NAME
-          ? defaultNameSearchQuery
-          : defaultContentSearchQuery),
-        ...histState,
-        history,
+      set((state) => {
+        const newState = getExistingElements(
+          histState || state,
+          defaultContentSearchQuery
+        );
+        return {
+          ...state,
+          ...(newState.searchMode === SEARCH_MODES.FILE_NAME
+            ? defaultNameSearchQuery
+            : defaultContentSearchQuery),
+          ...newState,
+          history,
+        };
+      });
+    },
+    // Profile
+    getCurrentProfileState: () => {
+      const state = get();
+      const profileState = getExistingElements(
+        state,
+        defaultContentSearchQuery
+      );
+      return profileState;
+    },
+    setProfiles: (profiles) => set({ profiles }),
+    selectProfile: (profile) => {
+      set((state) => {
+        const selectedProfile = state.profiles.find((p) => p.id === profile.id);
+        if (!selectedProfile) {
+          return {};
+        }
+        return {
+          ...state,
+          ...selectedProfile.state,
+        };
       });
     },
   };

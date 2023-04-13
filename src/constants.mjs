@@ -62,6 +62,10 @@ export const CHANNELS = {
   FILE_READ_RESPONSE: "file:read:response",
   FILE_WRITE_REQUEST: "file:write:request",
   FILE_WRITE_RESPONSE: "file:write:response",
+  // Profiles
+  PROFILES_LOAD_REQUEST: "profiles:load:request",
+  PROFILES_LOAD_RESPONSE: "profiles:load:response",
+  PROFILES_SAVE: "profiles:save",
 };
 
 export const DIALOG_ACTIONS_TYPES = {
@@ -89,6 +93,7 @@ export const STORE_TYPES = {
   SEARCH_MODE: "searchMode",
   TOTAL_CONTENT: "totalContent",
   TOTAL_FILE: "totalFile",
+  PROFILES: "profiles",
   ...SEARCH_TYPES,
 };
 
@@ -148,4 +153,9 @@ export const ERROR_DIALOG = {
   title: "Operation Failed!",
   error: " - Error: {error}",
   dismissBtnLabel: "Ok",
+};
+
+export const PROFILE_UPDATE_TYPE = {
+  NAME: "name",
+  REFRESH: "refresh",
 };

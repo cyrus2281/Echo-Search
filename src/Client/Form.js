@@ -8,7 +8,7 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Tooltip from "@mui/material/Tooltip";
 
-import Banner from "./Components/Banner";
+import Banner from "./Components/Banner/Banner";
 import Output from "./Components/Output";
 import Footer from "./Components/Footer";
 import DialogAlert from "./Components/DialogAlert";
