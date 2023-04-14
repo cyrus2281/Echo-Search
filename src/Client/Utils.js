@@ -103,3 +103,30 @@ export const getRegexFlagsArray = (flags) => {
   flags.single && regexFlags.push("s");
   return regexFlags;
 };
+
+export const getExistingElements = (object, patternObject) => {
+  const newObject = {};
+  for (const key in patternObject) {
+    if (object[key] !== undefined) {
+      newObject[key] = object[key];
+    }
+  }
+  return newObject;
+};
+
+export const generateID = () => {
+  const chars =
+    "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  let id = "";
+  for (let i = 0; i < 32; i++) {
+    id += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return id;
+};
+
+export const ellipsisText = (text, maxLength = 80) => {
+  if (text.length > maxLength) {
+    return text.slice(0, maxLength) + "...";
+  }
+  return text;
+};

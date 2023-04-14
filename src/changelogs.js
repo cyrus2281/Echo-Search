@@ -1,9 +1,10 @@
 module.exports = [
   {
-    version: "v2.6",
+    version: "v2.7",
     released: "00/05/2023",
     logs: [
       "Added search query history and restore.",
+      "Added saved search profiles.",
     ],
   },
   {

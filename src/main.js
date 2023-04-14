@@ -35,6 +35,8 @@ const {
   updateVersion,
   getSearchMode,
   setSearchMode,
+  storeProfiles,
+  getProfiles,
 } = require("./store.js");
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -229,3 +231,12 @@ ipcMain.on(
     }
   }
 );
+
+ipcMain.on(CHANNELS.PROFILES_SAVE, async (e, { profiles }) => {
+  storeProfiles(profiles);
+});
+
+ipcMain.on(CHANNELS.PROFILES_LOAD_REQUEST, async () => {
+  const profiles = getProfiles();
+  mainWindow.webContents.send(CHANNELS.PROFILES_LOAD_RESPONSE, { profiles });
+});
