@@ -5,6 +5,7 @@ module.exports = [
     logs: [
       "Added search query history and restore.",
       "Added saved search profiles.",
+      "Added search and replace query swap button.",
     ],
   },
   {

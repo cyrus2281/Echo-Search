@@ -15,35 +15,36 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import AbcIcon from "@mui/icons-material/Abc";
 import SpaceBarIcon from "@mui/icons-material/SpaceBar";
 import SearchOffIcon from "@mui/icons-material/SearchOff";
+import SwapVertIcon from "@mui/icons-material/SwapVert";
 
-import { shallow } from 'zustand/shallow'
+import { shallow } from "zustand/shallow";
 import useSearchQuery from "../store/useSearchQuery";
 
 function QuerySelector() {
-  const [searchQuery, setSearchQuery] = useSearchQuery((state) => [
-    state.searchQuery,
-    state.setSearchQuery,
-  ], shallow);
-  const [replaceQuery, setReplaceQuery] = useSearchQuery((state) => [
-    state.replaceQuery,
-    state.setReplaceQuery,
-  ], shallow);
-  const [caseInsensitive, setCaseInsensitive] = useSearchQuery((state) => [
-    state.caseInsensitive,
-    state.setCaseInsensitive,
-  ], shallow);
-  const [matchWhole, setMatchWhole] = useSearchQuery((state) => [
-    state.matchWhole,
-    state.setMatchWhole,
-  ], shallow);
-  const [isRegex, setIsRegex] = useSearchQuery((state) => [
-    state.isRegex,
-    state.setIsRegex,
-  ], shallow);
-  const [isSearchOnly, setIsSearchOnly] = useSearchQuery((state) => [
-    state.isSearchOnly,
-    state.setIsSearchOnly,
-  ], shallow);
+  const [searchQuery, setSearchQuery] = useSearchQuery(
+    (state) => [state.searchQuery, state.setSearchQuery],
+    shallow
+  );
+  const [replaceQuery, setReplaceQuery] = useSearchQuery(
+    (state) => [state.replaceQuery, state.setReplaceQuery],
+    shallow
+  );
+  const [caseInsensitive, setCaseInsensitive] = useSearchQuery(
+    (state) => [state.caseInsensitive, state.setCaseInsensitive],
+    shallow
+  );
+  const [matchWhole, setMatchWhole] = useSearchQuery(
+    (state) => [state.matchWhole, state.setMatchWhole],
+    shallow
+  );
+  const [isRegex, setIsRegex] = useSearchQuery(
+    (state) => [state.isRegex, state.setIsRegex],
+    shallow
+  );
+  const [isSearchOnly, setIsSearchOnly] = useSearchQuery(
+    (state) => [state.isSearchOnly, state.setIsSearchOnly],
+    shallow
+  );
 
   const searchLabel = isRegex ? "Regular Expression" : "Search Query";
   const searchLabelOptions =
@@ -90,8 +91,16 @@ function QuerySelector() {
           </Tooltip>
         </Box>
       </Grid>
-      <Grid item xs={12} mx={2}>
+      <Grid item xs={12} mx={2}  position="relative">
         <Collapse in={!isSearchOnly} timeout="auto">
+          <Tooltip title="Swap search and replace query.">
+            <IconButton sx={{position: "absolute", top: "-2px", left:"-4px", fontSize: "80px"}} size="small" onClick={() => {
+              setSearchQuery(replaceQuery);
+              setReplaceQuery(searchQuery);
+            }}>
+              <SwapVertIcon sx={{width: '20px', height: '20px'}} />
+            </IconButton>
+          </Tooltip>
           <Box
             sx={{
               display: "flex",
