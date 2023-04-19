@@ -18,9 +18,10 @@ import FileNameSearch from "./Pages/FileNameSearch";
 
 import { shallow } from "zustand/shallow";
 import { validateForm } from "./Utils";
-import { CHANNELS, SEARCH_MODES } from "../constants.mjs";
+import { CHANNELS, DIALOG_ACTIONS_TYPES, EMPTY_REPLACE_ERROR, SEARCH_MODES } from "../constants.mjs";
 import useSearchQuery from "./store/useSearchQuery";
 import CodeEditorDialog from "./Components/Editor/CodeEditorDialog";
+import useDialog from "./store/useDialog";
 
 const { ipcSend, ipcListen } = window.api;
 
@@ -49,6 +50,7 @@ function Form() {
     ],
     shallow
   );
+  const addToDialogQueue = useDialog((state) => state.addToDialogQueue);
 
   const { enqueueSnackbar } = useSnackbar();
   const [processID, setProcessID] = useState("");
@@ -62,6 +64,13 @@ function Form() {
       setDisableBtn(true);
       ipcSend(CHANNELS.SEARCH_CANCEL, { processID });
     } else {
+      const performSearch = () => {
+        addToHistory();
+        showOutput && setShowOutput(false);
+        setDisableBtn(true);
+        setIsRunning(true);
+        ipcSend(CHANNELS.SEARCH_START, searchQuery);
+      };
       const searchQuery = getSearchQuery();
       const hasError = validateForm(searchQuery, searchMode);
       console.log(searchQuery, hasError);
@@ -71,11 +80,27 @@ function Form() {
         );
         return;
       }
-      addToHistory();
-      showOutput && setShowOutput(false);
-      setDisableBtn(true);
-      setIsRunning(true);
-      ipcSend(CHANNELS.SEARCH_START, searchQuery);
+      if (hasError === EMPTY_REPLACE_ERROR) {
+        const dialogProp = {
+          title: "Are You Sure!?",
+          message: [
+            "You are about to replace all the matches with an empty space.",
+          ],
+          buttons: [
+            {
+              label: "Cancel",
+              type: DIALOG_ACTIONS_TYPES.DISMISS,
+            },
+            {
+              label: "Search & Delete",
+              action: performSearch,
+            },
+          ],
+        };
+        addToDialogQueue(dialogProp);
+        return;
+      }
+      performSearch();
     }
   };
 

@@ -1,4 +1,5 @@
 import {
+  EMPTY_REPLACE_ERROR,
   MESSAGE_MODES,
   MESSAGE_MODES_STYLES,
   SEARCH_MODES,
@@ -16,7 +17,7 @@ export const validateFileNameForm = (form) => {
 };
 
 export const validateFileContentForm = (form) => {
-  const errors = [];
+  let errors = [];
   if (!form.directories?.length) {
     errors.push("You at least need a directory to search in.");
   }
@@ -24,10 +25,11 @@ export const validateFileContentForm = (form) => {
     errors.push("You need a search query.");
   }
   if (
+    errors.length === 0 &&
     form.query?.replaceQuery !== false && // search only
     !form.query?.replaceQuery?.trim()
   ) {
-    errors.push("You need a replace query.");
+    errors = EMPTY_REPLACE_ERROR;
   }
   return errors;
 };

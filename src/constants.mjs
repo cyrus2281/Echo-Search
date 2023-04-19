@@ -159,3 +159,5 @@ export const PROFILE_UPDATE_TYPE = {
   NAME: "name",
   REFRESH: "refresh",
 };
+
+export const EMPTY_REPLACE_ERROR = 0;

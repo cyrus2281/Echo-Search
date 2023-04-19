@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -11,6 +11,7 @@ import Slide from "@mui/material/Slide";
 import { shallow } from "zustand/shallow";
 import useEditor from "../store/useEditor.js";
 import { CHANNELS, DIALOG_ACTIONS_TYPES } from "../../constants.mjs";
+import useDialog from "../store/useDialog.js";
 
 const { ipcListen, ipcSend } = window.api;
 
@@ -18,13 +19,18 @@ const openUrl = ({ url }) => {
   ipcSend(CHANNELS.OPEN_URL, { url });
 };
 
-const getActionButtons = (buttons = [], actions) => {
+const getActionButtons = (buttons = [], actions, closeDialog) => {
   return buttons.map((button, index) => {
     return (
       <Button
         key={index}
         onClick={() => {
-          actions[button.type](button);
+          if (typeof button.action === "function") {
+            button.action();
+          } else if (actions[button.type]) {
+            actions[button.type](button);
+          }
+          closeDialog();
         }}
         autoFocus={button.autoFocus}
       >
@@ -43,58 +49,42 @@ function DialogAlert() {
     (state) => [state.saveCloseFile, state.closeFile],
     shallow
   );
-  const [dialogQueue, setDialogQueue] = useState([]);
-  const [dialogProps, setDialogProps] = useState(null);
+  const [currentDialog, closeDialog, addToDialogQueue] = useDialog(
+    (state) => [state.currentDialog, state.closeDialog, state.addToDialogQueue],
+    shallow
+  );
   const actions = {
     [DIALOG_ACTIONS_TYPES.OPEN]: ({ url }) => {
       openUrl({ url });
-      setDialogProps(null);
-    },
-    [DIALOG_ACTIONS_TYPES.OK]: () => {
-      setDialogProps(null);
-    },
-    [DIALOG_ACTIONS_TYPES.DISMISS]: () => {
-      setDialogProps(null);
     },
     [DIALOG_ACTIONS_TYPES.EDITOR_SAVE_EXIT]: () => {
       saveCloseFile();
-      setDialogProps(null);
     },
     [DIALOG_ACTIONS_TYPES.EDITOR_NO_SAVE_EXIT]: () => {
       closeFile();
-      setDialogProps(null);
-    }
+    },
   };
 
   useEffect(() => {
     const onShowDialog = (props) => {
-      setDialogQueue((prev) => [...prev, props]);
+      addToDialogQueue(props);
     };
     return ipcListen(CHANNELS.OPEN_DIALOG, onShowDialog);
   }, []);
 
-  useEffect(() => {
-    if (dialogQueue.length > 0 && !dialogProps) {
-      const newDialogQueue = [...dialogQueue];
-      const nextDialog = newDialogQueue.shift();
-      setDialogProps(nextDialog);
-      setDialogQueue(newDialogQueue);
-    }
-  }, [dialogQueue, dialogProps]);
-
-  const messages = Array.isArray(dialogProps?.message)
-    ? dialogProps.message
-    : [dialogProps?.message];
+  const messages = Array.isArray(currentDialog?.message)
+    ? currentDialog.message
+    : [currentDialog?.message];
 
   return (
     <Dialog
       TransitionComponent={Transition}
-      open={!!dialogProps}
-      onClose={() => actions[DIALOG_ACTIONS_TYPES.DISMISS]()}
+      open={!!currentDialog}
+      onClose={closeDialog}
     >
-      {dialogProps && (
+      {currentDialog && (
         <>
-          <DialogTitle>{dialogProps.title}</DialogTitle>
+          <DialogTitle>{currentDialog.title}</DialogTitle>
           <DialogContent>
             {messages.map((message, index) => (
               <DialogContentText
@@ -106,7 +96,7 @@ function DialogAlert() {
             ))}
           </DialogContent>
           <DialogActions>
-            {getActionButtons(dialogProps.buttons, actions)}
+            {getActionButtons(currentDialog.buttons, actions, closeDialog)}
           </DialogActions>
         </>
       )}
