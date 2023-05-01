@@ -85,7 +85,26 @@ Menu.setApplicationMenu(menu);
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on("ready", createWindow);
+app.on("ready", () => {
+  if (process.platform === "darwin" && !app.isInApplicationsFolder() && !isDev) {
+    dialog.showMessageBox({
+      type: "question",
+      buttons: ["Move to Applications", "Cancel"],
+      defaultId: 0,
+      message: "Move to Applications folder?",
+      detail: "Do you want to move Echo-Search to the Application folder?"
+    }).then(result => {
+      if (result.response === 0) {
+        app.moveToApplicationsFolder()
+        app.relaunch()
+        return app.exit()
+      }
+      createWindow()
+    })
+  } else {
+    createWindow()
+  }
+});
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
