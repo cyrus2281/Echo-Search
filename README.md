@@ -77,8 +77,12 @@ Echo Search is a feature-rich and powerful application that allows you to search
 1. Open the `latest` release from [Releases](https://github.com/cyrus2281/Echo-Search/releases).
 2. From `Assets` download the `source code`
 3. unzip the code
-4. from within the repository run: `npm i && npm run make:linux`
-5. the app will be built in the `out` directory (exact path will be visible in the terminal)
+4. Install the required bundling tools. (Following command is for debian based)
+```
+sudo apt update && sudo apt install rpm dpkg fakeroot
+```
+5. from within the repository run: `npm i && npm run make:linux`
+6. the app will be built in the `out` directory (exact path will be visible in the terminal)
 
 That's it. Enjoy the app.
 

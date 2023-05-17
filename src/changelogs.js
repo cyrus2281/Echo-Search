@@ -7,6 +7,7 @@ module.exports = [
       "Added saved search profiles.",
       "Added search and replace query swap button.",
       "Added search and remove functionality.",
+      "Optimizations around installation process.",
     ],
   },
   {
