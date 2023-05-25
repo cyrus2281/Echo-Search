@@ -28,6 +28,10 @@ Echo Search is a feature-rich and powerful application that allows you to search
 
 - Search only mode: If you just want to search for files that contain a specific query, Echo Search has a search only mode that allows you to do just that, without making any replacements.
 
+- Profiles: Echo Search allows you to save your search settings as profiles, so you can easily re-use them later.
+
+- Search History: Echo Search keeps a history of your searches, so you can re-run them later.
+
 - Case sensitivity: You can choose whether the search should be case sensitive or not.
 
 - Whole word match or partial match: You can choose to search for the entire word only, or allow for partial matches.
@@ -47,6 +51,8 @@ Echo Search is a feature-rich and powerful application that allows you to search
 - Direct file and directory access: You can open the updated files or their directories with the file pre-selected directly from the console or quickly check the file metadata or copy its path.
 
 - Built-in code editor: Echo Search comes with a built-in code editor that allows you to open the files directly from the console and make quick edits and updates.
+
+- Intuitive UI: Echo Search has a clean and intuitive UI that makes it easy to use.
 
 
 ***Note:** The search content mode is only for text based files and can NOT be used with files such as pdf, doc, excel, etc.*
@@ -89,6 +95,12 @@ That's it. Enjoy the app.
 <hr>
 
 Echo Search is a versatile and efficient tool for searching and replacing text in files or searching filename within directories. With its extensive range of options, capabilities and the built-in code editor, it is suitable for a wide range of use cases, whether you are a software developer looking for a quick way to update code, or a data analyst searching for specific information in large datasets, or just trying to find a file. Try Echo Search today and see how it can make your life easier.
+
+## Request a feature
+You can request a feature by opening an issue in the repository. Please make sure to describe the feature in detail and provide a use case for it.
+
+## Report a bug
+You can report a bug by opening an issue in the repository. Please make sure to describe the bug in detail and provide steps to reproduce it including the version of the app and the operating system you are using.
 
 ## Application Screenshots
 
