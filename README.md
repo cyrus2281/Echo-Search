@@ -5,9 +5,17 @@
 [![License](https://img.shields.io/github/license/cyrus2281/echo-search)](https://github.com/cyrus2281/Echo-Search/blob/main/LICENSE)
 [![buyMeACoffee](https://img.shields.io/badge/BuyMeACoffee-cyrus2281-yellow?logo=buymeacoffee)](https://www.buymeacoffee.com/cyrus2281)
 [![downloads](https://img.shields.io/github/downloads/cyrus2281/echo-search/total?color=orange&label=Downloads)](https://github.com/cyrus2281/Echo-Search/releases)
-<br>
 
-https://user-images.githubusercontent.com/68962752/229653420-9d6c9ff1-904a-4d87-bd13-356b4b21df75.mp4
+
+[![GitHub issues](https://img.shields.io/github/issues/cyrus2281/Echo-Search?color=red)](https://github.com/cyrus2281/Echo-Search/issues)
+[![GitHub closed issues](https://img.shields.io/github/issues-closed/cyrus2281/Echo-Search?color=green)](https://github.com/cyrus2281/Echo-Search/issues?q=is%3Aissue+is%3Aclosed)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/cyrus2281/Echo-Search?color=red)](https://github.com/cyrus2281/Echo-Search/pulls)
+[![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/cyrus2281/Echo-Search?color=green)](https://github.com/cyrus2281/Echo-Search/pulls?q=is%3Apr+is%3Aclosed)
+[![GitHub stars](https://img.shields.io/github/stars/cyrus2281/Echo-Search?style=social)](https://github.com/cyrus2281/Echo-Search/stargazers)
+
+
+https://github.com/cyrus2281/Echo-Search/assets/68962752/948a8358-3438-4bf1-bdcc-d587f58ea2a5.png
+
 
 [![react](https://img.shields.io/github/package-json/dependency-version/cyrus2281/Echo-Search/react?logo=react&color=lightblue)](https://reactjs.org/)
 [![electron](https://img.shields.io/github/package-json/dependency-version/cyrus2281/Echo-Search/dev/electron?logo=electron&color=lightblue&logoColor=lightblue)](https://www.electronjs.org/)
